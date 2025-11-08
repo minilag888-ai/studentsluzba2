@@ -17,7 +17,7 @@ public class Converters {
         nastavnik.setEmail(nastavnikRequest.getEmail());
         nastavnik.setBrojTelefona(nastavnikRequest.getBrojTelefona());
         nastavnik.setAdresa(nastavnikRequest.getAdresa());
-        nastavnik.setZvanja(nastavnikRequest.getZvanja());
+        //nastavnik.setZvanja(nastavnikRequest.getZvanja());
         nastavnik.setDatumRodjenja(nastavnikRequest.getDatumRodjenja());
         nastavnik.setPol(nastavnikRequest.getPol());
         nastavnik.setJmbg(nastavnikRequest.getJmbg());
@@ -33,7 +33,7 @@ public class Converters {
         response.setEmail(nastavnik.getEmail());
         response.setBrojTelefona(nastavnik.getBrojTelefona());
         response.setAdresa(nastavnik.getAdresa());
-        response.setZvanja(nastavnik.getZvanja());
+       //response.setZvanja(nastavnik.getZvanja());
         response.setDatumRodjenja(nastavnik.getDatumRodjenja());
         response.setPol(nastavnik.getPol());
         response.setJmbg(nastavnik.getJmbg());

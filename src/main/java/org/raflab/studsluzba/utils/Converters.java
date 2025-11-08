@@ -3,16 +3,6 @@ package org.raflab.studsluzba.utils;
 import org.raflab.studsluzba.controllers.request.*;
 import org.raflab.studsluzba.controllers.response.*;
 import org.raflab.studsluzba.model.*;
-import org.raflab.studsluzba.controllers.request.SkolskaGodinaRequest;
-import org.raflab.studsluzba.controllers.response.SkolskaGodinaResponse;
-import org.raflab.studsluzba.model.SkolskaGodina;
-import org.raflab.studsluzba.controllers.request.PredispitnaObavezaRequest;
-import org.raflab.studsluzba.controllers.response.PredispitnaObavezaResponse;
-import org.raflab.studsluzba.model.PredispitnaObaveza;
-import org.raflab.studsluzba.controllers.request.OsvojeniPoeniRequest;
-import org.raflab.studsluzba.controllers.response.OsvojeniPoeniResponse;
-import org.raflab.studsluzba.model.OsvojeniPoeni;
-import org.raflab.studsluzba.model.StudentIndeks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +17,6 @@ public class Converters {
         nastavnik.setEmail(nastavnikRequest.getEmail());
         nastavnik.setBrojTelefona(nastavnikRequest.getBrojTelefona());
         nastavnik.setAdresa(nastavnikRequest.getAdresa());
-        //nastavnik.setZvanja(nastavnikRequest.getZvanja());
         nastavnik.setDatumRodjenja(nastavnikRequest.getDatumRodjenja());
         nastavnik.setPol(nastavnikRequest.getPol());
         nastavnik.setJmbg(nastavnikRequest.getJmbg());
@@ -43,7 +32,6 @@ public class Converters {
         response.setEmail(nastavnik.getEmail());
         response.setBrojTelefona(nastavnik.getBrojTelefona());
         response.setAdresa(nastavnik.getAdresa());
-       //response.setZvanja(nastavnik.getZvanja());
         response.setDatumRodjenja(nastavnik.getDatumRodjenja());
         response.setPol(nastavnik.getPol());
         response.setJmbg(nastavnik.getJmbg());
@@ -52,7 +40,6 @@ public class Converters {
 
     public static List<NastavnikResponse> toNastavnikResponseList(Iterable<Nastavnik> nastavnikIterable) {
         List<NastavnikResponse> nastavnikResponses = new ArrayList<>();
-
         nastavnikIterable.forEach((nastavnik) -> {
             nastavnikResponses.add(toNastavnikResponse(nastavnik));
         });
@@ -122,6 +109,7 @@ public class Converters {
         godine.forEach(godina -> responses.add(toSkolskaGodinaResponse(godina)));
         return responses;
     }
+
     // PredispitnaObaveza converters
     public static PredispitnaObaveza toPredispitnaObaveza(PredispitnaObavezaRequest request,
                                                           Predmet predmet,
@@ -151,6 +139,7 @@ public class Converters {
         obaveze.forEach(obaveza -> responses.add(toPredispitnaObavezaResponse(obaveza)));
         return responses;
     }
+
     // OsvojeniPoeni converters
     public static OsvojeniPoeni toOsvojeniPoeni(OsvojeniPoeniRequest request,
                                                 StudentIndeks indeks,
@@ -162,22 +151,43 @@ public class Converters {
         return poeni;
     }
 
-    public static OsvojeniPoeniResponse toOsvojeniPoeniResponse(OsvojeniPoeni poeni) {
+    public static OsvojeniPoeniResponse toOsvojeniPoeniResponse(OsvojeniPoeni osvojeniPoeni) {
         OsvojeniPoeniResponse response = new OsvojeniPoeniResponse();
-        response.setId(poeni.getId());
-        response.setStudentIndeksId(poeni.getStudentIndeks().getId());
-        response.setStudentIme(poeni.getStudentIndeks().getStudent().getIme());
-        response.setStudentPrezime(poeni.getStudentIndeks().getStudent().getPrezime());
-        response.setPredispitnaObavezaId(poeni.getPredispitnaObaveza().getId());
-        response.setObavezaVrsta(poeni.getPredispitnaObaveza().getVrsta());
-        response.setMaxPoena(poeni.getPredispitnaObaveza().getMaxPoena());
-        response.setPoeni(poeni.getPoeni());
-        return response;
-    }
+        response.setId(osvojeniPoeni.getId());
+        response.setPoeni(osvojeniPoeni.getPoeni());
 
-    public static List<OsvojeniPoeniResponse> toOsvojeniPoeniResponseList(Iterable<OsvojeniPoeni> poeni) {
-        List<OsvojeniPoeniResponse> responses = new ArrayList<>();
-        poeni.forEach(p -> responses.add(toOsvojeniPoeniResponse(p)));
-        return responses;
+        // Student podaci
+        if (osvojeniPoeni.getStudentIndeks() != null) {
+            response.setStudentIndeksId(osvojeniPoeni.getStudentIndeks().getId());
+            response.setStudentBrojIndeksa(osvojeniPoeni.getStudentIndeks().getBroj());
+            response.setStudentGodinaIndeksa(osvojeniPoeni.getStudentIndeks().getGodina());
+
+            if (osvojeniPoeni.getStudentIndeks().getStudent() != null) {
+                response.setStudentIme(osvojeniPoeni.getStudentIndeks().getStudent().getIme());
+                response.setStudentPrezime(osvojeniPoeni.getStudentIndeks().getStudent().getPrezime());
+            }
+        }
+
+        // Predispitna obaveza
+        if (osvojeniPoeni.getPredispitnaObaveza() != null) {
+            response.setPredispitnaObavezaId(osvojeniPoeni.getPredispitnaObaveza().getId());
+            response.setObavezaVrsta(osvojeniPoeni.getPredispitnaObaveza().getVrsta());
+            response.setMaxPoena(osvojeniPoeni.getPredispitnaObaveza().getMaxPoena());
+
+            // Predmet podaci
+            if (osvojeniPoeni.getPredispitnaObaveza().getPredmet() != null) {
+                response.setPredmetId(osvojeniPoeni.getPredispitnaObaveza().getPredmet().getId());
+                response.setPredmetSifra(osvojeniPoeni.getPredispitnaObaveza().getPredmet().getSifra());
+                response.setPredmetNaziv(osvojeniPoeni.getPredispitnaObaveza().getPredmet().getNaziv());
+            }
+
+            // Školska godina
+            if (osvojeniPoeni.getPredispitnaObaveza().getSkolskaGodina() != null) {
+                response.setSkolskaGodinaId(osvojeniPoeni.getPredispitnaObaveza().getSkolskaGodina().getId());
+                response.setSkolskaGodinaNaziv(osvojeniPoeni.getPredispitnaObaveza().getSkolskaGodina().getNaziv());
+            }
+        }
+
+        return response;
     }
 }

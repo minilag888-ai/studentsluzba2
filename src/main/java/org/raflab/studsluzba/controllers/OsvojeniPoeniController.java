@@ -10,12 +10,13 @@ import org.raflab.studsluzba.services.PredispitnaObavezaService;
 import org.raflab.studsluzba.services.StudentIndeksService;
 import org.raflab.studsluzba.utils.Converters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -33,63 +34,66 @@ public class OsvojeniPoeniController {
 
     @GetMapping(path = "/all")
     public List<OsvojeniPoeniResponse> getAll() {
-        return Converters.toOsvojeniPoeniResponseList(service.findAll());
+        List<OsvojeniPoeni> poeni = service.findAll();
+        List<OsvojeniPoeniResponse> responses = new ArrayList<>();
+        for (OsvojeniPoeni p : poeni) {
+            responses.add(Converters.toOsvojeniPoeniResponse(p));
+        }
+        return responses;
     }
 
     @GetMapping(path = "/{id}")
-    public OsvojeniPoeniResponse getById(@PathVariable Long id) {
-        Optional<OsvojeniPoeni> optional = service.findById(id);
-        return optional.map(Converters::toOsvojeniPoeniResponse).orElse(null);
+    public ResponseEntity<OsvojeniPoeniResponse> getById(@PathVariable Long id) {
+        OsvojeniPoeni poeni = service.findById(id).orElse(null);
+        if (poeni == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(Converters.toOsvojeniPoeniResponse(poeni));
     }
 
     @GetMapping(path = "/student/{studentId}")
     public List<OsvojeniPoeniResponse> getByStudent(@PathVariable Long studentId) {
         List<OsvojeniPoeni> poeni = service.findByStudent(studentId);
-        return Converters.toOsvojeniPoeniResponseList(poeni);
+        List<OsvojeniPoeniResponse> responses = new ArrayList<>();
+        for (OsvojeniPoeni p : poeni) {
+            responses.add(Converters.toOsvojeniPoeniResponse(p));
+        }
+        return responses;
     }
 
-    @GetMapping(path = "/student/{studentId}/predmet/{predmetId}/godina/{godinaId}")
-    public List<OsvojeniPoeniResponse> getByStudentPredmetGodina(
-            @PathVariable Long studentId,
+    @GetMapping(path = "/predmet/{predmetId}/godina/{godinaId}")
+    public List<OsvojeniPoeniResponse> getByPredmetGodina(
             @PathVariable Long predmetId,
             @PathVariable Long godinaId) {
-        List<OsvojeniPoeni> poeni = service.findByStudentPredmetGodina(studentId, predmetId, godinaId);
-        return Converters.toOsvojeniPoeniResponseList(poeni);
+        List<OsvojeniPoeni> poeni = service.findByPredmetAndGodina(predmetId, godinaId);
+        List<OsvojeniPoeniResponse> responses = new ArrayList<>();
+        for (OsvojeniPoeni p : poeni) {
+            responses.add(Converters.toOsvojeniPoeniResponse(p));
+        }
+        return responses;
     }
 
     @PostMapping(path = "/add")
     @Transactional
     public OsvojeniPoeniResponse add(@RequestBody @Valid OsvojeniPoeniRequest request) {
-        System.out.println("=== DEBUGGING ===");
-        System.out.println("REQUEST: " + request);
+        StudentIndeks indeks = studentIndeksService.findById(request.getStudentIndeksId())
+                .orElseThrow(() -> new RuntimeException("StudentIndeks not found"));
 
-        StudentIndeks indeks = studentIndeksService.findById(request.getStudentIndeksId()).orElse(null);
-        System.out.println("STUDENT INDEKS: " + indeks);
+        PredispitnaObaveza obaveza = predispitnaObavezaService.findById(request.getPredispitnaObavezaId())
+                .orElseThrow(() -> new RuntimeException("PredispitnaObaveza not found"));
 
-        PredispitnaObaveza obaveza = predispitnaObavezaService.findById(request.getPredispitnaObavezaId()).orElse(null);
-        System.out.println("PREDISPITNA OBAVEZA: " + obaveza);
-
-        if (indeks == null || obaveza == null) {
-            System.out.println("❌ NULL! Indeks=" + indeks + ", Obaveza=" + obaveza);
-            return null;
-        }
-
-        System.out.println("✅ Kreiram OsvojeniPoeni...");
         OsvojeniPoeni poeni = Converters.toOsvojeniPoeni(request, indeks, obaveza);
-        System.out.println("POENI OBJEKAT: " + poeni);
-
         OsvojeniPoeni saved = service.save(poeni);
-        System.out.println("SAVED: " + saved);
 
-        OsvojeniPoeniResponse response = Converters.toOsvojeniPoeniResponse(saved);
-        System.out.println("RESPONSE: " + response);
-
-        return response;
+        return Converters.toOsvojeniPoeniResponse(saved);
     }
 
     @DeleteMapping(path = "/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (!service.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
         service.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
-
 }

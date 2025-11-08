@@ -16,4 +16,8 @@ public interface OsvojeniPoeniRepository extends JpaRepository<OsvojeniPoeni, Lo
             "AND op.predispitnaObaveza.predmet.id = ?2 " +
             "AND op.predispitnaObaveza.skolskaGodina.id = ?3")
     List<OsvojeniPoeni> findByStudentPredmetGodina(Long studentId, Long predmetId, Long godinaId);
+
+    List<OsvojeniPoeni> findByPredispitnaObavezaPredmetIdAndPredispitnaObavezaSkolskaGodinaId(
+            Long predmetId, Long godinaId
+    );
 }

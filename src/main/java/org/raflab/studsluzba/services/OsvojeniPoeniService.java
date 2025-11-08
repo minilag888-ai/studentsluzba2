@@ -22,6 +22,9 @@ public class OsvojeniPoeniService {
     public Optional<OsvojeniPoeni> findById(Long id) {
         return repository.findById(id);
     }
+    public boolean existsById(Long id) {
+        return repository.existsById(id);
+    }
 
     public List<OsvojeniPoeni> findByStudent(Long studentIndeksId) {
         return repository.findByStudentIndeksId(studentIndeksId);
@@ -39,5 +42,8 @@ public class OsvojeniPoeniService {
     @Transactional
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+    public List<OsvojeniPoeni> findByPredmetAndGodina(Long predmetId, Long godinaId) {
+        return repository.findByPredispitnaObavezaPredmetIdAndPredispitnaObavezaSkolskaGodinaId(predmetId, godinaId);
     }
 }

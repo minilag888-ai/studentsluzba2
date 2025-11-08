@@ -190,4 +190,112 @@ public class Converters {
 
         return response;
     }
+    // IspitniRok converters
+    public static IspitniRok toIspitniRok(IspitniRokRequest request, SkolskaGodina godina) {
+        IspitniRok rok = new IspitniRok();
+        rok.setNaziv(request.getNaziv());
+        rok.setSkolskaGodina(godina);
+        rok.setPocetak(request.getPocetak());
+        rok.setKraj(request.getKraj());
+        rok.setAktivan(request.getAktivan() != null ? request.getAktivan() : false);
+        return rok;
+    }
+
+    public static IspitniRokResponse toIspitniRokResponse(IspitniRok rok) {
+        IspitniRokResponse response = new IspitniRokResponse();
+        response.setId(rok.getId());
+        response.setNaziv(rok.getNaziv());
+        response.setPocetak(rok.getPocetak());
+        response.setKraj(rok.getKraj());
+        response.setAktivan(rok.getAktivan());
+
+        if (rok.getSkolskaGodina() != null) {
+            response.setSkolskaGodinaId(rok.getSkolskaGodina().getId());
+            response.setSkolskaGodinaNaziv(rok.getSkolskaGodina().getNaziv());
+        }
+
+        return response;
+    }
+    // Ispit converters
+    public static Ispit toIspit(IspitRequest request,
+                                StudentIndeks indeks,
+                                Predmet predmet,
+                                IspitniRok rok) {
+        Ispit ispit = new Ispit();
+        ispit.setStudentIndeks(indeks);
+        ispit.setPredmet(predmet);
+        ispit.setIspitniRok(rok);
+        ispit.setOcena(request.getOcena());
+        ispit.setDatumPolaganja(request.getDatumPolaganja());
+        ispit.setNapomena(request.getNapomena());
+        return ispit;
+    }
+
+    public static IspitResponse toIspitResponse(Ispit ispit) {
+        IspitResponse response = new IspitResponse();
+        response.setId(ispit.getId());
+        response.setOcena(ispit.getOcena());
+        response.setDatumPolaganja(ispit.getDatumPolaganja());
+        response.setNapomena(ispit.getNapomena());
+
+        // Student podaci
+        if (ispit.getStudentIndeks() != null) {
+            response.setStudentIndeksId(ispit.getStudentIndeks().getId());
+            response.setStudentBrojIndeksa(ispit.getStudentIndeks().getBroj());
+            response.setStudentGodinaIndeksa(ispit.getStudentIndeks().getGodina());
+
+            if (ispit.getStudentIndeks().getStudent() != null) {
+                response.setStudentIme(ispit.getStudentIndeks().getStudent().getIme());
+                response.setStudentPrezime(ispit.getStudentIndeks().getStudent().getPrezime());
+            }
+        }
+
+        // Predmet podaci
+        if (ispit.getPredmet() != null) {
+            response.setPredmetId(ispit.getPredmet().getId());
+            response.setPredmetSifra(ispit.getPredmet().getSifra());
+            response.setPredmetNaziv(ispit.getPredmet().getNaziv());
+        }
+
+        // Ispitni rok podaci
+        if (ispit.getIspitniRok() != null) {
+            response.setIspitniRokId(ispit.getIspitniRok().getId());
+            response.setIspitniRokNaziv(ispit.getIspitniRok().getNaziv());
+
+            if (ispit.getIspitniRok().getSkolskaGodina() != null) {
+                response.setSkolskaGodinaId(ispit.getIspitniRok().getSkolskaGodina().getId());
+                response.setSkolskaGodinaNaziv(ispit.getIspitniRok().getSkolskaGodina().getNaziv());
+            }
+        }
+
+        return response;
+    }
+    // Predmet converters
+    public static Predmet toPredmet(PredmetRequest request, StudijskiProgram program) {
+        Predmet predmet = new Predmet();
+        predmet.setSifra(request.getSifra());
+        predmet.setNaziv(request.getNaziv());
+        predmet.setOpis(request.getOpis());
+        predmet.setEspb(request.getEspb());
+        predmet.setStudProgram(program);
+        predmet.setObavezan(request.getObavezan());
+        return predmet;
+    }
+
+    public static PredmetResponse toPredmetResponse(Predmet predmet) {
+        PredmetResponse response = new PredmetResponse();
+        response.setId(predmet.getId());
+        response.setSifra(predmet.getSifra());
+        response.setNaziv(predmet.getNaziv());
+        response.setOpis(predmet.getOpis());
+        response.setEspb(predmet.getEspb());
+        response.setObavezan(predmet.isObavezan());
+
+        if (predmet.getStudProgram() != null) {
+            response.setStudijskiProgramId(predmet.getStudProgram().getId());
+            response.setStudijskiProgramNaziv(predmet.getStudProgram().getNaziv());
+        }
+
+        return response;
+    }
 }

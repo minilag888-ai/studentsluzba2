@@ -1,0 +1,66 @@
+
+### 1. POST - Kreiraj Januarski rok
+POST http://localhost:8090/api/ispitni-rokovi/add
+Content-Type: application/json
+
+{
+  "naziv": "Januarski rok",
+  "skolskaGodinaId": 1,
+  "pocetak": "2024-01-15",
+  "kraj": "2024-02-15",
+  "aktivan": true
+}
+
+### 2. POST - Kreiraj Junski rok
+POST http://localhost:8090/api/ispitni-rokovi/add
+Content-Type: application/json
+
+{
+  "naziv": "Junski rok",
+  "skolskaGodinaId": 1,
+  "pocetak": "2024-06-01",
+  "kraj": "2024-06-30",
+  "aktivan": true
+}
+
+### 3. POST - Kreiraj Avgustovski rok
+POST http://localhost:8090/api/ispitni-rokovi/add
+Content-Type: application/json
+
+{
+  "naziv": "Avgustovski rok",
+  "skolskaGodinaId": 3,
+  "pocetak": "2024-08-20",
+  "kraj": "2024-09-10",
+  "aktivan": false
+}
+
+### 4. GET - Svi ispitni rokovi
+GET http://localhost:8090/api/ispitni-rokovi/all
+
+### 5. GET - Po ID (rok sa ID=1)
+GET http://localhost:8090/api/ispitni-rokovi/1
+
+### 6. GET - Po školskoj godini (godina ID=1)
+GET http://localhost:8090/api/ispitni-rokovi/godina/1
+
+### 7. PUT - Update Januarskog roka (ID=1)
+PUT http://localhost:8090/api/ispitni-rokovi/1
+Content-Type: application/json
+
+{
+  "naziv": "Januarski rok - IZMENJENO",
+  "skolskaGodinaId": 1,
+  "pocetak": "2024-01-20",
+  "kraj": "2024-02-20",
+  "aktivan": false
+}
+
+### 8. GET - Proveri izmenu (ID=1)
+GET http://localhost:8090/api/ispitni-rokovi/1
+
+### 9. DELETE - Obriši Avgustovski rok (ID=3)
+DELETE http://localhost:8090/api/ispitni-rokovi/3
+
+### 10. GET - Proveri sve rokove posle DELETE
+GET http://localhost:8090/api/ispitni-rokovi/all

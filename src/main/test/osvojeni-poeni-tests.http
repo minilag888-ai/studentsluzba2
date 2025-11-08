@@ -15,4 +15,4 @@ GET http://localhost:8090/api/osvojeni-poeni/all
 ###
 
 ### GET - Po studentu
-GET http://localhost:8090/api/osvojeni-poeni/student/1
+GET http://localhost:8090/api/osvojeni-poeni/predmet/1/godina/1

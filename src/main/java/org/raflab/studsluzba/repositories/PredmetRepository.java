@@ -1,6 +1,7 @@
 package org.raflab.studsluzba.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.raflab.studsluzba.model.Predmet;
 import org.raflab.studsluzba.model.StudijskiProgram;
@@ -10,12 +11,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PredmetRepository extends CrudRepository<Predmet, Long> {
-	
-	@Query("select p from Predmet p where p.studProgram.godinaAkreditacije = :godinaAkreditacije")
-	List<Predmet> getPredmetForGodinaAkreditacije(Integer godinaAkreditacije);
 
-	List<Predmet> getPredmetsByStudProgramAndObavezan(StudijskiProgram studProgram, boolean obavezan);
+    @Query("select p from Predmet p where p.studProgram.godinaAkreditacije = :godinaAkreditacije")
+    List<Predmet> getPredmetForGodinaAkreditacije(Integer godinaAkreditacije);
 
-	List<Predmet> findByIdIn(List<Long> ids);
-	List<Predmet> findByNazivIn(List<String> nazivi);
+    List<Predmet> getPredmetsByStudProgramAndObavezan(StudijskiProgram studProgram, boolean obavezan);
+
+    List<Predmet> findByIdIn(List<Long> ids);
+    List<Predmet> findByNazivIn(List<String> nazivi);
+
+    // ← DODAJ OVE DVE METODE:
+    Optional<Predmet> findBySifra(String sifra);
+    boolean existsBySifra(String sifra);
 }

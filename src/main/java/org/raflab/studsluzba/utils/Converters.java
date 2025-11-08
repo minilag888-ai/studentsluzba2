@@ -1,8 +1,18 @@
 package org.raflab.studsluzba.utils;
 
 import org.raflab.studsluzba.controllers.request.*;
-import org.raflab.studsluzba.controllers.response.NastavnikResponse;
+import org.raflab.studsluzba.controllers.response.*;
 import org.raflab.studsluzba.model.*;
+import org.raflab.studsluzba.controllers.request.SkolskaGodinaRequest;
+import org.raflab.studsluzba.controllers.response.SkolskaGodinaResponse;
+import org.raflab.studsluzba.model.SkolskaGodina;
+import org.raflab.studsluzba.controllers.request.PredispitnaObavezaRequest;
+import org.raflab.studsluzba.controllers.response.PredispitnaObavezaResponse;
+import org.raflab.studsluzba.model.PredispitnaObaveza;
+import org.raflab.studsluzba.controllers.request.OsvojeniPoeniRequest;
+import org.raflab.studsluzba.controllers.response.OsvojeniPoeniResponse;
+import org.raflab.studsluzba.model.OsvojeniPoeni;
+import org.raflab.studsluzba.model.StudentIndeks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,5 +91,93 @@ public class Converters {
         studentIndeks.setAktivan(studentIndeksRequest.isAktivan());
         studentIndeks.setVaziOd(studentIndeksRequest.getVaziOd());
         return studentIndeks;
+    }
+
+    // SkolskaGodina converters
+    public static SkolskaGodina toSkolskaGodina(SkolskaGodinaRequest request) {
+        SkolskaGodina godina = new SkolskaGodina();
+        godina.setNaziv(request.getNaziv());
+        godina.setPocetakZimskog(request.getPocetakZimskog());
+        godina.setKrajZimskog(request.getKrajZimskog());
+        godina.setPocetakLetnjeg(request.getPocetakLetnjeg());
+        godina.setKrajLetnjeg(request.getKrajLetnjeg());
+        godina.setAktivna(request.getAktivna() != null ? request.getAktivna() : false);
+        return godina;
+    }
+
+    public static SkolskaGodinaResponse toSkolskaGodinaResponse(SkolskaGodina godina) {
+        SkolskaGodinaResponse response = new SkolskaGodinaResponse();
+        response.setId(godina.getId());
+        response.setNaziv(godina.getNaziv());
+        response.setPocetakZimskog(godina.getPocetakZimskog());
+        response.setKrajZimskog(godina.getKrajZimskog());
+        response.setPocetakLetnjeg(godina.getPocetakLetnjeg());
+        response.setKrajLetnjeg(godina.getKrajLetnjeg());
+        response.setAktivna(godina.getAktivna());
+        return response;
+    }
+
+    public static List<SkolskaGodinaResponse> toSkolskaGodinaResponseList(Iterable<SkolskaGodina> godine) {
+        List<SkolskaGodinaResponse> responses = new ArrayList<>();
+        godine.forEach(godina -> responses.add(toSkolskaGodinaResponse(godina)));
+        return responses;
+    }
+    // PredispitnaObaveza converters
+    public static PredispitnaObaveza toPredispitnaObaveza(PredispitnaObavezaRequest request,
+                                                          Predmet predmet,
+                                                          SkolskaGodina godina) {
+        PredispitnaObaveza obaveza = new PredispitnaObaveza();
+        obaveza.setPredmet(predmet);
+        obaveza.setSkolskaGodina(godina);
+        obaveza.setVrsta(request.getVrsta());
+        obaveza.setMaxPoena(request.getMaxPoena());
+        return obaveza;
+    }
+
+    public static PredispitnaObavezaResponse toPredispitnaObavezaResponse(PredispitnaObaveza obaveza) {
+        PredispitnaObavezaResponse response = new PredispitnaObavezaResponse();
+        response.setId(obaveza.getId());
+        response.setPredmetId(obaveza.getPredmet().getId());
+        response.setPredmetNaziv(obaveza.getPredmet().getNaziv());
+        response.setSkolskaGodinaId(obaveza.getSkolskaGodina().getId());
+        response.setSkolskaGodinaNaziv(obaveza.getSkolskaGodina().getNaziv());
+        response.setVrsta(obaveza.getVrsta());
+        response.setMaxPoena(obaveza.getMaxPoena());
+        return response;
+    }
+
+    public static List<PredispitnaObavezaResponse> toPredispitnaObavezaResponseList(Iterable<PredispitnaObaveza> obaveze) {
+        List<PredispitnaObavezaResponse> responses = new ArrayList<>();
+        obaveze.forEach(obaveza -> responses.add(toPredispitnaObavezaResponse(obaveza)));
+        return responses;
+    }
+    // OsvojeniPoeni converters
+    public static OsvojeniPoeni toOsvojeniPoeni(OsvojeniPoeniRequest request,
+                                                StudentIndeks indeks,
+                                                PredispitnaObaveza obaveza) {
+        OsvojeniPoeni poeni = new OsvojeniPoeni();
+        poeni.setStudentIndeks(indeks);
+        poeni.setPredispitnaObaveza(obaveza);
+        poeni.setPoeni(request.getPoeni());
+        return poeni;
+    }
+
+    public static OsvojeniPoeniResponse toOsvojeniPoeniResponse(OsvojeniPoeni poeni) {
+        OsvojeniPoeniResponse response = new OsvojeniPoeniResponse();
+        response.setId(poeni.getId());
+        response.setStudentIndeksId(poeni.getStudentIndeks().getId());
+        response.setStudentIme(poeni.getStudentIndeks().getStudent().getIme());
+        response.setStudentPrezime(poeni.getStudentIndeks().getStudent().getPrezime());
+        response.setPredispitnaObavezaId(poeni.getPredispitnaObaveza().getId());
+        response.setObavezaVrsta(poeni.getPredispitnaObaveza().getVrsta());
+        response.setMaxPoena(poeni.getPredispitnaObaveza().getMaxPoena());
+        response.setPoeni(poeni.getPoeni());
+        return response;
+    }
+
+    public static List<OsvojeniPoeniResponse> toOsvojeniPoeniResponseList(Iterable<OsvojeniPoeni> poeni) {
+        List<OsvojeniPoeniResponse> responses = new ArrayList<>();
+        poeni.forEach(p -> responses.add(toOsvojeniPoeniResponse(p)));
+        return responses;
     }
 }

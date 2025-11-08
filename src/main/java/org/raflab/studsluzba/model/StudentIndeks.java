@@ -2,10 +2,22 @@ package org.raflab.studsluzba.model;
 
 import java.time.LocalDate;
 import javax.persistence.*;
-import lombok.Data;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
+
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"studijskiProgram", "student"})  // ← DODAJ OVO!
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"broj", "godina", "studProgramOznaka", "aktivan"}))
 public class StudentIndeks {
 
@@ -19,10 +31,12 @@ public class StudentIndeks {
 	private boolean aktivan; 
 	private LocalDate vaziOd;
 	@ManyToOne
+    @JsonIgnore
 	private StudentPodaci student;
-	
-	@ManyToOne
-	private StudijskiProgram studijskiProgram;   // na koji studijski program je upisan
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private StudijskiProgram studijskiProgram;   // na koji studijski program je upisan
 	private Integer ostvarenoEspb;
 
 }

@@ -1,0 +1,18 @@
+### POST - Dodaj osvojene poene
+POST http://localhost:8090/api/osvojeni-poeni/add
+Content-Type: application/json
+
+{
+  "studentIndeksId": 1,
+  "predispitnaObavezaId": 1,
+  "poeni": 25
+}
+
+
+### GET - Svi
+GET http://localhost:8090/api/osvojeni-poeni/all
+
+###
+
+### GET - Po studentu
+GET http://localhost:8090/api/osvojeni-poeni/student/1

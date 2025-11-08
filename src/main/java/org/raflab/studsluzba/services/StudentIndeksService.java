@@ -5,6 +5,8 @@ import org.raflab.studsluzba.repositories.StudentIndeksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
+
 
 import java.util.Collections;
 import java.util.List;
@@ -43,5 +45,22 @@ public class StudentIndeksService {
 
     public StudentIndeks findByStudentIdAndAktivan(Long studentPodaciId) {
         return studentIndeksRepository.findAktivanStudentIndeksiByStudentPodaciId(studentPodaciId);
+    }
+    public List<StudentIndeks> findAll() {
+        return studentIndeksRepository.findAll();
+    }
+
+    public Optional<StudentIndeks> findById(Long id) {
+        return studentIndeksRepository.findById(id);
+    }
+
+    @Transactional
+    public StudentIndeks save(StudentIndeks indeks) {
+        return studentIndeksRepository.save(indeks);
+    }
+
+    @Transactional
+    public void deleteById(Long id) {
+        studentIndeksRepository.deleteById(id);
     }
 }

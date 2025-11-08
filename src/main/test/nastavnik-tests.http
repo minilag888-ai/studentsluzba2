@@ -1,0 +1,31 @@
+### POST - Kreiraj nastavnika
+POST http://localhost:8090/api/nastavnik/add
+Content-Type: application/json
+
+{
+  "ime": "Marko",
+  "prezime": "Marković",
+  "srednjeIme": "Petar",
+  "email": "marko@raf.rs",
+  "brojTelefona": "0641234567"
+}
+
+###
+
+### GET - Svi nastavnici
+GET http://localhost:8090/api/nastavnik/all
+
+###
+
+### GET - Po ID
+GET http://localhost:8090/api/nastavnik/6
+
+###
+
+### GET - Pretraga po imenu
+GET http://localhost:8090/api/nastavnik/search?ime=Marko
+
+###
+
+### GET - Pretraga po prezimenu
+GET http://localhost:8090/api/nastavnik/search?prezime=Marković

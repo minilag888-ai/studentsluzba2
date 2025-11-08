@@ -1,0 +1,20 @@
+### POST - Kreiraj predispitnu obavezu
+POST http://localhost:8090/api/predispitna-obaveza/add
+Content-Type: application/json
+
+{
+  "predmetId": 1,
+  "skolskaGodinaId": 1,
+  "vrsta": "Kolokvijum 1",
+  "maxPoena": 30
+}
+
+###
+
+### GET - Sve obaveze
+GET http://localhost:8090/api/predispitna-obaveza/all
+
+###
+
+### GET - Po predmetu i godini
+GET http://localhost:8090/api/predispitna-obaveza/predmet/1/skolska-godina/1

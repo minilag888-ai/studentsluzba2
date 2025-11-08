@@ -29,6 +29,10 @@ public class Seeder implements CommandLineRunner {
     private SlusaPredmetRepository slusaPredmetRepository;
     @Autowired
     private GrupaRepository grupaRepository;
+    @Autowired
+    private SkolskaGodinaRepository skolskaGodinaRepository;
+    @Autowired
+    private PredispitnaObavezaRepository predispitnaObavezaRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -142,5 +146,53 @@ public class Seeder implements CommandLineRunner {
             g.setPredmeti(Collections.singletonList(predmetList.get(i - 1)));
             grupaRepository.save(g);
         }
+
+        // Školske godine
+        SkolskaGodina godina1 = new SkolskaGodina();
+        godina1.setNaziv("2023/2024");
+        godina1.setPocetakZimskog(LocalDate.of(2023, 10, 1));
+        godina1.setKrajZimskog(LocalDate.of(2024, 2, 15));
+        godina1.setPocetakLetnjeg(LocalDate.of(2024, 2, 16));
+        godina1.setKrajLetnjeg(LocalDate.of(2024, 9, 30));
+        godina1.setAktivna(true);
+        skolskaGodinaRepository.save(godina1);
+
+        SkolskaGodina godina2 = new SkolskaGodina();
+        godina2.setNaziv("2024/2025");
+        godina2.setPocetakZimskog(LocalDate.of(2024, 10, 1));
+        godina2.setKrajZimskog(LocalDate.of(2025, 2, 15));
+        godina2.setPocetakLetnjeg(LocalDate.of(2025, 2, 16));
+        godina2.setKrajLetnjeg(LocalDate.of(2025, 9, 30));
+        godina2.setAktivna(false);
+        skolskaGodinaRepository.save(godina2);
+
+        // Predispitne obaveze
+        List<Predmet> predmeti = new ArrayList<>();
+        predmetRepository.findAll().forEach(predmeti::add);  // ← FIX!
+
+        for (int i = 0; i < predmeti.size(); i++) {
+            PredispitnaObaveza obaveza1 = new PredispitnaObaveza();
+            obaveza1.setPredmet(predmeti.get(i));
+            obaveza1.setSkolskaGodina(godina1);
+            obaveza1.setVrsta("Kolokvijum 1");
+            obaveza1.setMaxPoena(30);
+            predispitnaObavezaRepository.save(obaveza1);
+
+            PredispitnaObaveza obaveza2 = new PredispitnaObaveza();
+            obaveza2.setPredmet(predmeti.get(i));
+            obaveza2.setSkolskaGodina(godina1);
+            obaveza2.setVrsta("Kolokvijum 2");
+            obaveza2.setMaxPoena(30);
+            predispitnaObavezaRepository.save(obaveza2);
+
+            PredispitnaObaveza obaveza3 = new PredispitnaObaveza();
+            obaveza3.setPredmet(predmeti.get(i));
+            obaveza3.setSkolskaGodina(godina1);
+            obaveza3.setVrsta("Projekat");
+            obaveza3.setMaxPoena(40);
+            predispitnaObavezaRepository.save(obaveza3);
+        }
+
+        System.out.println("Seeder completed: StudijskiProgram, Predmet, Nastavnik, Student, SkolskaGodina, PredispitnaObaveza");
     }
 }

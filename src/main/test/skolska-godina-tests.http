@@ -1,0 +1,27 @@
+### POST - Kreiraj školsku godinu
+POST http://localhost:8090/api/skolska-godina/add
+Content-Type: application/json
+
+{
+  "naziv": "2023/2024",
+  "pocetakZimskog": "2023-10-01",
+  "krajZimskog": "2024-01-31",
+  "pocetakLetnjeg": "2024-02-15",
+  "krajLetnjeg": "2024-06-30",
+  "aktivna": true
+}
+
+###
+
+### GET - Sve školske godine
+GET http://localhost:8090/api/skolska-godina/all
+
+###
+
+### GET - Aktivna
+GET http://localhost:8090/api/skolska-godina/aktivna
+
+###
+
+### GET - Po ID
+GET http://localhost:8090/api/skolska-godina/1

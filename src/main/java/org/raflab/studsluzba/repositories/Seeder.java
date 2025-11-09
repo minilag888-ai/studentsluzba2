@@ -36,11 +36,24 @@ public class Seeder implements CommandLineRunner {
     @Autowired
     private VrstaStudijaRepository vrstaStudijaRepository;
 
+
+    @Autowired
+    private PolozenPredmetRepository polozenPredmetRepository;
+    @Autowired
+    private UplataRepository uplataRepository;
+    @Autowired
+    private UpisGodineRepository upisGodineRepository;
+    @Autowired
+    private ObnovaGodineRepository obnovaGodineRepository;
+    @Autowired
+    private SrednjaSkolaRepository srednjaSkolaRepository;
+
     @Override
     public void run(String... args) throws Exception {
-        List<StudijskiProgram> spList = new ArrayList<>();
 
-        // Prvo kreiraj vrstu studija (OAS)
+        // ========== POSTOJEĆI KOD (OSTAVI KAO ŠTO JE) ==========
+
+        List<StudijskiProgram> spList = new ArrayList<>();
         VrstaStudija oas = new VrstaStudija("OAS", "Osnovne akademske studije");
         vrstaStudijaRepository.save(oas);
 
@@ -56,12 +69,12 @@ public class Seeder implements CommandLineRunner {
         }
 
         List<Predmet> predmetList = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 10; i++) {  //  POVEĆAJ NA 10 PREDMETA
             Predmet p = new Predmet();
             p.setSifra("PR" + i);
             p.setNaziv("Predmet " + i);
             p.setOpis("Opis predmeta " + i);
-            p.setEspb(6 + i);
+            p.setEspb(6 + (i % 5));
             p.setStudProgram(spList.get((i - 1) % spList.size()));
             p.setObavezan(i % 2 == 0);
             predmetList.add(predmetRepository.save(p));
@@ -94,14 +107,24 @@ public class Seeder implements CommandLineRunner {
             zvanjeList.add(nastavnikZvanjeRepository.save(nz));
         }
 
+        //  DODAJ SREDNJE ŠKOLE
+        List<SrednjaSkola> srednjeSkolee = new ArrayList<>();
+        for (int i = 1; i <= 3; i++) {
+            SrednjaSkola ss = new SrednjaSkola();
+            ss.setNaziv("Srednja škola " + i);
+            ss.setMesto("Grad " + i);
+            ss.setVrsta(i == 1 ? "Gimnazija" : "Stručna škola");
+            srednjeSkolee.add(srednjaSkolaRepository.save(ss));
+        }
+
         List<StudentPodaci> studentPodaciList = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 10; i++) {  //  POVEĆAJ NA 10 STUDENATA
             StudentPodaci s = new StudentPodaci();
             s.setIme("Student" + i);
             s.setPrezime("Prezime" + i);
             s.setSrednjeIme("Srednje" + i);
             s.setJmbg("00101012345" + i);
-            s.setDatumRodjenja(LocalDate.of(2000 + i, i, i));
+            s.setDatumRodjenja(LocalDate.of(2000 + i, (i % 12) + 1, (i % 28) + 1));
             s.setMestoRodjenja("Mesto" + i);
             s.setMestoPrebivalista("Prebivaliste" + i);
             s.setDrzavaRodjenja("Srbija");
@@ -111,38 +134,42 @@ public class Seeder implements CommandLineRunner {
             s.setAdresa("Adresa " + i);
             s.setBrojTelefonaMobilni("06123456" + i);
             s.setEmail("student" + i + "@example.com");
+            s.setSrednjaSkola(srednjeSkolee.get(i % 3));  //  DODAJ SREDNJU ŠKOLU
             studentPodaciList.add(studentPodaciRepository.save(s));
         }
 
         List<StudentIndeks> indeksList = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 10; i++) {  //  POVEĆAJ NA 10 INDEKSA
             StudentIndeks si = new StudentIndeks();
             si.setBroj(i);
             si.setGodina(2023);
-            si.setStudProgramOznaka(spList.get(i - 1).getOznaka());
+            si.setStudProgramOznaka(spList.get((i - 1) % spList.size()).getOznaka());
             si.setNacinFinansiranja(i % 2 == 0 ? "Budzet" : "Samofinansiranje");
             si.setAktivan(true);
-            si.setVaziOd(LocalDate.of(2023, 10, i));
+            si.setVaziOd(LocalDate.of(2023, 10, (i % 28) + 1));
             si.setStudent(studentPodaciList.get(i - 1));
-            si.setStudijskiProgram(spList.get(i - 1));
+            si.setStudijskiProgram(spList.get((i - 1) % spList.size()));
             si.setOstvarenoEspb(0);
             indeksList.add(studentIndeksRepository.save(si));
         }
 
         List<DrziPredmet> drziPredmetList = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 10; i++) {  //  POVEĆAJ NA 10
             DrziPredmet dp = new DrziPredmet();
-            dp.setNastavnik(nastavnikList.get(i - 1));
+            dp.setNastavnik(nastavnikList.get((i - 1) % nastavnikList.size()));
             dp.setPredmet(predmetList.get(i - 1));
             drziPredmetList.add(drziPredmetRepository.save(dp));
         }
 
+        //  POVEĆAJ SLUSA PREDMET - Svaki student sluša 3-5 predmeta
         List<SlusaPredmet> slusaPredmetList = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
-            SlusaPredmet sl = new SlusaPredmet();
-            sl.setStudentIndeks(indeksList.get(i - 1));
-            sl.setDrziPredmet(drziPredmetList.get(i - 1));
-            slusaPredmetList.add(slusaPredmetRepository.save(sl));
+        for (int i = 0; i < indeksList.size(); i++) {
+            for (int j = 0; j < 5; j++) {  // Svaki student sluša 5 predmeta
+                SlusaPredmet sl = new SlusaPredmet();
+                sl.setStudentIndeks(indeksList.get(i));
+                sl.setDrziPredmet(drziPredmetList.get(j % drziPredmetList.size()));
+                slusaPredmetList.add(slusaPredmetRepository.save(sl));
+            }
         }
 
         for (int i = 1; i <= 5; i++) {
@@ -173,7 +200,7 @@ public class Seeder implements CommandLineRunner {
 
         // Predispitne obaveze
         List<Predmet> predmeti = new ArrayList<>();
-        predmetRepository.findAll().forEach(predmeti::add);  // ← FIX!
+        predmetRepository.findAll().forEach(predmeti::add);
 
         for (int i = 0; i < predmeti.size(); i++) {
             PredispitnaObaveza obaveza1 = new PredispitnaObaveza();
@@ -198,6 +225,76 @@ public class Seeder implements CommandLineRunner {
             predispitnaObavezaRepository.save(obaveza3);
         }
 
-        System.out.println("Seeder completed: StudijskiProgram, Predmet, Nastavnik, Student, SkolskaGodina, PredispitnaObaveza");
+
+
+        //  POLOŽENI PREDMETI - Prvi 3 studenta su položili neke predmete
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 2; j++) {  // Svaki student položio 2 predmeta
+                PolozenPredmet pp = new PolozenPredmet();
+                pp.setStudentIndeks(indeksList.get(i));
+                pp.setPredmet(predmetList.get(j));
+                pp.setOcena(8 + (i % 3));  // Ocene 8, 9, 10
+                pp.setDatumPolaganja(LocalDate.of(2024, 6, 15 + i));
+                polozenPredmetRepository.save(pp);
+            }
+        }
+
+        //  UPLATE - Prvi 5 studenata je uplatilo različite iznose
+        for (int i = 0; i < 5; i++) {
+            Uplata uplata = new Uplata();
+            uplata.setStudent(studentPodaciList.get(i));
+            uplata.setDatumUplate(LocalDate.of(2024, 10, 1 + i));
+            uplata.setIznosEur(500.0 + (i * 100));  // 500, 600, 700, 800, 900 EUR
+            uplata.setSrednjiKurs(117.5);
+            uplata.setIznosRsd(uplata.getIznosEur() * 117.5);
+            uplataRepository.save(uplata);
+        }
+
+        //  UPIS GODINE - Prvi 3 studenta su upisali godinu
+        for (int i = 0; i < 3; i++) {
+            UpisGodine upisGodine = new UpisGodine();
+            upisGodine.setStudentIndeks(indeksList.get(i));
+            upisGodine.setSkolskaGodina(godina1);
+            upisGodine.setGodinaStudija(1);
+            upisGodine.setDatumUpisa(LocalDate.of(2023, 10, 1));
+            upisGodine.setNapomena("Redovan upis");
+
+            // Dodaj predmete koje student upisuje
+            List<Predmet> upisaniPredmeti = new ArrayList<>();
+            for (int j = 0; j < 3; j++) {
+                upisaniPredmeti.add(predmetList.get(j));
+            }
+            upisGodine.setPredmeti(upisaniPredmeti);
+
+            upisGodineRepository.save(upisGodine);
+        }
+
+        //  OBNOVA GODINE - Student 4 i 5 su obnovili godinu
+        for (int i = 3; i < 5; i++) {
+            ObnovaGodine obnovaGodine = new ObnovaGodine();
+            obnovaGodine.setStudentIndeks(indeksList.get(i));
+            obnovaGodine.setSkolskaGodina(godina1);
+            obnovaGodine.setGodinaStudija(1);
+            obnovaGodine.setDatumObnove(LocalDate.of(2023, 10, 1));
+            obnovaGodine.setNapomena("Obnova zbog nepoloženih predmeta");
+
+            // Dodaj predmete (max 60 ESPB)
+            List<Predmet> obnovljeniPredmeti = new ArrayList<>();
+            obnovljeniPredmeti.add(predmetList.get(0));  // 6 ESPB
+            obnovljeniPredmeti.add(predmetList.get(1));  // 7 ESPB
+            obnovljeniPredmeti.add(predmetList.get(2));  // 8 ESPB
+            obnovaGodine.setPredmeti(obnovljeniPredmeti);
+
+
+            obnovaGodineRepository.save(obnovaGodine);
+        }
+
+        System.out.println(" Seeder completed successfully!");
+        System.out.println("   - " + spList.size() + " Studijskih programa");
+        System.out.println("   - " + predmetList.size() + " Predmeta");
+        System.out.println("   - " + nastavnikList.size() + " Nastavnika");
+        System.out.println("   - " + studentPodaciList.size() + " Studenata");
+        System.out.println("   - " + srednjeSkolee.size() + " Srednjih škola");
+        System.out.println("   - Položeni predmeti, Uplate, Upis i Obnova godine dodati!");
     }
 }

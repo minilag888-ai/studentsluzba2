@@ -1,0 +1,178 @@
+### ========== STUDENT OPERACIJE  ==========
+
+### 1. Selekcija studenta preko broja indeksa (godina, broj, oznaka)
+GET http://localhost:8090/api/students/indeks?godina=2023&broj=1&oznaka=SP1
+Accept: application/json
+
+###
+
+### 2. Selekcija studenta preko broja indeksa - Drugi student
+GET http://localhost:8090/api/students/indeks?godina=2023&broj=2&oznaka=SP2
+Accept: application/json
+
+###
+
+### 3. Selekcija svih položenih ispita za broj indeksa, paginirano
+GET http://localhost:8090/api/students/1/polozeni-predmeti?page=0&size=10
+Accept: application/json
+
+###
+
+### 4. Selekcija svih položenih ispita - Stranica 2
+GET http://localhost:8090/api/students/1/polozeni-predmeti?page=1&size=5
+Accept: application/json
+
+###
+
+### 5. Selekcija svih nepoloženih ispita, paginirano
+GET http://localhost:8090/api/students/1/nepolozeni-predmeti?page=0&size=10
+Accept: application/json
+
+###
+
+### 6. Pregled svih upisanih godina za broj indeksa
+GET http://localhost:8090/api/students/1/upisane-godine
+Accept: application/json
+
+###
+
+### 7. Upis studenta na godinu (POST)
+POST http://localhost:8090/api/students/6/upis-godine
+Content-Type: application/json
+
+{
+  "skolskaGodinaId": 1,
+  "godinaStudija": 1,
+  "datumUpisa": "2024-10-01",
+  "napomena": "Redovan upis 1. godine",
+  "predmetIds": [1, 2, 3]
+}
+
+###
+
+### 8. Pregled obnovljenih godina za broj indeksa
+GET http://localhost:8090/api/students/4/obnovljene-godine
+Accept: application/json
+
+###
+
+### 9. Obnova godine za studenta (max 60 ESPB)
+POST http://localhost:8090/api/students/7/obnova-godine
+Content-Type: application/json
+
+{
+  "skolskaGodinaId": 1,
+  "godinaStudija": 1,
+  "datumObnove": "2024-10-01",
+  "napomena": "Obnova zbog nepoloženih predmeta",
+  "predmetIds": [1, 2, 3]
+}
+
+###
+
+### 10. Dodavanje nove uplate (automatski dohvata kurs)
+POST http://localhost:8090/api/students/1/uplate
+Content-Type: application/json
+
+{
+  "datumUplate": "2024-11-09",
+  "iznosEur": 1000.0
+}
+
+###
+
+### 11. Selekcija preostalog iznosa za uplatu (EUR + RSD)
+GET http://localhost:8090/api/students/1/preostali-iznos-za-uplatu
+Accept: application/json
+
+###
+
+### 12. Selekcija preostalog iznosa - Student 2
+GET http://localhost:8090/api/students/2/preostali-iznos-za-uplatu
+Accept: application/json
+
+###
+
+### 13. Selekcija studenata po imenu (paginirano)
+GET http://localhost:8090/api/students/ime-prezime?ime=Student1&page=0&size=10
+Accept: application/json
+
+###
+
+### 14. Selekcija studenata po prezimenu (paginirano)
+GET http://localhost:8090/api/students/ime-prezime?prezime=Prezime1&page=0&size=10
+Accept: application/json
+
+###
+
+### 15. Selekcija studenata po oba parametra
+GET http://localhost:8090/api/students/ime-prezime?ime=Student2&prezime=Prezime2&page=0&size=10
+Accept: application/json
+
+###
+
+### 16. Selekcija svih studenata (bez filtera)
+GET http://localhost:8090/api/students/ime-prezime?page=0&size=20
+Accept: application/json
+
+###
+
+### 17. Selekcija studenata iz određene srednje škole
+GET http://localhost:8090/api/students/srednja-skola/1
+Accept: application/json
+
+###
+
+### 18. Selekcija studenata iz srednje škole 2
+GET http://localhost:8090/api/students/srednja-skola/2
+Accept: application/json
+
+###
+
+### 19. Selekcija studenata iz srednje škole 3
+GET http://localhost:8090/api/students/srednja-skola/3
+Accept: application/json
+
+###
+
+### ========== ERROR TESTOVI - STUDENT ==========
+
+### 20. Selekcija nepostojećeg studenta preko indeksa (404)
+GET http://localhost:8090/api/students/indeks?godina=9999&broj=9999&oznaka=FAKE
+Accept: application/json
+
+###
+
+### 21. Upis na nepostojeću školsku godinu (404)
+POST http://localhost:8090/api/students/1/upis-godine
+Content-Type: application/json
+
+{
+  "skolskaGodinaId": 99999,
+  "godinaStudija": 1,
+  "datumUpisa": "2024-10-01",
+  "napomena": "Nepostojeća godina",
+  "predmetIds": [1, 2, 3]
+}
+
+###
+
+### 22. Obnova godine - Preko 60 ESPB (400 Bad Request)
+POST http://localhost:8090/api/students/1/obnova-godine
+Content-Type: application/json
+
+{
+  "skolskaGodinaId": 1,
+  "godinaStudija": 1,
+  "datumObnove": "2024-10-01",
+  "napomena": "Pokušaj obnove sa preko 60 ESPB",
+  "predmetIds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+}
+
+###
+
+### 23. Preostali iznos - Nepostojeći student (404)
+GET http://localhost:8090/api/students/99999/preostali-iznos-za-uplatu
+Accept: application/json
+
+###

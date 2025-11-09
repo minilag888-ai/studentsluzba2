@@ -116,4 +116,5 @@ public class ObnovaGodine {
                 .mapToInt(Predmet::getEspb)
                 .sum();
     }
+
 }

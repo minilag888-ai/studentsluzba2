@@ -14,7 +14,7 @@ public class Uplata {
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    private StudentPodaci student;  // ← PROMENJENO SA Student NA StudentPodaci
 
     @Column(name = "datum_uplate", nullable = false)
     private LocalDate datumUplate;
@@ -26,7 +26,7 @@ public class Uplata {
     private Double srednjiKurs;
 
     @Column(name = "iznos_eur")
-    private Double iznosEur; // Izračunato: iznosRsd / srednjiKurs
+    private Double iznosEur;
 
     @Column(name = "napomena")
     private String napomena;
@@ -35,7 +35,7 @@ public class Uplata {
     public Uplata() {
     }
 
-    public Uplata(Student student, LocalDate datumUplate, Double iznosRsd, Double srednjiKurs) {
+    public Uplata(StudentPodaci student, LocalDate datumUplate, Double iznosRsd, Double srednjiKurs) {
         this.student = student;
         this.datumUplate = datumUplate;
         this.iznosRsd = iznosRsd;
@@ -52,11 +52,11 @@ public class Uplata {
         this.id = id;
     }
 
-    public Student getStudent() {
+    public StudentPodaci getStudent() {  // ← PROMENJEN TIP
         return student;
     }
 
-    public void setStudent(Student student) {
+    public void setStudent(StudentPodaci student) {  // ← PROMENJEN TIP
         this.student = student;
     }
 
@@ -96,6 +96,24 @@ public class Uplata {
 
     public void setIznosEur(Double iznosEur) {
         this.iznosEur = iznosEur;
+    }
+
+
+    public Double getIznos() {
+        return iznosEur;  // ili iznosRsd, zavisi šta koristiš
+    }
+
+    public void setIznos(Double iznos) {
+        this.iznosEur = iznos;
+    }
+
+
+    public LocalDate getDatum() {
+        return datumUplate;
+    }
+
+    public void setDatum(LocalDate datum) {
+        this.datumUplate = datum;
     }
 
     public String getNapomena() {

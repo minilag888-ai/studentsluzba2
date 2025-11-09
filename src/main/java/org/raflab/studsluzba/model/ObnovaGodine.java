@@ -15,15 +15,15 @@ public class ObnovaGodine {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "indeks_id", nullable = false)
-    private Indeks indeks;
+    @JoinColumn(name = "student_indeks_id", nullable = false)
+    private StudentIndeks studentIndeks;  // PROMENJENO SA Indeks NA StudentIndeks
 
     @ManyToOne
     @JoinColumn(name = "skolska_godina_id", nullable = false)
     private SkolskaGodina skolskaGodina;
 
     @Column(name = "godina_studija", nullable = false)
-    private Integer godinaStudija; // Godina koja se obnavlja (1, 2, 3...)
+    private Integer godinaStudija;
 
     @Column(name = "datum_obnove", nullable = false)
     private LocalDate datumObnove;
@@ -43,8 +43,8 @@ public class ObnovaGodine {
     public ObnovaGodine() {
     }
 
-    public ObnovaGodine(Indeks indeks, SkolskaGodina skolskaGodina, Integer godinaStudija, LocalDate datumObnove) {
-        this.indeks = indeks;
+    public ObnovaGodine(StudentIndeks studentIndeks, SkolskaGodina skolskaGodina, Integer godinaStudija, LocalDate datumObnove) {
+        this.studentIndeks = studentIndeks;
         this.skolskaGodina = skolskaGodina;
         this.godinaStudija = godinaStudija;
         this.datumObnove = datumObnove;
@@ -59,12 +59,12 @@ public class ObnovaGodine {
         this.id = id;
     }
 
-    public Indeks getIndeks() {
-        return indeks;
+    public StudentIndeks getStudentIndeks() {
+        return studentIndeks;
     }
 
-    public void setIndeks(Indeks indeks) {
-        this.indeks = indeks;
+    public void setStudentIndeks(StudentIndeks studentIndeks) {
+        this.studentIndeks = studentIndeks;
     }
 
     public SkolskaGodina getSkolskaGodina() {
@@ -111,7 +111,6 @@ public class ObnovaGodine {
         this.predmeti.add(predmet);
     }
 
-    // Helper - ukupno ESPB za sve predmete u obnovi
     public int getUkupnoESPB() {
         return predmeti.stream()
                 .mapToInt(Predmet::getEspb)

@@ -13,25 +13,25 @@ public class PolozenPredmet {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @JoinColumn(name = "student_indeks_id", nullable = false)
+    private StudentIndeks studentIndeks;  // PROMENJENO SA Student NA StudentIndeks!
 
     @ManyToOne
     @JoinColumn(name = "predmet_id", nullable = false)
     private Predmet predmet;
 
     @Column(name = "ocena", nullable = false)
-    private Integer ocena; // 6-10
+    private Integer ocena;
 
     @Column(name = "datum_polaganja", nullable = false)
     private LocalDate datumPolaganja;
 
     @OneToOne
     @JoinColumn(name = "izlazak_na_ispit_id")
-    private IzlazakNaIspit izlazakNaIspit; // Ako je položen na ispitu
+    private IzlazakNaIspit izlazakNaIspit;
 
     @Column(name = "priznat", nullable = false)
-    private Boolean priznat = false; // Da li je priznat sa druge ustanove
+    private Boolean priznat = false;
 
     @Column(name = "napomena")
     private String napomena;
@@ -40,21 +40,12 @@ public class PolozenPredmet {
     public PolozenPredmet() {
     }
 
-    public PolozenPredmet(Student student, Predmet predmet, Integer ocena, LocalDate datumPolaganja) {
-        this.student = student;
+    public PolozenPredmet(StudentIndeks studentIndeks, Predmet predmet, Integer ocena, LocalDate datumPolaganja) {
+        this.studentIndeks = studentIndeks;
         this.predmet = predmet;
         this.ocena = ocena;
         this.datumPolaganja = datumPolaganja;
         this.priznat = false;
-    }
-
-    // Constructor za priznati predmet
-    public PolozenPredmet(Student student, Predmet predmet, Integer ocena, LocalDate datumPolaganja, Boolean priznat) {
-        this.student = student;
-        this.predmet = predmet;
-        this.ocena = ocena;
-        this.datumPolaganja = datumPolaganja;
-        this.priznat = priznat;
     }
 
     // Getters and Setters
@@ -66,12 +57,12 @@ public class PolozenPredmet {
         this.id = id;
     }
 
-    public Student getStudent() {
-        return student;
+    public StudentIndeks getStudentIndeks() {
+        return studentIndeks;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setStudentIndeks(StudentIndeks studentIndeks) {
+        this.studentIndeks = studentIndeks;
     }
 
     public Predmet getPredmet() {

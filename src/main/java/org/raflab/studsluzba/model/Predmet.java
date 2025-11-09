@@ -1,11 +1,6 @@
 package org.raflab.studsluzba.model;
 
-import javax.persistence.Entity;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import lombok.Data;
 import lombok.ToString;
@@ -23,6 +18,9 @@ public class Predmet {
 	private String naziv;
 	private String opis;
 	private Integer espb;
+    @ManyToOne
+    @JoinColumn(name = "studijski_program_id")
+    private StudijskiProgram studijskiProgram;
 	@ManyToOne
 	private StudijskiProgram studProgram;
 	private boolean obavezan;
@@ -50,5 +48,11 @@ public class Predmet {
 			return false;
 		return true;
 	}
+    public StudijskiProgram getStudijskiProgram() {
+        return studijskiProgram;
+    }
 
+    public void setStudijskiProgram(StudijskiProgram studijskiProgram) {
+        this.studijskiProgram = studijskiProgram;
+    }
 }

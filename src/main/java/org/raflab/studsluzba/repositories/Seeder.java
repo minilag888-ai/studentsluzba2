@@ -33,20 +33,25 @@ public class Seeder implements CommandLineRunner {
     private SkolskaGodinaRepository skolskaGodinaRepository;
     @Autowired
     private PredispitnaObavezaRepository predispitnaObavezaRepository;
+    @Autowired
+    private VrstaStudijaRepository vrstaStudijaRepository;
 
     @Override
     public void run(String... args) throws Exception {
         List<StudijskiProgram> spList = new ArrayList<>();
+
+        // Prvo kreiraj vrstu studija (OAS)
+        VrstaStudija oas = new VrstaStudija("OAS", "Osnovne akademske studije");
+        vrstaStudijaRepository.save(oas);
+
         for (int i = 1; i <= 5; i++) {
             StudijskiProgram sp = new StudijskiProgram();
             sp.setOznaka("SP" + i);
             sp.setNaziv("Program " + i);
             sp.setGodinaAkreditacije(2020 + i);
-            sp.setZvanje("Zvanje " + i);
-            sp.setTrajanjeGodina(4);
+            sp.setNazivZvanja("Bachelor");
             sp.setTrajanjeSemestara(8);
-            sp.setVrstaStudija("OAS");
-            sp.setUkupnoEspb(240);
+            sp.setVrstaStudija(oas);
             spList.add(studijskiProgramRepository.save(sp));
         }
 

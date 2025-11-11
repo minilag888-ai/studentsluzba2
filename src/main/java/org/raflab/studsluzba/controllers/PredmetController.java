@@ -4,6 +4,8 @@ import org.raflab.studsluzba.controllers.request.PredmetRequest;
 import org.raflab.studsluzba.controllers.response.PredmetResponse;
 import org.raflab.studsluzba.model.Predmet;
 import org.raflab.studsluzba.model.StudijskiProgram;
+import org.raflab.studsluzba.model.dtos.PredmetDTO;
+import org.raflab.studsluzba.model.dtos.ProsecnaOcenaDTO;
 import org.raflab.studsluzba.services.PredmetService;
 import org.raflab.studsluzba.services.StudijskiProgramService;
 import org.raflab.studsluzba.utils.Converters;
@@ -118,5 +120,29 @@ public class PredmetController {
         }
         service.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // NOVI ENDPOINTI ZA SPECIFIKACIJU
+
+    /**
+     * 1. Spisak predmeta na studijskom programu
+     */
+    @GetMapping(path = "/studijski-program/{id}")
+    public ResponseEntity<List<PredmetDTO>> getPredmetiNaStudijskomProgramu(@PathVariable Long id) {
+        List<PredmetDTO> predmeti = service.getPredmetiNaStudijskomProgramu(id);
+        return ResponseEntity.ok(predmeti);
+    }
+
+    /**
+     * 4. Prosečna ocena na predmetu za raspon godina
+     */
+    @GetMapping(path = "/{id}/prosecna-ocena")
+    public ResponseEntity<ProsecnaOcenaDTO> getProsecnaOcena(
+            @PathVariable Long id,
+            @RequestParam Integer odGodine,
+            @RequestParam Integer doGodine) {
+
+        ProsecnaOcenaDTO dto = service.getProsecnaOcenaNaPredmetu(id, odGodine, doGodine);
+        return ResponseEntity.ok(dto);
     }
 }

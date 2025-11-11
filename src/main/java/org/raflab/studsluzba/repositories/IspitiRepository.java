@@ -9,17 +9,14 @@ import java.util.Optional;
 
 public interface IspitiRepository extends CrudRepository<Ispit, Long> {
 
-    @EntityGraph(attributePaths = {"studentIndeks", "studentIndeks.student", "predmet", "ispitniRok", "ispitniRok.skolskaGodina"})
+    @EntityGraph(attributePaths = {"predmet", "ispitniRok", "ispitniRok.skolskaGodina", "drziPredmet", "drziPredmet.nastavnik"})
     @Override
     Iterable<Ispit> findAll();
 
-    @EntityGraph(attributePaths = {"studentIndeks", "studentIndeks.student", "predmet", "ispitniRok", "ispitniRok.skolskaGodina"})
+    @EntityGraph(attributePaths = {"predmet", "ispitniRok", "ispitniRok.skolskaGodina", "drziPredmet", "drziPredmet.nastavnik"})
     @Override
     Optional<Ispit> findById(Long id);
 
-    @EntityGraph(attributePaths = {"studentIndeks", "studentIndeks.student", "predmet", "ispitniRok", "ispitniRok.skolskaGodina"})
-    List<Ispit> findByStudentIndeksId(Long studentIndeksId);
-
-    @EntityGraph(attributePaths = {"studentIndeks", "studentIndeks.student", "predmet", "ispitniRok", "ispitniRok.skolskaGodina"})
+    @EntityGraph(attributePaths = {"predmet", "ispitniRok", "ispitniRok.skolskaGodina", "drziPredmet", "drziPredmet.nastavnik"})
     List<Ispit> findByPredmetIdAndIspitniRokId(Long predmetId, Long rokId);
 }

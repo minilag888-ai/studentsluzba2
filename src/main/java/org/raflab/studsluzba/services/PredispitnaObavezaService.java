@@ -24,7 +24,7 @@ public class PredispitnaObavezaService {
     }
 
     public List<PredispitnaObaveza> findByPredmetAndSkolskaGodina(Long predmetId, Long skolskaGodinaId) {
-        return repository.findByPredmetIdAndSkolskaGodinaId(predmetId, skolskaGodinaId);
+        return repository.findByPredmet_IdAndSkolskaGodina_Id(predmetId, skolskaGodinaId);
     }
 
     @Transactional

@@ -1,43 +1,96 @@
-### KORAK 1: Kreiraj školsku godinu
-POST http://localhost:8090/api/skolska-godina/add
+### ========================================
+### TESTOVI ZA ISPITE - MINIMALNI SET (7 operacija iz specifikacije)
+### ========================================
+
+### 1. Svi prijavljeni studenti za ispit
+GET http://localhost:8090/api/ispiti/1
+Accept: application/json
+
+###
+
+### 2. Prosečna ocena na ispitu
+GET http://localhost:8090/api/ispiti/1/prosecna-ocena
+Accept: application/json
+
+###
+
+### 3. Prijava ispita za izabrani ispitni rok i predmet koji student sluša
+POST http://localhost:8090/api/ispiti/prijava
 Content-Type: application/json
 
 {
-  "naziv": "2023/2024",
-  "pocetakZimskog": "2023-10-01",
-  "krajZimskog": "2024-01-31",
-  "pocetakLetnjeg": "2024-02-15",
-  "krajLetnjeg": "2024-06-30",
-  "aktivna": true
+  "studentIndeksId": 6,
+  "ispitId": 1,
+  "datumPrijave": "2024-11-11"
 }
 
-### KORAK 2: Kreiraj ispitni rok
-POST http://localhost:8090/api/ispitni-rokovi/add
+###
+
+### 4. Dodavanje izlaska na ispit sa osvojenim poenima (minimum 51 poen = položen)
+POST http://localhost:8090/api/ispiti/izlazak
 Content-Type: application/json
 
 {
-  "naziv": "Januarski rok",
-  "skolskaGodinaId": 1,
-  "pocetak": "2024-01-15",
-  "kraj": "2024-02-15",
-  "aktivan": true
+  "prijavaIspitaId": 5,
+  "poeniIspit": 15,
+  "napomena": "Nije izašao na ispit ali ga sada dodajemo"
 }
 
-### KORAK 3: Proveri da li postoje predmeti
-GET http://localhost:8090/api/predmeti/all
+###
 
-### KORAK 4: Proveri da li postoje student indeksi
-GET http://localhost:8090/api/student-indeks/all
+### 5. Rezultati ispita sortirani (default: po ukupnim poenima)
+GET http://localhost:8090/api/ispiti/1/rezultati
+Accept: application/json
 
-### KORAK 5: Sada kreiraj ispit
-POST http://localhost:8090/api/ispiti/add
+###
+
+### 6. Predispitni poeni studenta na predmetu u školskoj godini
+GET http://localhost:8090/api/ispiti/predispitni-poeni/1/1?skolskaGodinaId=1
+Accept: application/json
+
+###
+
+### 7. Broj pokušaja polaganja predmeta za studenta
+GET http://localhost:8090/api/ispiti/broj-polaganja/1/1
+Accept: application/json
+
+###
+
+### ========================================
+### DODATNI TESTOVI (opciono - za demonstraciju edge cases)
+### ========================================
+
+### 8. Rezultati sortirani po prezimenu
+GET http://localhost:8090/api/ispiti/1/rezultati?sortBy=prezime
+Accept: application/json
+
+###
+
+### 9. Rezultati sortirani po oceni
+GET http://localhost:8090/api/ispiti/1/rezultati?sortBy=ocena
+Accept: application/json
+
+###
+
+### 10. Prijava ispita - greška (duplikat)
+POST http://localhost:8090/api/ispiti/prijava
 Content-Type: application/json
 
 {
   "studentIndeksId": 1,
-  "predmetId": 1,
-  "ispitniRokId": 1,
-  "ocena": 9,
-  "datumPolaganja": "2024-01-25",
-  "napomena": "Odličan ispit"
+  "ispitId": 1
 }
+
+###
+
+### 11. Prosečna ocena na drugom ispitu
+GET http://localhost:8090/api/ispiti/2/prosecna-ocena
+Accept: application/json
+
+###
+
+### 12. Predispitni poeni studenta koji nema poene (prazan rezultat)
+GET http://localhost:8090/api/ispiti/predispitni-poeni/8/3?skolskaGodinaId=1
+Accept: application/json
+
+###

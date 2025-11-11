@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class IspitiService {
+public class IspitCrudService {  // ← PROMENIO IME
 
     @Autowired
     private IspitiRepository repository;
@@ -24,9 +24,6 @@ public class IspitiService {
         return repository.findById(id);
     }
 
-    public List<Ispit> findByStudent(Long studentIndeksId) {
-        return repository.findByStudentIndeksId(studentIndeksId);
-    }
 
     public List<Ispit> findByPredmetAndRok(Long predmetId, Long rokId) {
         return repository.findByPredmetIdAndIspitniRokId(predmetId, rokId);

@@ -190,6 +190,7 @@ public class Converters {
 
         return response;
     }
+
     // IspitniRok converters
     public static IspitniRok toIspitniRok(IspitniRokRequest request, SkolskaGodina godina) {
         IspitniRok rok = new IspitniRok();
@@ -216,39 +217,11 @@ public class Converters {
 
         return response;
     }
-    // Ispit converters
-    public static Ispit toIspit(IspitRequest request,
-                                StudentIndeks indeks,
-                                Predmet predmet,
-                                IspitniRok rok) {
-        Ispit ispit = new Ispit();
-        ispit.setStudentIndeks(indeks);
-        ispit.setPredmet(predmet);
-        ispit.setIspitniRok(rok);
-        ispit.setOcena(request.getOcena());
-        ispit.setDatumPolaganja(request.getDatumPolaganja());
-        ispit.setNapomena(request.getNapomena());
-        return ispit;
-    }
 
+    // Ispit converters - ISPRAVLJENO ZA NOVI MODEL
     public static IspitResponse toIspitResponse(Ispit ispit) {
         IspitResponse response = new IspitResponse();
         response.setId(ispit.getId());
-        response.setOcena(ispit.getOcena());
-        response.setDatumPolaganja(ispit.getDatumPolaganja());
-        response.setNapomena(ispit.getNapomena());
-
-        // Student podaci
-        if (ispit.getStudentIndeks() != null) {
-            response.setStudentIndeksId(ispit.getStudentIndeks().getId());
-            response.setStudentBrojIndeksa(ispit.getStudentIndeks().getBroj());
-            response.setStudentGodinaIndeksa(ispit.getStudentIndeks().getGodina());
-
-            if (ispit.getStudentIndeks().getStudent() != null) {
-                response.setStudentIme(ispit.getStudentIndeks().getStudent().getIme());
-                response.setStudentPrezime(ispit.getStudentIndeks().getStudent().getPrezime());
-            }
-        }
 
         // Predmet podaci
         if (ispit.getPredmet() != null) {
@@ -268,8 +241,22 @@ public class Converters {
             }
         }
 
+        // Nastavnik podaci
+        if (ispit.getDrziPredmet() != null && ispit.getDrziPredmet().getNastavnik() != null) {
+            response.setNastavnikId(ispit.getDrziPredmet().getNastavnik().getId());
+            response.setNastavnikIme(ispit.getDrziPredmet().getNastavnik().getIme());
+            response.setNastavnikPrezime(ispit.getDrziPredmet().getNastavnik().getPrezime());
+        }
+
+        // Ispit podaci
+        response.setDatumOdrzavanja(ispit.getDatumOdrzavanja());
+        response.setVremePocetka(ispit.getVremePocetka());
+        response.setZakljucen(ispit.getZakljucen());
+        response.setNapomena(ispit.getNapomena());
+
         return response;
     }
+
     // Predmet converters
     public static Predmet toPredmet(PredmetRequest request, StudijskiProgram program) {
         Predmet predmet = new Predmet();

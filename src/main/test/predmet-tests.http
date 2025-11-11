@@ -1,95 +1,77 @@
 
-### 1. POST - Kreiraj predmet Objektno programiranje
+### 1. Spisak predmeta na studijskom programu - Program 1
+GET http://localhost:8090/api/predmeti/studijski-program/1
+Accept: application/json
+
+###
+
+### 2. Spisak predmeta na studijskom programu - Program 2
+GET http://localhost:8090/api/predmeti/studijski-program/2
+Accept: application/json
+
+###
+
+### 3. Spisak svih predmeta sa svim podacima
+GET http://localhost:8090/api/predmeti/all
+Accept: application/json
+
+###
+
+### 4. Dodavanje novog predmeta sa jedinstvenom šifrom
 POST http://localhost:8090/api/predmeti/add
 Content-Type: application/json
 
 {
-  "sifra": "OOP",
-  "naziv": "Objektno programiranje",
-  "opis": "Osnove objektno orijentisanog programiranja",
-  "espb": 6,
-  "obavezan": true
-}
-
-### 2. POST - Kreiraj predmet Matematika 1
-POST http://localhost:8090/api/predmeti/add
-Content-Type: application/json
-
-{
-  "sifra": "MATH1",
-  "naziv": "Matematika 1",
-  "opis": "Osnove matematičke analize",
-  "espb": 8,
-  "obavezan": true
-}
-
-### 3. POST - Kreiraj predmet Baze podataka
-POST http://localhost:8090/api/predmeti/add
-Content-Type: application/json
-
-{
-  "sifra": "BP",
-  "naziv": "Baze podataka",
-  "opis": "Relacione baze podataka i SQL",
-  "espb": 6,
-  "obavezan": true
-}
-
-### 4. POST - Kreiraj izborni predmet Web Development
-POST http://localhost:8090/api/predmeti/add
-Content-Type: application/json
-
-{
-  "sifra": "WEBDEV",
-  "naziv": "Web Development",
-  "opis": "Razvoj web aplikacija",
-  "espb": 5,
-  "obavezan": false
-}
-
-### 4A. POST - Kreiraj predmet sa studijskim programom (SP1 - 2021)
-POST http://localhost:8090/api/predmeti/add
-Content-Type: application/json
-
-{
-  "sifra": "TEST2021",
-  "naziv": "Test predmet za 2021",
-  "opis": "Predmet vezan za Program 1",
+  "sifra": "NEWPRED",
+  "naziv": "Novi Predmet",
+  "opis": "Opis novog predmeta",
   "espb": 6,
   "studijskiProgramId": 1,
   "obavezan": true
 }
 
-### 5. GET - Svi predmeti (trebalo bi 5)
-GET http://localhost:8090/api/predmeti/all
+###
 
-### 6. GET - Po ID (predmet sa ID=1)
-GET http://localhost:8090/api/predmeti/1
-
-### 7. GET - Po šifri (OOP)
-GET http://localhost:8090/api/predmeti/sifra/OOP
-
-### 8. GET - Po godini akreditacije (2021)
-GET http://localhost:8090/api/predmeti/all/2021
-
-### 9. PUT - Update predmeta (ID=1) - SAMO naziv i ESPB
-PUT http://localhost:8090/api/predmeti/1
+### 5. Pokušaj dodavanja predmeta sa postojećom šifrom (greška)
+POST http://localhost:8090/api/predmeti/add
 Content-Type: application/json
 
 {
   "sifra": "PR1",
-  "naziv": "Predmet 1 - UPDATED",
-  "opis": "Opis predmeta 1 - izmenjeno",
-  "espb": 8,
-  "studijskiProgramId": 1,
-  "obavezan": false
+  "naziv": "Duplikat",
+  "opis": "Ovo treba da baci grešku",
+  "espb": 6,
+  "obavezan": true
 }
 
-### 10. GET - Proveri izmenu (ID=1)
-GET http://localhost:8090/api/predmeti/1
+###
 
-### 11. DELETE - Obriši predmet (ID=4 - WEBDEV)
-DELETE http://localhost:8090/api/predmeti/9
+### 6. Prosečna ocena na predmetu PR1 za period 2020-2024
+GET http://localhost:8090/api/predmeti/1/prosecna-ocena?odGodine=2020&doGodine=2024
+Accept: application/json
 
-### 12. GET - Proveri sve predmete posle DELETE (trebalo bi 4)
-GET http://localhost:8090/api/predmeti/all
+###
+
+### 7. Prosečna ocena na predmetu PR2 za period 2023-2024
+GET http://localhost:8090/api/predmeti/2/prosecna-ocena?odGodine=2023&doGodine=2024
+Accept: application/json
+
+###
+
+### 8. Prosečna ocena za predmet bez polaganja
+GET http://localhost:8090/api/predmeti/10/prosecna-ocena?odGodine=2020&doGodine=2024
+Accept: application/json
+
+###
+
+### 9. Prosečna ocena - Nepostojeći predmet (404)
+GET http://localhost:8090/api/predmeti/99999/prosecna-ocena?odGodine=2020&doGodine=2024
+Accept: application/json
+
+###
+
+### 10. Spisak predmeta - Nepostojeći studijski program (404)
+GET http://localhost:8090/api/predmeti/studijski-program/99999
+Accept: application/json
+
+###

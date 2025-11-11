@@ -25,6 +25,26 @@ public class DrziPredmetService {
     final PredmetRepository predmetRepository;
     final NastavnikRepository nastavnikRepository;
 
+
+
+    public Optional<DrziPredmet> findById(Long id) {
+        return drziPredmetRepository.findById(id);
+    }
+
+    public List<DrziPredmet> findAll() {
+        return (List<DrziPredmet>) drziPredmetRepository.findAll();
+    }
+
+    public DrziPredmet save(DrziPredmet drziPredmet) {
+        return drziPredmetRepository.save(drziPredmet);
+    }
+
+    public boolean existsById(Long id) {
+        return drziPredmetRepository.existsById(id);
+    }
+
+
+
     @Transactional
     public void saveDrziPredmet(DrziPredmetRequest request) {
 

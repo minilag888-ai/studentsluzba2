@@ -4,18 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class IspitRequest {
-
-    @NotNull(message = "Student indeks je obavezan")
-    private Long studentIndeksId;
 
     @NotNull(message = "Predmet je obavezan")
     private Long predmetId;
@@ -23,13 +19,13 @@ public class IspitRequest {
     @NotNull(message = "Ispitni rok je obavezan")
     private Long ispitniRokId;
 
-    @NotNull(message = "Ocena je obavezna")
-    @Min(value = 5, message = "Minimalna ocena je 5")
-    @Max(value = 10, message = "Maksimalna ocena je 10")
-    private Integer ocena;
+    @NotNull(message = "Nastavnik je obavezan")
+    private Long drziPredmetId;  // ID iz DrziPredmet tabele
 
-    @NotNull(message = "Datum polaganja je obavezan")
-    private LocalDate datumPolaganja;
+    @NotNull(message = "Datum održavanja je obavezan")
+    private LocalDate datumOdrzavanja;
+
+    private LocalDateTime vremePocetka;
 
     private String napomena;
 }

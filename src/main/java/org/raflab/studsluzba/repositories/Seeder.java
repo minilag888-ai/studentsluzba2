@@ -35,7 +35,16 @@ public class Seeder implements CommandLineRunner {
     private PredispitnaObavezaRepository predispitnaObavezaRepository;
     @Autowired
     private VrstaStudijaRepository vrstaStudijaRepository;
-
+    @Autowired
+    private IspitiRepository ispitRepository;
+    @Autowired
+    private PrijavaIspitaRepository prijavaIspitaRepository;
+    @Autowired
+    private IzlazakNaIspitRepository izlazakNaIspitRepository;
+    @Autowired
+    private IspitniRokRepository ispitniRokRepository;
+    @Autowired
+    private OsvojeniPoeniRepository osvojeniPoeniRepository;
 
     @Autowired
     private PolozenPredmetRepository polozenPredmetRepository;
@@ -289,12 +298,204 @@ public class Seeder implements CommandLineRunner {
             obnovaGodineRepository.save(obnovaGodine);
         }
 
-        System.out.println(" Seeder completed successfully!");
+
+
+// ======== ISPITI, PRIJAVE ISPITA i IZLASCI STUDENATA NA ISPIT =========
+
+// 1. KREIRAJ ISPITNE ROKOVE
+        IspitniRok junskiRok = new IspitniRok();
+        junskiRok.setNaziv("Jun 2024");
+        junskiRok.setPocetak(LocalDate.of(2024, 6, 1));
+        junskiRok.setKraj(LocalDate.of(2024, 6, 30));
+        junskiRok.setSkolskaGodina(godina1);
+        junskiRok.setAktivan(true);
+        ispitniRokRepository.save(junskiRok);
+
+        IspitniRok septembarskiRok = new IspitniRok();
+        septembarskiRok.setNaziv("Septembar 2024");
+        septembarskiRok.setPocetak(LocalDate.of(2024, 9, 1));
+        septembarskiRok.setKraj(LocalDate.of(2024, 9, 15));
+        septembarskiRok.setSkolskaGodina(godina1);
+        septembarskiRok.setAktivan(false);
+        ispitniRokRepository.save(septembarskiRok);
+
+// 2. KREIRAJ ISPITE (5 ispita - 3 u junskom, 2 u septembarskom roku)
+        List<Ispit> ispitiList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Ispit ispit = new Ispit();
+            ispit.setPredmet(predmetList.get(i));
+            ispit.setIspitniRok(junskiRok);
+            ispit.setDrziPredmet(drziPredmetList.get(i));
+            ispit.setDatumOdrzavanja(LocalDate.of(2024, 6, 10 + i));
+            ispit.setVremePocetka(null);
+            ispit.setZakljucen(false);
+            ispit.setNapomena("Ispit iz predmeta " + predmetList.get(i).getNaziv());
+            ispitiList.add(ispitRepository.save(ispit));
+        }
+
+        for (int i = 3; i < 5; i++) {
+            Ispit ispit = new Ispit();
+            ispit.setPredmet(predmetList.get(i));
+            ispit.setIspitniRok(septembarskiRok);
+            ispit.setDrziPredmet(drziPredmetList.get(i));
+            ispit.setDatumOdrzavanja(LocalDate.of(2024, 9, 5 + (i - 3)));
+            ispit.setVremePocetka(null);
+            ispit.setZakljucen(false);
+            ispit.setNapomena("Septembar - " + predmetList.get(i).getNaziv());
+            ispitiList.add(ispitRepository.save(ispit));
+        }
+
+// 3. DODAJ OSVOJENE POENE - JEDNOSTAVNO BEZ QUERY-ja
+
+// Dohvati sve predispitne obaveze za prvi predmet u školskoj godini 1
+        List<PredispitnaObaveza> obavezePrviPredmet = new ArrayList<>();
+        predispitnaObavezaRepository.findAll().forEach(obaveza -> {
+            if (obaveza.getPredmet().getId().equals(predmetList.get(0).getId()) &&
+                    obaveza.getSkolskaGodina().getId().equals(godina1.getId())) {
+                obavezePrviPredmet.add(obaveza);
+            }
+        });
+
+// Student 0 - osvojio 60% na svakoj obavezi
+        for (PredispitnaObaveza obaveza : obavezePrviPredmet) {
+            OsvojeniPoeni op = new OsvojeniPoeni();
+            op.setStudentIndeks(indeksList.get(0));
+            op.setPredispitnaObaveza(obaveza);
+            op.setPoeni((int)(obaveza.getMaxPoena() * 0.6)); // 18, 18, 24 = 60 ukupno
+            osvojeniPoeniRepository.save(op);
+        }
+
+// Student 1 - osvojio 70% na svakoj obavezi
+        for (PredispitnaObaveza obaveza : obavezePrviPredmet) {
+            OsvojeniPoeni op = new OsvojeniPoeni();
+            op.setStudentIndeks(indeksList.get(1));
+            op.setPredispitnaObaveza(obaveza);
+            op.setPoeni((int)(obaveza.getMaxPoena() * 0.7)); // 21, 21, 28 = 70 ukupno
+            osvojeniPoeniRepository.save(op);
+        }
+
+// Student 2 - osvojio 50% na svakoj obavezi
+        for (PredispitnaObaveza obaveza : obavezePrviPredmet) {
+            OsvojeniPoeni op = new OsvojeniPoeni();
+            op.setStudentIndeks(indeksList.get(2));
+            op.setPredispitnaObaveza(obaveza);
+            op.setPoeni((int)(obaveza.getMaxPoena() * 0.5)); // 15, 15, 20 = 50 ukupno
+            osvojeniPoeniRepository.save(op);
+        }
+
+// Dohvati obaveze za drugi predmet
+        List<PredispitnaObaveza> obavezeDrugiPredmet = new ArrayList<>();
+        predispitnaObavezaRepository.findAll().forEach(obaveza -> {
+            if (obaveza.getPredmet().getId().equals(predmetList.get(1).getId()) &&
+                    obaveza.getSkolskaGodina().getId().equals(godina1.getId())) {
+                obavezeDrugiPredmet.add(obaveza);
+            }
+        });
+
+// Student 0 i 1 imaju poene i na drugom predmetu
+        for (int i = 0; i < 2; i++) {
+            for (PredispitnaObaveza obaveza : obavezeDrugiPredmet) {
+                OsvojeniPoeni op = new OsvojeniPoeni();
+                op.setStudentIndeks(indeksList.get(i));
+                op.setPredispitnaObaveza(obaveza);
+                op.setPoeni((int)(obaveza.getMaxPoena() * 0.6));
+                osvojeniPoeniRepository.save(op);
+            }
+        }
+
+// 4. PRIJAVE ISPITA
+        List<PrijavaIspita> prijaveList = new ArrayList<>();
+
+// Prijave za PRVI ispit (Ispit 0) - 5 studenata
+        for (int i = 0; i < 5; i++) {
+            PrijavaIspita prijava = new PrijavaIspita();
+            prijava.setStudentIndeks(indeksList.get(i));
+            prijava.setIspit(ispitiList.get(0));
+            prijava.setDatumPrijave(LocalDate.of(2024, 6, 1 + i));
+            prijava.setIzasao(i < 4);  // Prva 4 su izašla, 5. nije
+            prijaveList.add(prijavaIspitaRepository.save(prijava));
+        }
+
+// Prijave za DRUGI ispit (Ispit 1) - 3 studenta
+        for (int i = 0; i < 3; i++) {
+            PrijavaIspita prijava = new PrijavaIspita();
+            prijava.setStudentIndeks(indeksList.get(i));
+            prijava.setIspit(ispitiList.get(1));
+            prijava.setDatumPrijave(LocalDate.of(2024, 6, 2 + i));
+            prijava.setIzasao(true);
+            prijaveList.add(prijavaIspitaRepository.save(prijava));
+        }
+
+// Prijave za TREĆI ispit (Ispit 2) - 2 studenta
+        for (int i = 0; i < 2; i++) {
+            PrijavaIspita prijava = new PrijavaIspita();
+            prijava.setStudentIndeks(indeksList.get(i + 5));  // Studenti 5 i 6
+            prijava.setIspit(ispitiList.get(2));
+            prijava.setDatumPrijave(LocalDate.of(2024, 6, 3));
+            prijava.setIzasao(false);  // Nisu izašli
+            prijaveList.add(prijavaIspitaRepository.save(prijava));
+        }
+
+// 5. IZLASCI NA ISPIT (samo za one koji su izašli)
+
+// Izlasci za PRVI ispit
+        for (int i = 0; i < 4; i++) {  // Prva 4 studenta su izašla
+            PrijavaIspita prijava = prijaveList.get(i);
+
+            IzlazakNaIspit izlazak = new IzlazakNaIspit();
+            izlazak.setPrijavaIspita(prijava);
+
+            // Različiti rezultati:
+            if (i == 0) {
+                // Student 0: položio sa odličnom ocenom
+                izlazak.setPoeniPredispitne(55);
+                izlazak.setPoeniIspit(40);  // Ukupno 95 -> ocena 10
+                izlazak.setNapomena("Odličan rad!");
+            } else if (i == 1) {
+                // Student 1: položio sa dobrom ocenom
+                izlazak.setPoeniPredispitne(58);
+                izlazak.setPoeniIspit(25);  // Ukupno 83 -> ocena 9
+                izlazak.setNapomena("Dobar rezultat");
+            } else if (i == 2) {
+                // Student 2: jedva položio
+                izlazak.setPoeniPredispitne(61);
+                izlazak.setPoeniIspit(1);   // Ukupno 62 -> ocena 7
+                izlazak.setNapomena("Na granici");
+            } else {
+                // Student 3: pao
+                izlazak.setPoeniPredispitne(64);
+                izlazak.setPoeniIspit(0);   // Ukupno 64 -> ocena 7
+                izlazak.setNapomena("Nedovoljno");
+            }
+
+            izlazak.setPonisteno(false);
+            izlazakNaIspitRepository.save(izlazak);
+        }
+
+// Izlasci za DRUGI ispit
+        for (int i = 5; i < 8; i++) {  // Prijave 5, 6, 7 (studenti 0, 1, 2 na drugom ispitu)
+            PrijavaIspita prijava = prijaveList.get(i);
+
+            IzlazakNaIspit izlazak = new IzlazakNaIspit();
+            izlazak.setPrijavaIspita(prijava);
+            izlazak.setPoeniPredispitne(50 + ((i - 5) * 5));
+            izlazak.setPoeniIspit(30 + ((i - 5) * 5));
+            izlazak.setNapomena("Rezultat ispita " + (i - 4));
+            izlazak.setPonisteno(false);
+            izlazakNaIspitRepository.save(izlazak);
+        }
+
+        System.out.println("✅ Seeder completed successfully!");
         System.out.println("   - " + spList.size() + " Studijskih programa");
         System.out.println("   - " + predmetList.size() + " Predmeta");
         System.out.println("   - " + nastavnikList.size() + " Nastavnika");
         System.out.println("   - " + studentPodaciList.size() + " Studenata");
         System.out.println("   - " + srednjeSkolee.size() + " Srednjih škola");
+        System.out.println("   - " + ispitiList.size() + " Ispita");
+        System.out.println("   - " + prijaveList.size() + " Prijava ispita");
         System.out.println("   - Položeni predmeti, Uplate, Upis i Obnova godine dodati!");
+
+
     }
+
 }

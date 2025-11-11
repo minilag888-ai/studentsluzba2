@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ispit")
@@ -19,10 +20,6 @@ public class Ispit {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_indeks_id", nullable = false)
-    private StudentIndeks studentIndeks;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "predmet_id", nullable = false)
     private Predmet predmet;
 
@@ -30,11 +27,18 @@ public class Ispit {
     @JoinColumn(name = "ispitni_rok_id", nullable = false)
     private IspitniRok ispitniRok;
 
-    @Column(nullable = false)
-    private Integer ocena;  // 5-10
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "drzi_predmet_id", nullable = false)
+    private DrziPredmet drziPredmet;  // Nastavnik koji drži ispit
 
-    @Column(name = "datum_polaganja", nullable = false)
-    private LocalDate datumPolaganja;
+    @Column(name = "datum_odrzavanja", nullable = false)
+    private LocalDate datumOdrzavanja;
+
+    @Column(name = "vreme_pocetka")
+    private LocalDateTime vremePocetka;
+
+    @Column(name = "zakljucen", nullable = false)
+    private Boolean zakljucen = false;
 
     @Column(length = 500)
     private String napomena;

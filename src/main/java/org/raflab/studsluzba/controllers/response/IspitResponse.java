@@ -1,10 +1,9 @@
 package org.raflab.studsluzba.controllers.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -12,26 +11,23 @@ import java.time.LocalDate;
 public class IspitResponse {
     private Long id;
 
-    // Student podaci
-    private Long studentIndeksId;
-    private String studentIme;
-    private String studentPrezime;
-    private Integer studentBrojIndeksa;
-    private Integer studentGodinaIndeksa;
-
-    // Predmet podaci
     private Long predmetId;
     private String predmetSifra;
     private String predmetNaziv;
 
-    // Ispitni rok podaci
     private Long ispitniRokId;
     private String ispitniRokNaziv;
+
     private Long skolskaGodinaId;
     private String skolskaGodinaNaziv;
 
-    // Ispit podaci
-    private Integer ocena;
-    private LocalDate datumPolaganja;
+    private Long nastavnikId;
+    private String nastavnikIme;
+    private String nastavnikPrezime;
+
+    private LocalDate datumOdrzavanja;
+    private LocalDateTime vremePocetka;
+    private Boolean zakljucen;
     private String napomena;
+
 }

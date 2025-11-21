@@ -485,7 +485,7 @@ public class Seeder implements CommandLineRunner {
             izlazakNaIspitRepository.save(izlazak);
         }
 
-        System.out.println("✅ Seeder completed successfully!");
+        System.out.println("Seeder completed successfully!");
         System.out.println("   - " + spList.size() + " Studijskih programa");
         System.out.println("   - " + predmetList.size() + " Predmeta");
         System.out.println("   - " + nastavnikList.size() + " Nastavnika");

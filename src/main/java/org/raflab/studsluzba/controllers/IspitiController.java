@@ -29,7 +29,7 @@ import java.util.List;
 public class IspitiController {
 
     @Autowired
-    private IspitService ispitService;  // ← SAMO JEDAN SERVIS!
+    private IspitService ispitService;
 
     @Autowired
     private PredmetService predmetService;

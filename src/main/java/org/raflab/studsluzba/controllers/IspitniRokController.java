@@ -28,7 +28,7 @@ public class IspitniRokController {
     private SkolskaGodinaService skolskaGodinaService;
 
     @GetMapping(path = "/all")
-    @Transactional(readOnly = true)  // ← DODAJ!
+    @Transactional(readOnly = true)
     public List<IspitniRokResponse> getAll() {
         List<IspitniRok> rokovi = service.findAll();
         List<IspitniRokResponse> responses = new ArrayList<>();
@@ -39,7 +39,7 @@ public class IspitniRokController {
     }
 
     @GetMapping(path = "/{id}")
-    @Transactional(readOnly = true)  // ← DODAJ!
+    @Transactional(readOnly = true)
     public ResponseEntity<IspitniRokResponse> getById(@PathVariable Long id) {
         IspitniRok rok = service.findById(id).orElse(null);
         if (rok == null) {
@@ -49,7 +49,7 @@ public class IspitniRokController {
     }
 
     @GetMapping(path = "/godina/{godinaId}")
-    @Transactional(readOnly = true)  // ← DODAJ!
+    @Transactional(readOnly = true)
     public List<IspitniRokResponse> getByGodina(@PathVariable Long godinaId) {
         List<IspitniRok> rokovi = service.findBySkolskaGodina(godinaId);
         List<IspitniRokResponse> responses = new ArrayList<>();
@@ -60,7 +60,7 @@ public class IspitniRokController {
     }
 
     @PostMapping(path = "/add")
-    @Transactional  // ← DODAJ!
+    @Transactional
     public ResponseEntity<IspitniRokResponse> add(@RequestBody @Valid IspitniRokRequest request) {
         SkolskaGodina godina = skolskaGodinaService.findById(request.getSkolskaGodinaId())
                 .orElseThrow(() -> new RuntimeException("SkolskaGodina not found"));
@@ -72,7 +72,7 @@ public class IspitniRokController {
     }
 
     @PutMapping(path = "/{id}")
-    @Transactional  // ← DODAJ!
+    @Transactional
     public ResponseEntity<IspitniRokResponse> update(@PathVariable Long id,
                                                      @RequestBody @Valid IspitniRokRequest request) {
         if (!service.existsById(id)) {
@@ -90,7 +90,7 @@ public class IspitniRokController {
     }
 
     @DeleteMapping(path = "/{id}")
-    @Transactional  // ← DODAJ!
+    @Transactional
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if (!service.existsById(id)) {
             return ResponseEntity.notFound().build();

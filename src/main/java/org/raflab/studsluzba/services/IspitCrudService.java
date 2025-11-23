@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class IspitCrudService {  // ← PROMENIO IME
+public class IspitCrudService {  //  PROMENIO IME
 
     @Autowired
     private IspitiRepository repository;

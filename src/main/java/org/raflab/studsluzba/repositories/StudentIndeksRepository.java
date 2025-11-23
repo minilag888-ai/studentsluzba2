@@ -20,7 +20,7 @@ public interface StudentIndeksRepository extends JpaRepository<StudentIndeks, Lo
     StudentIndeks findStudentIndeks(String studProgramOznaka, int godina, int broj);
 	
 	
-	//TODO dodati da se gledaju samo aktivni indeksi
+
 	@Query("select indeks from StudentIndeks indeks where "
 			+ "(:ime is null or lower(indeks.student.ime) like :ime) and "
 			+ "(:prezime is null or lower(indeks.student.prezime) like :prezime) and "

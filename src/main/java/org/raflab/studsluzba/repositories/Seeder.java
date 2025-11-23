@@ -490,10 +490,10 @@ public class Seeder implements CommandLineRunner {
         System.out.println("   - " + predmetList.size() + " Predmeta");
         System.out.println("   - " + nastavnikList.size() + " Nastavnika");
         System.out.println("   - " + studentPodaciList.size() + " Studenata");
-        System.out.println("   - " + srednjeSkolee.size() + " Srednjih škola");
+        System.out.println("   - " + srednjeSkolee.size() + " Srednjih skola");
         System.out.println("   - " + ispitiList.size() + " Ispita");
         System.out.println("   - " + prijaveList.size() + " Prijava ispita");
-        System.out.println("   - Položeni predmeti, Uplate, Upis i Obnova godine dodati!");
+        System.out.println("   - Polozeni predmeti, Uplate, Upis i Obnova godine dodati");
 
 
     }

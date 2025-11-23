@@ -37,7 +37,7 @@ public class NastavnikZvanje {
     @JsonIgnoreProperties("zvanja")  // ← Spreči circular JSON!
     private Nastavnik nastavnik;
 
-    // ✅ Custom hashCode i equals BEZ "nastavnik" polja!
+    // Custom hashCode i equals BEZ "nastavnik" polja!
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

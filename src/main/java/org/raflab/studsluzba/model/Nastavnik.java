@@ -45,7 +45,7 @@ public class Nastavnik {
     private Character pol;
     private String jmbg;
 
-    // ✅ Custom hashCode i equals BEZ "zvanja" polja!
+    // Custom hashCode i equals BEZ "zvanja" polja!
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

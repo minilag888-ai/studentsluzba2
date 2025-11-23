@@ -56,9 +56,9 @@ Accept: application/json
 
 ###
 
-### ========================================
-### DODATNI TESTOVI (opciono - za demonstraciju edge cases)
-### ========================================
+
+### DODATNI TESTOVI ( - za demonstraciju edge cases)
+
 
 ### 8. Rezultati sortirani po prezimenu
 GET http://localhost:8090/api/ispiti/1/rezultati?sortBy=prezime

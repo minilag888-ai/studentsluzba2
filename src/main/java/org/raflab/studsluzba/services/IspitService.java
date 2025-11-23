@@ -178,7 +178,7 @@ public class IspitService {
 
         izlazak = izlazakNaIspitRepository.save(izlazak);
 
-        // Označi da je student izašao na ispit
+        // Oznaci da je student izasao na ispit
         prijava.setIzasao(true);
         prijavaIspitaRepository.save(prijava);
 

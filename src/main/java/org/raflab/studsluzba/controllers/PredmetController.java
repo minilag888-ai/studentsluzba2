@@ -2,21 +2,21 @@ package org.raflab.studsluzba.controllers;
 
 import org.raflab.studsluzba.controllers.request.PredmetRequest;
 import org.raflab.studsluzba.controllers.response.PredmetResponse;
+import org.raflab.studsluzba.mappers.PredmetMapper;
 import org.raflab.studsluzba.model.Predmet;
 import org.raflab.studsluzba.model.StudijskiProgram;
 import org.raflab.studsluzba.model.dtos.PredmetDTO;
 import org.raflab.studsluzba.model.dtos.ProsecnaOcenaDTO;
 import org.raflab.studsluzba.services.PredmetService;
 import org.raflab.studsluzba.services.StudijskiProgramService;
-import org.raflab.studsluzba.utils.Converters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -30,47 +30,41 @@ public class PredmetController {
     @Autowired
     private StudijskiProgramService studijskiProgramService;
 
+    @Autowired
+    private PredmetMapper predmetMapper;
+
     @GetMapping(path = "/all")
     public List<PredmetResponse> getAll() {
-        List<Predmet> predmeti = service.findAll();
-        List<PredmetResponse> responses = new ArrayList<>();
-        for (Predmet predmet : predmeti) {
-            responses.add(Converters.toPredmetResponse(predmet));
-        }
-        return responses;
+        return service.findAll().stream()
+                .map(this::toPredmetResponse)
+                .collect(Collectors.toList());
     }
 
     @GetMapping(path = "/all/{godinaAkreditacije}")
     public List<PredmetResponse> getByGodinaAkreditacije(@PathVariable Integer godinaAkreditacije) {
-        List<Predmet> predmeti = service.findByGodinaAkreditacije(godinaAkreditacije);
-        List<PredmetResponse> responses = new ArrayList<>();
-        for (Predmet predmet : predmeti) {
-            responses.add(Converters.toPredmetResponse(predmet));
-        }
-        return responses;
+        return service.findByGodinaAkreditacije(godinaAkreditacije).stream()
+                .map(this::toPredmetResponse)
+                .collect(Collectors.toList());
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<PredmetResponse> getById(@PathVariable Long id) {
-        Predmet predmet = service.findById(id).orElse(null);
-        if (predmet == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(Converters.toPredmetResponse(predmet));
+        return service.findById(id)
+                .map(this::toPredmetResponse)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping(path = "/sifra/{sifra}")
     public ResponseEntity<PredmetResponse> getBySifra(@PathVariable String sifra) {
-        Predmet predmet = service.findBySifra(sifra).orElse(null);
-        if (predmet == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(Converters.toPredmetResponse(predmet));
+        return service.findBySifra(sifra)
+                .map(this::toPredmetResponse)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping(path = "/add")
     public ResponseEntity<PredmetResponse> add(@RequestBody @Valid PredmetRequest request) {
-        // Proveri da li šifra već postoji
         if (service.existsBySifra(request.getSifra())) {
             return ResponseEntity.badRequest().build();
         }
@@ -81,10 +75,10 @@ public class PredmetController {
                     .orElseThrow(() -> new RuntimeException("StudijskiProgram not found"));
         }
 
-        Predmet predmet = Converters.toPredmet(request, program);
+        Predmet predmet = toEntity(request, program);
         Predmet saved = service.save(predmet);
 
-        return ResponseEntity.ok(Converters.toPredmetResponse(saved));
+        return ResponseEntity.ok(toPredmetResponse(saved));
     }
 
     @PutMapping(path = "/{id}")
@@ -94,7 +88,6 @@ public class PredmetController {
             return ResponseEntity.notFound().build();
         }
 
-        // Proveri da li nova šifra već postoji (ako se menja)
         Predmet existing = service.findById(id).get();
         if (!existing.getSifra().equals(request.getSifra()) && service.existsBySifra(request.getSifra())) {
             return ResponseEntity.badRequest().build();
@@ -106,11 +99,11 @@ public class PredmetController {
                     .orElseThrow(() -> new RuntimeException("StudijskiProgram not found"));
         }
 
-        Predmet predmet = Converters.toPredmet(request, program);
+        Predmet predmet = toEntity(request, program);
         predmet.setId(id);
         Predmet updated = service.save(predmet);
 
-        return ResponseEntity.ok(Converters.toPredmetResponse(updated));
+        return ResponseEntity.ok(toPredmetResponse(updated));
     }
 
     @DeleteMapping(path = "/{id}")
@@ -124,18 +117,12 @@ public class PredmetController {
 
     // NOVI ENDPOINTI ZA SPECIFIKACIJU
 
-    /**
-     * 1. Spisak predmeta na studijskom programu
-     */
     @GetMapping(path = "/studijski-program/{id}")
     public ResponseEntity<List<PredmetDTO>> getPredmetiNaStudijskomProgramu(@PathVariable Long id) {
         List<PredmetDTO> predmeti = service.getPredmetiNaStudijskomProgramu(id);
         return ResponseEntity.ok(predmeti);
     }
 
-    /**
-     * 4. Prosečna ocena na predmetu za raspon godina
-     */
     @GetMapping(path = "/{id}/prosecna-ocena")
     public ResponseEntity<ProsecnaOcenaDTO> getProsecnaOcena(
             @PathVariable Long id,
@@ -144,5 +131,34 @@ public class PredmetController {
 
         ProsecnaOcenaDTO dto = service.getProsecnaOcenaNaPredmetu(id, odGodine, doGodine);
         return ResponseEntity.ok(dto);
+    }
+
+    // Helper metode
+    private Predmet toEntity(PredmetRequest request, StudijskiProgram program) {
+        Predmet predmet = new Predmet();
+        predmet.setSifra(request.getSifra());
+        predmet.setNaziv(request.getNaziv());
+        predmet.setOpis(request.getOpis());
+        predmet.setEspb(request.getEspb());
+        predmet.setStudProgram(program);
+        predmet.setObavezan(request.getObavezan());
+        return predmet;
+    }
+
+    private PredmetResponse toPredmetResponse(Predmet predmet) {
+        PredmetResponse response = new PredmetResponse();
+        response.setId(predmet.getId());
+        response.setSifra(predmet.getSifra());
+        response.setNaziv(predmet.getNaziv());
+        response.setOpis(predmet.getOpis());
+        response.setEspb(predmet.getEspb());
+        response.setObavezan(predmet.isObavezan());
+
+        if (predmet.getStudProgram() != null) {
+            response.setStudijskiProgramId(predmet.getStudProgram().getId());
+            response.setStudijskiProgramNaziv(predmet.getStudProgram().getNaziv());
+        }
+
+        return response;
     }
 }

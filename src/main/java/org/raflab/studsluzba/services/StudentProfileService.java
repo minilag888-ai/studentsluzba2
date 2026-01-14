@@ -289,6 +289,10 @@ public class StudentProfileService {
 
     @Transactional
     public UplataDTO dodajUplatu(Long studentIndeksId, UplataRequestDTO request) {
+        // VALIDACIJA - iznos ne sme biti negativan ili nula
+        if (request.getIznosEur() == null || request.getIznosEur() <= 0) {
+            throw new RuntimeException("Iznos uplate mora biti veći od 0");
+        }
         StudentIndeks indeks = indeksRepo.findById(studentIndeksId)
                 .orElseThrow(() -> new RuntimeException("Student indeks ne postoji"));
 

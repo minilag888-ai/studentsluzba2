@@ -4,6 +4,7 @@ import org.raflab.studsluzba.controllers.request.IspitRequest;
 import org.raflab.studsluzba.controllers.request.IzlazakNaIspitRequest;
 import org.raflab.studsluzba.controllers.request.PrijavaIspitaRequest;
 import org.raflab.studsluzba.controllers.response.*;
+import org.raflab.studsluzba.mappers.IspitMapper;
 import org.raflab.studsluzba.model.Ispit;
 import org.raflab.studsluzba.model.IspitniRok;
 import org.raflab.studsluzba.model.Predmet;
@@ -12,14 +13,12 @@ import org.raflab.studsluzba.services.IspitService;
 import org.raflab.studsluzba.services.IspitniRokService;
 import org.raflab.studsluzba.services.PredmetService;
 import org.raflab.studsluzba.services.DrziPredmetService;
-import org.raflab.studsluzba.utils.Converters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
@@ -40,37 +39,29 @@ public class IspitiController {
     @Autowired
     private DrziPredmetService drziPredmetService;
 
+    @Autowired
+    private IspitMapper ispitMapper;
+
     // ========== CRUD OPERACIJE ==========
 
     @GetMapping(path = "/all")
     public List<IspitResponse> getAll() {
-        List<Ispit> ispiti = ispitService.findAll();
-        List<IspitResponse> responses = new ArrayList<>();
-        for (Ispit ispit : ispiti) {
-            responses.add(Converters.toIspitResponse(ispit));
-        }
-        return responses;
+        return ispitMapper.toResponseList(ispitService.findAll());
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<IspitResponse> getById(@PathVariable Long id) {
-        Ispit ispit = ispitService.findById(id).orElse(null);
-        if (ispit == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(Converters.toIspitResponse(ispit));
+        return ispitService.findById(id)
+                .map(ispitMapper::toResponse)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
-
-
 
     @GetMapping(path = "/predmet/{predmetId}/rok/{rokId}")
     public List<IspitResponse> getByPredmetAndRok(@PathVariable Long predmetId, @PathVariable Long rokId) {
-        List<Ispit> ispiti = ispitService.findByPredmetAndRok(predmetId, rokId);
-        List<IspitResponse> responses = new ArrayList<>();
-        for (Ispit ispit : ispiti) {
-            responses.add(Converters.toIspitResponse(ispit));
-        }
-        return responses;
+        return ispitMapper.toResponseList(
+                ispitService.findByPredmetAndRok(predmetId, rokId)
+        );
     }
 
     @PostMapping(path = "/add")
@@ -95,7 +86,7 @@ public class IspitiController {
 
         Ispit saved = ispitService.save(ispit);
 
-        return ResponseEntity.ok(Converters.toIspitResponse(saved));
+        return ResponseEntity.ok(ispitMapper.toResponse(saved));
     }
 
     @PutMapping(path = "/{id}")
@@ -124,7 +115,7 @@ public class IspitiController {
 
         Ispit updated = ispitService.save(ispit);
 
-        return ResponseEntity.ok(Converters.toIspitResponse(updated));
+        return ResponseEntity.ok(ispitMapper.toResponse(updated));
     }
 
     @DeleteMapping(path = "/{id}")
@@ -135,7 +126,6 @@ public class IspitiController {
         ispitService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
 
     /**
      * 1. Svi prijavljeni studenti za ispit

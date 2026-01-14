@@ -2,20 +2,19 @@ package org.raflab.studsluzba.controllers;
 
 import org.raflab.studsluzba.controllers.request.OsvojeniPoeniRequest;
 import org.raflab.studsluzba.controllers.response.OsvojeniPoeniResponse;
+import org.raflab.studsluzba.mappers.OsvojeniPoeniMapper;
 import org.raflab.studsluzba.model.OsvojeniPoeni;
 import org.raflab.studsluzba.model.PredispitnaObaveza;
 import org.raflab.studsluzba.model.StudentIndeks;
 import org.raflab.studsluzba.services.OsvojeniPoeniService;
 import org.raflab.studsluzba.services.PredispitnaObavezaService;
 import org.raflab.studsluzba.services.StudentIndeksService;
-import org.raflab.studsluzba.utils.Converters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin
@@ -32,45 +31,32 @@ public class OsvojeniPoeniController {
     @Autowired
     private PredispitnaObavezaService predispitnaObavezaService;
 
+    @Autowired
+    private OsvojeniPoeniMapper mapper;
+
     @GetMapping(path = "/all")
     public List<OsvojeniPoeniResponse> getAll() {
-        List<OsvojeniPoeni> poeni = service.findAll();
-        List<OsvojeniPoeniResponse> responses = new ArrayList<>();
-        for (OsvojeniPoeni p : poeni) {
-            responses.add(Converters.toOsvojeniPoeniResponse(p));
-        }
-        return responses;
+        return mapper.toResponseList(service.findAll());
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<OsvojeniPoeniResponse> getById(@PathVariable Long id) {
-        OsvojeniPoeni poeni = service.findById(id).orElse(null);
-        if (poeni == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(Converters.toOsvojeniPoeniResponse(poeni));
+        return service.findById(id)
+                .map(mapper::toResponse)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping(path = "/student/{studentId}")
     public List<OsvojeniPoeniResponse> getByStudent(@PathVariable Long studentId) {
-        List<OsvojeniPoeni> poeni = service.findByStudent(studentId);
-        List<OsvojeniPoeniResponse> responses = new ArrayList<>();
-        for (OsvojeniPoeni p : poeni) {
-            responses.add(Converters.toOsvojeniPoeniResponse(p));
-        }
-        return responses;
+        return mapper.toResponseList(service.findByStudent(studentId));
     }
 
     @GetMapping(path = "/predmet/{predmetId}/godina/{godinaId}")
     public List<OsvojeniPoeniResponse> getByPredmetGodina(
             @PathVariable Long predmetId,
             @PathVariable Long godinaId) {
-        List<OsvojeniPoeni> poeni = service.findByPredmetAndGodina(predmetId, godinaId);
-        List<OsvojeniPoeniResponse> responses = new ArrayList<>();
-        for (OsvojeniPoeni p : poeni) {
-            responses.add(Converters.toOsvojeniPoeniResponse(p));
-        }
-        return responses;
+        return mapper.toResponseList(service.findByPredmetAndGodina(predmetId, godinaId));
     }
 
     @PostMapping(path = "/add")
@@ -82,10 +68,10 @@ public class OsvojeniPoeniController {
         PredispitnaObaveza obaveza = predispitnaObavezaService.findById(request.getPredispitnaObavezaId())
                 .orElseThrow(() -> new RuntimeException("PredispitnaObaveza not found"));
 
-        OsvojeniPoeni poeni = Converters.toOsvojeniPoeni(request, indeks, obaveza);
+        OsvojeniPoeni poeni = mapper.toEntity(request, indeks, obaveza);
         OsvojeniPoeni saved = service.save(poeni);
 
-        return Converters.toOsvojeniPoeniResponse(saved);
+        return mapper.toResponse(saved);
     }
 
     @DeleteMapping(path = "/{id}")

@@ -1,6 +1,8 @@
 package org.raflab.studsluzba.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
@@ -14,22 +16,29 @@ public class Uplata {
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
-    private StudentPodaci student;  // ← PROMENJENO SA Student NA StudentPodaci
+    private StudentPodaci student;
 
     @Column(name = "datum_uplate", nullable = false)
+    @NotNull
     private LocalDate datumUplate;
 
     @Column(name = "iznos_rsd", nullable = false)
+    @NotNull
+    @DecimalMin(value = "0.01", message = "Iznos u dinarima mora biti veći od 0")
     private Double iznosRsd;
 
     @Column(name = "srednji_kurs", nullable = false)
+    @NotNull
+    @DecimalMin(value = "0.01", message = "Srednji kurs mora biti veći od 0")
     private Double srednjiKurs;
 
     @Column(name = "iznos_eur")
+    @DecimalMin(value = "0.01", message = "Iznos u evrima mora biti veći od 0")
     private Double iznosEur;
 
     @Column(name = "napomena")
     private String napomena;
+
 
     // Constructors
     public Uplata() {

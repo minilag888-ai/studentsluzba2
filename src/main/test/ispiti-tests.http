@@ -1,6 +1,4 @@
-### ========================================
-### TESTOVI ZA ISPITE - MINIMALNI SET (7 operacija iz specifikacije)
-### ========================================
+
 
 ### 1. Svi prijavljeni studenti za ispit
 GET http://localhost:8090/api/ispiti/1

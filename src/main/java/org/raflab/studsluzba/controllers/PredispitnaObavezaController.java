@@ -2,13 +2,13 @@ package org.raflab.studsluzba.controllers;
 
 import org.raflab.studsluzba.controllers.request.PredispitnaObavezaRequest;
 import org.raflab.studsluzba.controllers.response.PredispitnaObavezaResponse;
+import org.raflab.studsluzba.mappers.PredispitnaObavezaMapper;
 import org.raflab.studsluzba.model.PredispitnaObaveza;
 import org.raflab.studsluzba.model.Predmet;
 import org.raflab.studsluzba.model.SkolskaGodina;
 import org.raflab.studsluzba.services.PredispitnaObavezaService;
 import org.raflab.studsluzba.services.PredmetService;
 import org.raflab.studsluzba.services.SkolskaGodinaService;
-import org.raflab.studsluzba.utils.Converters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,15 +30,18 @@ public class PredispitnaObavezaController {
     @Autowired
     private SkolskaGodinaService skolskaGodinaService;
 
+    @Autowired
+    private PredispitnaObavezaMapper mapper;
+
     @GetMapping(path = "/all")
     public List<PredispitnaObavezaResponse> getAll() {
-        return Converters.toPredispitnaObavezaResponseList(service.findAll());
+        return mapper.toResponseList(service.findAll());
     }
 
     @GetMapping(path = "/{id}")
     public PredispitnaObavezaResponse getById(@PathVariable Long id) {
         Optional<PredispitnaObaveza> optional = service.findById(id);
-        return optional.map(Converters::toPredispitnaObavezaResponse).orElse(null);
+        return optional.map(mapper::toResponse).orElse(null);
     }
 
     @GetMapping(path = "/predmet/{predmetId}/skolska-godina/{godinaId}")
@@ -46,7 +49,7 @@ public class PredispitnaObavezaController {
             @PathVariable Long predmetId,
             @PathVariable Long godinaId) {
         List<PredispitnaObaveza> obaveze = service.findByPredmetAndSkolskaGodina(predmetId, godinaId);
-        return Converters.toPredispitnaObavezaResponseList(obaveze);
+        return mapper.toResponseList(obaveze);
     }
 
     @PostMapping(path = "/add")
@@ -58,9 +61,9 @@ public class PredispitnaObavezaController {
             return null;
         }
 
-        PredispitnaObaveza obaveza = Converters.toPredispitnaObaveza(request, predmet, godina);
+        PredispitnaObaveza obaveza = mapper.toEntity(request, predmet, godina);
         PredispitnaObaveza saved = service.save(obaveza);
-        return Converters.toPredispitnaObavezaResponse(saved);
+        return mapper.toResponse(saved);
     }
 
     @DeleteMapping(path = "/{id}")

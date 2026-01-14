@@ -10,7 +10,7 @@ Accept: application/json
 GET http://localhost:8090/api/students/indeks?godina=2023&broj=2&oznaka=SP2
 Accept: application/json
 
-###
+
 
 ### 3. Selekcija svih položenih ispita za broj indeksa, paginirano
 GET http://localhost:8090/api/students/1/polozeni-predmeti?page=0&size=10

@@ -2,7 +2,6 @@ package org.raflab.studsluzba.controllers;
 
 import org.raflab.studsluzba.controllers.request.PredmetRequest;
 import org.raflab.studsluzba.controllers.response.PredmetResponse;
-import org.raflab.studsluzba.mappers.PredmetMapper;
 import org.raflab.studsluzba.model.Predmet;
 import org.raflab.studsluzba.model.StudijskiProgram;
 import org.raflab.studsluzba.model.dtos.PredmetDTO;
@@ -29,9 +28,6 @@ public class PredmetController {
 
     @Autowired
     private StudijskiProgramService studijskiProgramService;
-
-    @Autowired
-    private PredmetMapper predmetMapper;
 
     @GetMapping(path = "/all")
     public List<PredmetResponse> getAll() {
@@ -133,7 +129,7 @@ public class PredmetController {
         return ResponseEntity.ok(dto);
     }
 
-    // Helper metode
+    // Helper metode - OVDE OSTAVLJAMO JER SU SPECIFIČNE ZA CONTROLLER
     private Predmet toEntity(PredmetRequest request, StudijskiProgram program) {
         Predmet predmet = new Predmet();
         predmet.setSifra(request.getSifra());

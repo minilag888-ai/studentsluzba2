@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.raflab.studsluzba.client.controllers.PredmetController"
+      stylesheets="@../css/style.css">
+      spacing="15" prefWidth="1100" prefHeight="700">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <Label text="Predmeti" styleClass="page-title">
+            <font>
+                <Font name="System Bold" size="24"/>
+            </font>
+        </Label>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnDodajPredmet" text="➕ Dodaj predmet"
+                onAction="#onDodajPredmet" styleClass="add-button"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Tabela predmeta -->
+    <VBox spacing="10" VBox.vgrow="ALWAYS">
+        <Label text="Svi predmeti:" styleClass="section-label">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+
+        <TableView fx:id="tablePredmeti" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colSifra" text="Šifra" prefWidth="100"/>
+                <TableColumn fx:id="colNaziv" text="Naziv" prefWidth="350"/>
+                <TableColumn fx:id="colEspb" text="ESPB" prefWidth="80"/>
+                <TableColumn fx:id="colProgram" text="Studijski program" prefWidth="250"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+    <Separator/>
+
+    <!-- Prosečna ocena -->
+    <VBox spacing="10" styleClass="stats-section">
+        <Label text="Prosečna ocena na predmetu:" styleClass="section-label">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Label text="Period:" minWidth="60"/>
+            <Label text="Od godine:"/>
+            <TextField fx:id="txtOdGodine" promptText="2020" prefWidth="100"/>
+
+            <Label text="Do godine:"/>
+            <TextField fx:id="txtDoGodine" promptText="2024" prefWidth="100"/>
+
+            <Button fx:id="btnPrikaziProsek" text="📊 Prikaži prosek"
+                    onAction="#onPrikaziProsek" styleClass="action-button"/>
+        </HBox>
+
+        <HBox spacing="20" alignment="CENTER_LEFT" styleClass="result-box">
+            <VBox spacing="5">
+                <Label text="Prosečna ocena:" styleClass="label-bold"/>
+                <Label fx:id="lblProsecnaOcena" text="-" styleClass="result-value">
+                    <font>
+                        <Font name="System Bold" size="20"/>
+                    </font>
+                </Label>
+            </VBox>
+
+            <Separator orientation="VERTICAL"/>
+
+            <VBox spacing="5">
+                <Label text="Broj polaganja:" styleClass="label-bold"/>
+                <Label fx:id="lblBrojPolaganja" text="-" styleClass="result-value">
+                    <font>
+                        <Font name="System Bold" size="20"/>
+                    </font>
+                </Label>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- Info -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-section">
+        <Label text="💡 Selektujte predmet pa izaberite period za prikaz prosečne ocene"/>
+    </HBox>
+
+</VBox>

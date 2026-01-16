@@ -1,3 +1,4 @@
+org\raflab\studsluzba\client\controllers\IspitController$IspitniRokOption.class
 org\raflab\studsluzba\client\api\IspitApiClient.class
 org\raflab\studsluzba\client\api\PageDTO.class
 org\raflab\studsluzba\client\api\request\NastavnikRequest.class
@@ -14,6 +15,7 @@ org\raflab\studsluzba\client\api\response\StudentPodaciResponse.class
 org\raflab\studsluzba\client\dto\ProsecnaOcenaDTO.class
 org\raflab\studsluzba\client\dto\PolozenPredmetDTO.class
 org\raflab\studsluzba\client\api\request\IspitRequest.class
+org\raflab\studsluzba\client\controllers\IspitController$SkolskaGodinaOption.class
 org\raflab\studsluzba\client\api\request\DrziPredmetRequest.class
 org\raflab\studsluzba\client\api\request\IzlazakNaIspitRequest.class
 org\raflab\studsluzba\client\dto\StudentPodaciDTO.class
@@ -22,12 +24,14 @@ org\raflab\studsluzba\client\utils\AsyncTaskExecutor$1.class
 org\raflab\studsluzba\client\dto\UplataDTO.class
 org\raflab\studsluzba\client\controllers\MainController.class
 org\raflab\studsluzba\client\controllers\StudentSearchController.class
+org\raflab\studsluzba\client\controllers\IspitController$PredmetOption.class
 org\raflab\studsluzba\client\api\response\RezultatIspitaResponse.class
 org\raflab\studsluzba\client\api\request\PredmetRequest.class
 org\raflab\studsluzba\client\StudsluzbaClientApp.class
 org\raflab\studsluzba\client\api\response\IspitResponse.class
 org\raflab\studsluzba\client\dto\StudentProfileDTO.class
 org\raflab\studsluzba\client\utils\AsyncTaskExecutor.class
+org\raflab\studsluzba\client\controllers\StudentProfileController$PredmetCheckItem.class
 org\raflab\studsluzba\client\dto\ObnovaGodineRequestDTO.class
 org\raflab\studsluzba\client\controllers\StudentSearchController$SrednjaSkola.class
 org\raflab\studsluzba\client\navigation\NavigationEvent.class
@@ -53,12 +57,15 @@ org\raflab\studsluzba\client\dto\UpisGodineRequestDTO.class
 org\raflab\studsluzba\client\navigation\NavigationHistory.class
 org\raflab\studsluzba\client\dto\StudentDTO.class
 org\raflab\studsluzba\client\api\request\PredispitnaObavezaRequest.class
+org\raflab\studsluzba\client\controllers\StudentProfileController$1.class
 org\raflab\studsluzba\client\api\request\IspitniRokRequest.class
 org\raflab\studsluzba\client\api\response\IzlazakNaIspitResponse.class
 org\raflab\studsluzba\client\api\response\DrziPredmetInitResponse.class
+org\raflab\studsluzba\client\controllers\PredmetController$StudijskiProgramOption.class
 org\raflab\studsluzba\client\api\response\ProsecnaOcenaIspitResponse.class
 org\raflab\studsluzba\client\api\response\OsvojeniPoeniResponse.class
 org\raflab\studsluzba\client\dto\DrziPredmetDTO.class
+org\raflab\studsluzba\client\controllers\StudentProfileController$SkolskaGodinaOption.class
 org\raflab\studsluzba\client\navigation\NavigationManager.class
 org\raflab\studsluzba\client\utils\FxmlLoader.class
 org\raflab\studsluzba\client\dto\StudentWebProfileDTO.class

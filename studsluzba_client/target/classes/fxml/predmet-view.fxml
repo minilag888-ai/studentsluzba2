@@ -9,7 +9,7 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.raflab.studsluzba.client.controllers.PredmetController"
       stylesheets="@../css/style.css"
-      spacing="15" prefWidth="1100" prefHeight="700">
+      spacing="20" prefWidth="1100" prefHeight="700">
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
@@ -41,16 +41,20 @@
             <columns>
                 <TableColumn fx:id="colSifra" text="Šifra" prefWidth="100"/>
                 <TableColumn fx:id="colNaziv" text="Naziv" prefWidth="350"/>
-                <TableColumn fx:id="colEspb" text="ESPB" prefWidth="80"/>
+                <TableColumn fx:id="colEspb" text="ESPB" prefWidth="80"
+                             style="-fx-alignment: CENTER;"/>
                 <TableColumn fx:id="colProgram" text="Studijski program" prefWidth="250"/>
             </columns>
+            <placeholder>
+                <Label text="Nema predmeta u bazi." style="-fx-text-fill: gray;"/>
+            </placeholder>
         </TableView>
     </VBox>
 
     <Separator/>
 
     <!-- Prosečna ocena -->
-    <VBox spacing="10" styleClass="stats-section">
+    <VBox spacing="15" styleClass="stats-section">
         <Label text="Prosečna ocena na predmetu:" styleClass="section-label">
             <font>
                 <Font name="System Bold" size="14"/>
@@ -58,7 +62,7 @@
         </Label>
 
         <HBox spacing="15" alignment="CENTER_LEFT">
-            <Label text="Period:" minWidth="60"/>
+            <Label text="Period:"/>
             <Label text="Od godine:"/>
             <TextField fx:id="txtOdGodine" promptText="2020" prefWidth="100"/>
 
@@ -69,21 +73,19 @@
                     onAction="#onPrikaziProsek" styleClass="action-button"/>
         </HBox>
 
-        <HBox spacing="20" alignment="CENTER_LEFT" styleClass="result-box">
-            <VBox spacing="5">
-                <Label text="Prosečna ocena:" styleClass="label-bold"/>
-                <Label fx:id="lblProsecnaOcena" text="-" styleClass="result-value">
+        <HBox spacing="30" alignment="CENTER_LEFT" styleClass="result-box">
+            <VBox spacing="5" alignment="CENTER" styleClass="stat-box">
+                <Label text="Prosečna ocena:" styleClass="stat-label"/>
+                <Label fx:id="lblProsecnaOcena" text="-" styleClass="stat-value">
                     <font>
                         <Font name="System Bold" size="20"/>
                     </font>
                 </Label>
             </VBox>
 
-            <Separator orientation="VERTICAL"/>
-
-            <VBox spacing="5">
-                <Label text="Broj polaganja:" styleClass="label-bold"/>
-                <Label fx:id="lblBrojPolaganja" text="-" styleClass="result-value">
+            <VBox spacing="5" alignment="CENTER" styleClass="stat-box">
+                <Label text="Broj polaganja:" styleClass="stat-label"/>
+                <Label fx:id="lblBrojPolaganja" text="-" styleClass="stat-value">
                     <font>
                         <Font name="System Bold" size="20"/>
                     </font>

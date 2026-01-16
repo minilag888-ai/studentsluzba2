@@ -13,11 +13,10 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class
-MainController {
+public class MainController {
 
     @FXML
-    private BorderPane mainContainer;
+    private BorderPane rootPane;  // Ovo je glavni BorderPane iz FXML-a
 
     @FXML
     private Button btnStudenti;
@@ -75,6 +74,7 @@ MainController {
     private void loadStudentSearch() {
         try {
             Parent view = fxmlLoader.load("student-search.fxml");
+            setContent(view);
             navigationManager.navigateTo(view, "Pretraga studenata");
         } catch (Exception e) {
             log.error("Failed to load student search view", e);
@@ -88,6 +88,7 @@ MainController {
     private void loadIspitView() {
         try {
             Parent view = fxmlLoader.load("ispit-view.fxml");
+            setContent(view);
             navigationManager.navigateTo(view, "Ispiti");
         } catch (Exception e) {
             log.error("Failed to load ispit view", e);
@@ -101,6 +102,7 @@ MainController {
     private void loadPredmetView() {
         try {
             Parent view = fxmlLoader.load("predmet-view.fxml");
+            setContent(view);
             navigationManager.navigateTo(view, "Predmeti");
         } catch (Exception e) {
             log.error("Failed to load predmet view", e);
@@ -114,10 +116,22 @@ MainController {
     private void loadReportView() {
         try {
             Parent view = fxmlLoader.load("report-view.fxml");
+            setContent(view);
             navigationManager.navigateTo(view, "Izveštaji");
         } catch (Exception e) {
             log.error("Failed to load report view", e);
             AlertUtil.showException("Greška", e);
+        }
+    }
+
+    /**
+     * Postavi sadržaj u centar BorderPane-a
+     */
+    private void setContent(Parent content) {
+        if (rootPane != null) {
+            rootPane.setCenter(content);
+        } else {
+            log.error("RootPane is null!");
         }
     }
 }

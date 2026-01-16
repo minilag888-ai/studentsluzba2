@@ -1,0 +1,3 @@
+cd C:\Users\PC\Desktop\studsluzba_server\studsluzba_client
+mvn clean compile
+mvn javafx:run

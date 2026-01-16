@@ -9,7 +9,7 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.raflab.studsluzba.client.controllers.IspitController"
       stylesheets="@../css/style.css"
-      spacing="15" prefWidth="1100" prefHeight="750">
+      spacing="20" prefWidth="1100" prefHeight="750">
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
@@ -23,8 +23,10 @@
             </font>
         </Label>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button text="➕ Dodaj ispitni rok" onAction="#onDodajIspitniRok" styleClass="add-button"/>
-        <Button text="➕ Dodaj ispit" onAction="#onDodajIspit" styleClass="add-button"/>
+        <Button text="➕ Dodaj ispitni rok" onAction="#onDodajIspitniRok"
+                styleClass="add-button" prefWidth="150"/>
+        <Button text="➕ Dodaj ispit" onAction="#onDodajIspit"
+                styleClass="add-button" prefWidth="120"/>
     </HBox>
 
     <Separator/>
@@ -43,6 +45,9 @@
                 <TableColumn fx:id="colRok" text="Ispitni rok" prefWidth="150"/>
                 <TableColumn fx:id="colDatum" text="Datum" prefWidth="120"/>
             </columns>
+            <placeholder>
+                <Label text="Nema ispita u bazi." style="-fx-text-fill: gray;"/>
+            </placeholder>
         </TableView>
 
         <HBox spacing="10" alignment="CENTER_LEFT">
@@ -65,11 +70,17 @@
 
         <TableView fx:id="tableRezultati" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="colIndeks" text="Indeks" prefWidth="100"/>
+                <TableColumn fx:id="colIndeks" text="Indeks" prefWidth="120"/>
                 <TableColumn fx:id="colIme" text="Ime i prezime" prefWidth="200"/>
-                <TableColumn fx:id="colPoeni" text="Ukupno poeni" prefWidth="120"/>
-                <TableColumn fx:id="colOcena" text="Ocena" prefWidth="80"/>
+                <TableColumn fx:id="colPoeni" text="Ukupno poeni" prefWidth="120"
+                             style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="colOcena" text="Ocena" prefWidth="80"
+                             style="-fx-alignment: CENTER;"/>
             </columns>
+            <placeholder>
+                <Label text="Selektujte ispit pa kliknite 'Prikaži rezultate'"
+                       style="-fx-text-fill: gray;"/>
+            </placeholder>
         </TableView>
     </VBox>
 

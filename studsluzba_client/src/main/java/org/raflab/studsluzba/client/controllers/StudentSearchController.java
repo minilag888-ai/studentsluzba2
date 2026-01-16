@@ -26,6 +26,8 @@ public class StudentSearchController {
     @FXML private TextField txtBroj;
     @FXML private TextField txtOznaka;
     @FXML private ComboBox<SrednjaSkola> cmbSrednjaSkola;
+
+    // ✅ Koristi StudentPodaciDTO jer to backend vraća
     @FXML private TableView<StudentPodaciDTO> tableStudents;
     @FXML private TableColumn<StudentPodaciDTO, String> colIme;
     @FXML private TableColumn<StudentPodaciDTO, String> colPrezime;
@@ -38,6 +40,7 @@ public class StudentSearchController {
     @Autowired private NavigationManager navigationManager;
     @Autowired private FxmlLoader fxmlLoader;
 
+    // ✅ Koristi StudentPodaciDTO
     private final ObservableList<StudentPodaciDTO> studentData = FXCollections.observableArrayList();
     private int currentPage = 0;
     private final int pageSize = 20;
@@ -51,13 +54,15 @@ public class StudentSearchController {
     }
 
     private void setupTable() {
+        // ✅ StudentPodaciDTO ima prava polja
         colIme.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getIme()));
         colPrezime.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPrezime()));
         colEmail.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEmail()));
         colJmbg.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getJmbg()));
         colSrednjaSkola.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getSrednjaSkolaNaziv() != null ?
-                        data.getValue().getSrednjaSkolaNaziv() : "N/A"));
+                        data.getValue().getSrednjaSkolaNaziv() : "N/A")
+        );
 
         tableStudents.setItems(studentData);
 
@@ -66,6 +71,7 @@ public class StudentSearchController {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 StudentPodaciDTO selected = tableStudents.getSelectionModel().getSelectedItem();
                 if (selected != null) {
+                    // ✅ Koristi getId() umesto getIdIndeks()
                     openStudentProfile(selected.getId());
                 }
             }
@@ -77,7 +83,6 @@ public class StudentSearchController {
         pagination.setCurrentPageIndex(0);
         pagination.currentPageIndexProperty().addListener((obs, oldPage, newPage) -> {
             currentPage = newPage.intValue();
-            // Re-execute current search with new page
             String ime = txtIme.getText().trim();
             String prezime = txtPrezime.getText().trim();
             if (!ime.isEmpty() || !prezime.isEmpty()) {
@@ -86,12 +91,7 @@ public class StudentSearchController {
         });
     }
 
-    /**
-     * Učitaj listu srednjih škola
-     */
     private void loadSrednjeSkole() {
-        // TODO: Implementirati API call za sve srednje škole
-        // Za sada hardcode primere
         ObservableList<SrednjaSkola> skole = FXCollections.observableArrayList(
                 new SrednjaSkola(1L, "Matematička gimnazija"),
                 new SrednjaSkola(2L, "Treća beogradska gimnazija"),
@@ -108,7 +108,7 @@ public class StudentSearchController {
     }
 
     /**
-     * 1. NAČIN: Pretraga po broju indeksa - DIREKTNO OTVARA PROFIL
+     * 1. NAČIN: Pretraga po broju indeksa - PRIKAZUJE LISTU (ne otvara direktno profil)
      */
     @FXML
     private void onSearchByIndeks() {
@@ -127,11 +127,20 @@ public class StudentSearchController {
 
             log.info("Searching by indeks: {}/{}/{}", godina, broj, oznaka);
 
+            // ✅ findByIndeks vraća Page<StudentPodaciDTO>
             studentService.findByIndeks(godina, broj, oznaka)
                     .subscribe(
-                            profile -> Platform.runLater(() -> {
-                                log.info("Found student: {}", profile.getId());
-                                openStudentProfile(profile.getId());
+                            page -> Platform.runLater(() -> {
+                                studentData.clear();
+                                studentData.addAll(page.getContent());
+                                pagination.setPageCount(Math.max(1, page.getTotalPages()));
+                                log.info("Found {} students", page.getTotalElements());
+
+                                // Ako je pronađen samo jedan student, odmah otvori profil
+                                if (page.getContent().size() == 1) {
+                                    StudentPodaciDTO student = page.getContent().get(0);
+                                    openStudentProfile(student.getId());
+                                }
                             }),
                             error -> Platform.runLater(() -> {
                                 log.error("Student not found", error);
@@ -168,6 +177,7 @@ public class StudentSearchController {
         studentService.searchStudents(ime, prezime, currentPage, pageSize)
                 .subscribe(
                         page -> Platform.runLater(() -> {
+                            // ✅ Ispravno mapiranje Page<StudentDTO>
                             studentData.clear();
                             studentData.addAll(page.getContent());
                             pagination.setPageCount(Math.max(1, page.getTotalPages()));
@@ -197,9 +207,10 @@ public class StudentSearchController {
         studentService.findBySrednjaSkola(selected.getId())
                 .subscribe(
                         students -> Platform.runLater(() -> {
+                            // ✅ List<StudentPodaciDTO> se pravilno parsira
                             studentData.clear();
                             studentData.addAll(students);
-                            pagination.setPageCount(1); // Nema paginacije za ovu pretragu
+                            pagination.setPageCount(1);
                             log.info("Found {} students from {}", students.size(), selected.getNaziv());
                         }),
                         error -> Platform.runLater(() -> {
@@ -213,6 +224,11 @@ public class StudentSearchController {
      * Otvori profil studenta
      */
     private void openStudentProfile(Long studentIndeksId) {
+        if (studentIndeksId == null) {
+            AlertUtil.showError("Greška", "Student nema validan ID");
+            return;
+        }
+
         try {
             FxmlLoader.LoadResult<StudentProfileController> result =
                     fxmlLoader.loadWithController("student-profile.fxml");
@@ -228,9 +244,6 @@ public class StudentSearchController {
         }
     }
 
-    /**
-     * Clear search fields and results
-     */
     @FXML
     private void onClearSearch() {
         txtIme.clear();
@@ -243,9 +256,6 @@ public class StudentSearchController {
         pagination.setPageCount(1);
     }
 
-    /**
-     * Helper class za ComboBox
-     */
     private static class SrednjaSkola {
         private final Long id;
         private final String naziv;

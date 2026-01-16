@@ -6,6 +6,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * DTO za prikaz osnovnih podataka o studentu u listi
+ * Koristi se za rezultate pretrage
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

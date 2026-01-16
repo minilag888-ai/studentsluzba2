@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 @Component
 public class StudentProfileController {
 
-    // Header labels
     @FXML private Label lblIme;
     @FXML private Label lblPrezime;
     @FXML private Label lblIndeks;
@@ -43,7 +42,6 @@ public class StudentProfileController {
 
     @FXML private TabPane tabPane;
 
-    // Položeni predmeti
     @FXML private TableView<PolozenPredmetDTO> tablePolozeni;
     @FXML private TableColumn<PolozenPredmetDTO, String> colSifra;
     @FXML private TableColumn<PolozenPredmetDTO, String> colNaziv;
@@ -51,14 +49,12 @@ public class StudentProfileController {
     @FXML private TableColumn<PolozenPredmetDTO, Integer> colOcena;
     @FXML private TableColumn<PolozenPredmetDTO, LocalDate> colDatum;
 
-    // Nepoloženi predmeti
     @FXML private TableView<NepolozenPredmetDTO> tableNepolozeni;
     @FXML private TableColumn<NepolozenPredmetDTO, String> colSifraNepolozeni;
     @FXML private TableColumn<NepolozenPredmetDTO, String> colNazivNepolozeni;
     @FXML private TableColumn<NepolozenPredmetDTO, Integer> colEspbNepolozeni;
     @FXML private TableColumn<NepolozenPredmetDTO, Integer> colBrojPokusaja;
 
-    // Upisane godine
     @FXML private TableView<UpisGodineDTO> tableUpisaneGodine;
     @FXML private TableColumn<UpisGodineDTO, Integer> colGodinaStudija;
     @FXML private TableColumn<UpisGodineDTO, String> colSkolskaGodina;
@@ -66,7 +62,6 @@ public class StudentProfileController {
     @FXML private TableColumn<UpisGodineDTO, Integer> colUkupnoESPB;
     @FXML private TableColumn<UpisGodineDTO, String> colNapomena;
 
-    // Obnovljene godine
     @FXML private TableView<ObnovaGodineDTO> tableObnovljeneGodine;
     @FXML private TableColumn<ObnovaGodineDTO, Integer> colGodinaObnovljene;
     @FXML private TableColumn<ObnovaGodineDTO, String> colSkolskaGodinaObnova;
@@ -74,7 +69,6 @@ public class StudentProfileController {
     @FXML private TableColumn<ObnovaGodineDTO, Integer> colUkupnoESPBObnova;
     @FXML private TableColumn<ObnovaGodineDTO, String> colNapomenaObnova;
 
-    // Uplate
     @FXML private TableView<UplataDTO> tableUplate;
     @FXML private TableColumn<UplataDTO, LocalDate> colDatumUplate;
     @FXML private TableColumn<UplataDTO, Double> colIznosEur;
@@ -99,19 +93,15 @@ public class StudentProfileController {
     public void initialize() {
         log.info("StudentProfileController initialized");
         setupTables();
-        setupTabPaneListener(); // ← KLJUČNO!
+        setupTabPaneListener();
     }
 
-    /**
-     * ✅ KLJUČNO: Osveži podatke kada korisnik klikne na tab
-     */
     private void setupTabPaneListener() {
         tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
             if (newTab != null && currentStudentIndeksId != null) {
                 String tabText = newTab.getText();
                 log.info("🔄 Tab changed to: {}", tabText);
 
-                // Osveži podatke za odgovarajući tab
                 if (tabText.contains("Upisane godine")) {
                     log.info("🔄 Auto-refreshing Upisane godine...");
                     loadUpisaneGodine(currentStudentIndeksId);
@@ -127,7 +117,6 @@ public class StudentProfileController {
     }
 
     private void setupTables() {
-        // Položeni predmeti
         colSifra.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSifraPredmeta()));
         colNaziv.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNazivPredmeta()));
         colEspb.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getEspb()).asObject());
@@ -135,14 +124,12 @@ public class StudentProfileController {
         colDatum.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getDatumPolaganja()));
         tablePolozeni.setItems(polozeniData);
 
-        // Nepoloženi predmeti
         colSifraNepolozeni.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSifraPredmeta()));
         colNazivNepolozeni.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNazivPredmeta()));
         colEspbNepolozeni.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getEspb()).asObject());
         colBrojPokusaja.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getBrojPokusaja()).asObject());
         tableNepolozeni.setItems(nepolozeniData);
 
-        // Upisane godine
         colGodinaStudija.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getGodinaStudija()).asObject());
         colSkolskaGodina.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSkolskaGodina()));
         colDatumUpisa.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getDatumUpisa()));
@@ -150,7 +137,6 @@ public class StudentProfileController {
         colNapomena.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNapomena()));
         tableUpisaneGodine.setItems(upisaneData);
 
-        // Obnovljene godine
         colGodinaObnovljene.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getGodinaStudija()).asObject());
         colSkolskaGodinaObnova.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSkolskaGodina()));
         colDatumObnove.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getDatumObnove()));
@@ -158,7 +144,6 @@ public class StudentProfileController {
         colNapomenaObnova.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNapomena()));
         tableObnovljeneGodine.setItems(obnovljeneData);
 
-        // Uplate
         colDatumUplate.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getDatumUplate()));
         colIznosEur.setCellValueFactory(data -> new SimpleDoubleProperty(data.getValue().getIznosEur()).asObject());
         colSrednjiKurs.setCellValueFactory(data -> new SimpleDoubleProperty(data.getValue().getSrednjiKurs()).asObject());
@@ -229,30 +214,19 @@ public class StudentProfileController {
     }
 
     private void loadUpisaneGodine(Long studentIndeksId) {
-        log.info("=== LOADING UPISANE GODINE for student {} ===", studentIndeksId);
+        log.info("=== LOADING UPISANE GODINE ===");
 
         studentService.getUpisaneGodine(studentIndeksId)
                 .subscribe(
                         godine -> Platform.runLater(() -> {
-                            log.info("✅ RECEIVED {} upisane godine from backend", godine.size());
-
-                            if (godine.isEmpty()) {
-                                log.warn("⚠️ Backend returned EMPTY list for upisane godine!");
-                            } else {
-                                for (UpisGodineDTO g : godine) {
-                                    log.info("  - Godina: {}, ESPB: {}, Skolska: {}",
-                                            g.getGodinaStudija(), g.getUkupnoESPB(), g.getSkolskaGodina());
-                                }
-                            }
+                            log.info("✅ Received {} upisane godine", godine.size());
 
                             upisaneData.clear();
                             upisaneData.addAll(godine);
                             tableUpisaneGodine.refresh();
-
-                            log.info("✅ TableView now has {} items", upisaneData.size());
                         }),
                         error -> {
-                            log.error("❌ FAILED to load upisane godine", error);
+                            log.error("❌ Failed to load upisane godine", error);
                             Platform.runLater(() ->
                                     AlertUtil.showError("Greška", "Nije moguće učitati upisane godine: " + error.getMessage())
                             );
@@ -261,54 +235,53 @@ public class StudentProfileController {
     }
 
     private void loadObnovljeneGodine(Long studentIndeksId) {
-        log.info("=== LOADING OBNOVLJENE GODINE for student {} ===", studentIndeksId);
+        log.info("=== LOADING OBNOVLJENE GODINE ===");
 
         studentService.getObnovljeneGodine(studentIndeksId)
                 .subscribe(
                         godine -> Platform.runLater(() -> {
-                            log.info("✅ RECEIVED {} obnovljene godine from backend", godine.size());
+                            log.info("✅ Received {} obnovljene godine", godine.size());
 
                             obnovljeneData.clear();
                             obnovljeneData.addAll(godine);
                             tableObnovljeneGodine.refresh();
-
-                            log.info("✅ TableView now has {} items", obnovljeneData.size());
                         }),
                         error -> {
-                            log.error("❌ FAILED to load obnovljene godine", error);
-                            Platform.runLater(() ->
-                                    AlertUtil.showError("Greška", "Nije moguće učitati obnovljene godine: " + error.getMessage())
-                            );
+                            log.error("❌ Failed to load obnovljene godine", error);
                         }
                 );
     }
 
+    /**
+     * ✅ Učitaj preostali iznos (ne može biti ispod 0.00 EUR)
+     */
     private void loadPreostaliIznos(Long studentIndeksId) {
         studentService.getPreostaliIznos(studentIndeksId)
                 .subscribe(
                         iznos -> Platform.runLater(() -> {
-                            lblPreostaliIznos.setText(
-                                    String.format("%.2f EUR", iznos.getPreostaliIznosEur())
-                            );
+                            double preostali = iznos.getPreostaliIznosEur();
+
+                            // ✅ Ne dozvoli negativan iznos - prikaži 0.00 ako je minus
+                            if (preostali < 0) {
+                                preostali = 0.00;
+                            }
+
+                            lblPreostaliIznos.setText(String.format("%.2f EUR", preostali));
                         }),
                         error -> log.error("Failed to load preostali iznos", error)
                 );
     }
 
     /**
-     * ✅ UČITAVANJE UPLATA - proverite da li imate API endpoint!
+     * ✅ UČITAJ UPLATE - sada koristi StudentService.getUplate()
      */
     private void loadUplate(Long studentIndeksId) {
-        log.info("=== LOADING UPLATE for student {} ===", studentIndeksId);
+        log.info("=== LOADING UPLATE ===");
 
-        // TODO: Proverite da li StudentService ima metodu getUplate()
-        // Ako nema, dodajte je ili zakomentirajte ovaj poziv
-
-        /* PRIMER IMPLEMENTACIJE kada backend bude spreman:
         studentService.getUplate(studentIndeksId)
                 .subscribe(
                         uplate -> Platform.runLater(() -> {
-                            log.info("✅ RECEIVED {} uplate from backend", uplate.size());
+                            log.info("✅ Received {} uplate", uplate.size());
 
                             uplateData.clear();
                             uplateData.addAll(uplate);
@@ -316,17 +289,24 @@ public class StudentProfileController {
                             double ukupno = uplate.stream()
                                     .mapToDouble(UplataDTO::getIznosEur)
                                     .sum();
-                            lblUkupnoUplaceno.setText(String.format("%.2f EUR", ukupno));
+
+                            if (lblUkupnoUplaceno != null) {
+                                lblUkupnoUplaceno.setText(String.format("%.2f EUR", ukupno));
+                            }
 
                             tableUplate.refresh();
                         }),
                         error -> {
-                            log.error("❌ FAILED to load uplate", error);
+                            log.error("❌ Failed to load uplate", error);
+                            Platform.runLater(() -> {
+                                // Ako endpoint ne postoji, samo ostavi praznu tabelu
+                                uplateData.clear();
+                                if (lblUkupnoUplaceno != null) {
+                                    lblUkupnoUplaceno.setText("0.00 EUR");
+                                }
+                            });
                         }
                 );
-        */
-
-        log.info("⚠️ API endpoint za uplate nije implementiran - tableUplate ostaje prazan");
     }
 
     @FXML
@@ -419,9 +399,7 @@ public class StudentProfileController {
         napomenaBox.getChildren().addAll(lblNapomena, txtNapomena);
 
         Label lblPredmeti = new Label("Izaberite predmete:");
-
         ObservableList<PredmetCheckItem> predmetItems = FXCollections.observableArrayList();
-
         ListView<PredmetCheckItem> listPredmeti = new ListView<>(predmetItems);
         listPredmeti.setPrefHeight(250);
         listPredmeti.setCellFactory(CheckBoxListCell.forListView(PredmetCheckItem::selectedProperty));
@@ -437,7 +415,6 @@ public class StudentProfileController {
                             predmetItems.clear();
                             for (PredmetDTO p : predmeti) {
                                 PredmetCheckItem item = new PredmetCheckItem(p);
-
                                 item.selectedProperty().addListener((obs, oldVal, newVal) -> {
                                     int ukupnoESPB = predmetItems.stream()
                                             .filter(PredmetCheckItem::isSelected)
@@ -445,7 +422,6 @@ public class StudentProfileController {
                                             .sum();
                                     lblUkupnoESPB.setText("Ukupno ESPB: " + ukupnoESPB);
                                 });
-
                                 predmetItems.add(item);
                             }
                         }),
@@ -517,7 +493,7 @@ public class StudentProfileController {
 
                             AlertUtil.showInfo("Uspeh", "Student je uspešno upisan na " + response.getGodinaStudija() + ". godinu!");
 
-                            // ✅ ODMAH OSVEŽI podatke
+                            // Osveži podatke
                             loadUpisaneGodine(currentStudentIndeksId);
                             loadNepolozeniPredmeti(currentStudentIndeksId);
                         }),
@@ -536,10 +512,8 @@ public class StudentProfileController {
         }
 
         if (upisaneData.isEmpty()) {
-            // ✅ OSVEŽI podatke ako je lista prazna
             loadUpisaneGodine(currentStudentIndeksId);
 
-            // Čekaj malo pa proveri ponovo
             new Thread(() -> {
                 try {
                     Thread.sleep(1000);
@@ -619,9 +593,7 @@ public class StudentProfileController {
         napomenaBox.getChildren().addAll(lblNapomena, txtNapomena);
 
         Label lblPredmeti = new Label("Izaberite predmete (max 60 ESPB):");
-
         ObservableList<PredmetCheckItem> predmetItems = FXCollections.observableArrayList();
-
         ListView<PredmetCheckItem> listPredmeti = new ListView<>(predmetItems);
         listPredmeti.setPrefHeight(250);
         listPredmeti.setCellFactory(CheckBoxListCell.forListView(PredmetCheckItem::selectedProperty));
@@ -637,22 +609,18 @@ public class StudentProfileController {
                             predmetItems.clear();
                             for (PredmetDTO p : predmeti) {
                                 PredmetCheckItem item = new PredmetCheckItem(p);
-
                                 item.selectedProperty().addListener((obs, oldVal, newVal) -> {
                                     int ukupnoESPB = predmetItems.stream()
                                             .filter(PredmetCheckItem::isSelected)
                                             .mapToInt(pci -> pci.getPredmet().getEspb())
                                             .sum();
-
                                     lblUkupnoESPB.setText("Ukupno ESPB: " + ukupnoESPB + " / 60");
-
                                     if (ukupnoESPB > 60) {
                                         lblUkupnoESPB.setStyle("-fx-text-fill: red; -fx-font-size: 14px; -fx-font-weight: bold;");
                                     } else {
                                         lblUkupnoESPB.setStyle("-fx-text-fill: green; -fx-font-size: 14px; -fx-font-weight: bold;");
                                     }
                                 });
-
                                 predmetItems.add(item);
                             }
                         }),
@@ -665,8 +633,7 @@ public class StudentProfileController {
                 );
 
         vbox.getChildren().addAll(
-                upisanaGodinaBox,
-                skolskaGodinaBox, datumBox, napomenaBox,
+                upisanaGodinaBox, skolskaGodinaBox, datumBox, napomenaBox,
                 new Separator(),
                 lblPredmeti, listPredmeti, lblUkupnoESPB
         );
@@ -817,7 +784,6 @@ public class StudentProfileController {
 
                             AlertUtil.showInfo("Uspeh", "Uplata je evidentirana");
 
-                            // ✅ ODMAH OSVEŽI podatke
                             loadPreostaliIznos(currentStudentIndeksId);
                             loadUplate(currentStudentIndeksId);
                         }),

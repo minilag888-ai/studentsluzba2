@@ -3,90 +3,62 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/17"
-      xmlns:fx="http://javafx.com/fxml/1"
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.raflab.studsluzba.client.controllers.StudentSearchController"
-      stylesheets="@../css/style.css"
-      spacing="20" prefWidth="1150" prefHeight="750">
+      spacing="15"
+      stylesheets="@../css/style.css">
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
-    <!-- Header -->
-    <HBox alignment="CENTER_LEFT">
-        <Label text="Pretraga studenata" styleClass="page-title">
-            <font>
-                <Font name="System Bold" size="28"/>
-            </font>
-        </Label>
-    </HBox>
+    <Label text="Pretraga studenata" styleClass="title"/>
+
+    <!-- 1. Pretraga po broju indeksa -->
+    <VBox spacing="10" styleClass="search-section">
+        <Label text="Pretraga po broju indeksa" styleClass="section-title"/>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Godina:" minWidth="80"/>
+            <TextField fx:id="txtGodina" promptText="2023" prefWidth="100"/>
+
+            <Label text="Broj:" minWidth="60"/>
+            <TextField fx:id="txtBroj" promptText="59" prefWidth="100"/>
+
+            <Label text="Oznaka:" minWidth="70"/>
+            <TextField fx:id="txtOznaka" promptText="SPI" prefWidth="100"/>
+
+            <Button text="Pretraži" onAction="#onSearchByIndeks" styleClass="primary-button"/>
+        </HBox>
+    </VBox>
 
     <Separator/>
 
-    <!-- 1. Pretraga po broju indeksa - direktno otvara profil -->
-    <VBox spacing="12" styleClass="search-section">
-        <Label text="1. Pretraga po broju indeksa (direktno otvara profil):" styleClass="section-label">
-            <font>
-                <Font name="System Bold" size="14"/>
-            </font>
-        </Label>
-
-        <HBox spacing="15" alignment="CENTER_LEFT">
-            <Label text="Godina:" minWidth="70"/>
-            <TextField fx:id="txtGodina" promptText="2023" prefWidth="80"/>
-
-            <Label text="Broj:" minWidth="50"/>
-            <TextField fx:id="txtBroj" promptText="123" prefWidth="80"/>
-
-            <Label text="Oznaka:" minWidth="70"/>
-            <TextField fx:id="txtOznaka" promptText="RA" prefWidth="80"/>
-
-            <Button fx:id="btnSearchByIndeks" text="🔍 Otvori profil"
-                    onAction="#onSearchByIndeks" styleClass="search-button" prefWidth="140"/>
-        </HBox>
-    </VBox>
-
-    <!-- 2. Pretraga po imenu/prezimenu - prikazuje listu -->
-    <VBox spacing="12" styleClass="search-section">
-        <Label text="2. Pretraga po imenu i/ili prezimenu (prikazuje listu):" styleClass="section-label">
-            <font>
-                <Font name="System Bold" size="14"/>
-            </font>
-        </Label>
-
-        <HBox spacing="15" alignment="CENTER_LEFT">
-            <Label text="Ime:" minWidth="70"/>
+    <!-- 2. Pretraga po imenu/prezimenu -->
+    <VBox spacing="10" styleClass="search-section">
+        <Label text="Pretraga po imenu/prezimenu" styleClass="section-title"/>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Ime:" minWidth="80"/>
             <TextField fx:id="txtIme" promptText="Unesite ime" prefWidth="200"/>
 
-            <Label text="Prezime:" minWidth="70"/>
+            <Label text="Prezime:" minWidth="80"/>
             <TextField fx:id="txtPrezime" promptText="Unesite prezime" prefWidth="200"/>
 
-            <Button fx:id="btnSearchByName" text="🔍 Pretraži"
-                    onAction="#onSearchByName" styleClass="search-button" prefWidth="120"/>
+            <Button text="Pretraži" onAction="#onSearchByName" styleClass="primary-button"/>
         </HBox>
     </VBox>
 
-    <!-- 3. Pretraga po srednjoj školi - prikazuje listu -->
-    <VBox spacing="12" styleClass="search-section">
-        <Label text="3. Pretraga po završenoj srednjoj školi (prikazuje listu):" styleClass="section-label">
-            <font>
-                <Font name="System Bold" size="14"/>
-            </font>
-        </Label>
+    <Separator/>
 
-        <HBox spacing="15" alignment="CENTER_LEFT">
+    <!-- 3. Pretraga po srednjoj školi -->
+    <VBox spacing="10" styleClass="search-section">
+        <Label text="Pretraga po srednjoj školi" styleClass="section-title"/>
+        <HBox spacing="10" alignment="CENTER_LEFT">
             <Label text="Srednja škola:" minWidth="120"/>
-            <ComboBox fx:id="cmbSrednjaSkola" promptText="Izaberite srednju školu"
-                      prefWidth="350" editable="false"/>
-
-            <Button fx:id="btnSearchBySkola" text="🔍 Pretraži"
-                    onAction="#onSearchBySrednjaSkola" styleClass="search-button" prefWidth="120"/>
-
-            <Button text="🔄 Osveži listu škola" onAction="#onRefreshSkole"
-                    styleClass="clear-button" prefWidth="140"/>
+            <ComboBox fx:id="cmbSrednjaSkola" prefWidth="300" promptText="Izaberite srednju školu"/>
+            <Button text="Pretraži" onAction="#onSearchBySrednjaSkola" styleClass="primary-button"/>
+            <Button text="🔄 Osveži" onAction="#onRefreshSkole"/>
         </HBox>
     </VBox>
 
@@ -94,40 +66,25 @@
 
     <!-- Rezultati pretrage -->
     <VBox spacing="10" VBox.vgrow="ALWAYS">
-        <HBox alignment="CENTER_LEFT" spacing="15">
-            <Label text="Rezultati pretrage:" styleClass="section-label">
-                <font>
-                    <Font name="System Bold" size="14"/>
-                </font>
-            </Label>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="🗑️ Obriši rezultate" onAction="#onClearSearch"
-                    styleClass="clear-button" prefWidth="140"/>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Rezultati pretrage" styleClass="section-title"/>
+            <Button text="Obriši rezultate" onAction="#onClearSearch" styleClass="secondary-button"/>
         </HBox>
 
         <TableView fx:id="tableStudents" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="colIme" text="Ime" prefWidth="150"/>
                 <TableColumn fx:id="colPrezime" text="Prezime" prefWidth="150"/>
-                <TableColumn fx:id="colEmail" text="Email" prefWidth="250"/>
-                <TableColumn fx:id="colJmbg" text="JMBG" prefWidth="130"/>
-                <TableColumn fx:id="colSrednjaSkola" text="Srednja škola" prefWidth="200"/>
+                <TableColumn fx:id="colEmail" text="Indeks" prefWidth="150"/>
+                <TableColumn fx:id="colJmbg" text="Status" prefWidth="100"/>
+                <TableColumn fx:id="colSrednjaSkola" text="ID Indeksa" prefWidth="100"/>
             </columns>
             <placeholder>
-                <Label text="Nema rezultata. Unesite kriterijume pretrage."
-                       style="-fx-text-fill: gray; -fx-font-size: 14px;"/>
+                <Label text="Nema rezultata pretrage"/>
             </placeholder>
         </TableView>
 
-        <!-- Pagination -->
-        <HBox alignment="CENTER">
-            <Pagination fx:id="pagination" pageCount="1"/>
-        </HBox>
+        <Pagination fx:id="pagination"/>
     </VBox>
-
-    <!-- Info -->
-    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="info-section">
-        <Label text="💡 Dupli klik na studenta u tabeli za otvaranje profila"/>
-    </HBox>
 
 </VBox>

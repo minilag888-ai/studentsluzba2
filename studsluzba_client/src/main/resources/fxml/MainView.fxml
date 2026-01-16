@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="rs.ac.bg.fon.client.controller.MainController"
+            stylesheets="@../css/style.css">
+
+    <!-- TOP: Menu Bar -->
+    <top>
+        <VBox>
+            <MenuBar>
+                <Menu text="Studenti">
+                    <MenuItem text="Pretraga po broju indeksa" onAction="#onSearchByIndex"/>
+                    <MenuItem text="Pretraga po imenu/prezimenu" onAction="#onSearchByName"/>
+                    <MenuItem text="Pretraga po srednjoj školi" onAction="#onSearchByHighSchool"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Dodaj novog studenta" onAction="#onAddStudent"/>
+                </Menu>
+
+                <Menu text="Studijski programi">
+                    <MenuItem text="Pregled studijskih programa" onAction="#onViewStudyPrograms"/>
+                    <MenuItem text="Pregled predmeta" onAction="#onViewSubjects"/>
+                    <MenuItem text="Dodaj predmet" onAction="#onAddSubject"/>
+                    <MenuItem text="Prosečna ocena na predmetu" onAction="#onAverageGradeReport"/>
+                </Menu>
+
+                <Menu text="Ispiti">
+                    <MenuItem text="Ispitni rokovi" onAction="#onExamPeriods"/>
+                    <MenuItem text="Pregled ispita" onAction="#onViewExams"/>
+                    <MenuItem text="Dodaj ispit" onAction="#onAddExam"/>
+                    <MenuItem text="Prijava ispita" onAction="#onRegisterExam"/>
+                </Menu>
+
+                <Menu text="Pomoć">
+                    <MenuItem text="O aplikaciji" onAction="#onAbout"/>
+                    <MenuItem text="Podešavanja" onAction="#onSettings"/>
+                </Menu>
+            </MenuBar>
+
+            <!-- Navigation Toolbar -->
+            <ToolBar styleClass="navigation-toolbar">
+                <Button fx:id="btnBack" text="◄" styleClass="nav-button"
+                        onAction="#onNavigateBack" disable="true"/>
+                <Button fx:id="btnForward" text="►" styleClass="nav-button"
+                        onAction="#onNavigateForward" disable="true"/>
+                <Separator orientation="VERTICAL"/>
+                <Label fx:id="lblCurrentPage" text="Početna stranica" styleClass="page-label">
+                    <font>
+                        <Font name="System Bold" size="12.0"/>
+                    </font>
+                </Label>
+            </ToolBar>
+        </VBox>
+    </top>
+
+    <!-- CENTER: Content Area -->
+    <center>
+        <StackPane fx:id="contentArea" styleClass="content-area">
+            <VBox alignment="CENTER" spacing="30">
+                <Label text="Studentska Služba" styleClass="title-label">
+                    <font>
+                        <Font name="System Bold" size="36.0"/>
+                    </font>
+                </Label>
+
+                <Label text="Računarski fakultet - Univerzitet Union" styleClass="subtitle-label">
+                    <font>
+                        <Font size="18.0"/>
+                    </font>
+                </Label>
+
+                <VBox spacing="15" alignment="CENTER" styleClass="quick-actions">
+                    <Label text="Brze akcije:" styleClass="section-label">
+                        <font>
+                            <Font name="System Bold" size="14.0"/>
+                        </font>
+                    </Label>
+
+                    <HBox spacing="15" alignment="CENTER">
+                        <Button text="🔍 Pretraga studenta" onAction="#onSearchByIndex"
+                                styleClass="quick-button" prefWidth="200"/>
+                        <Button text="📚 Studijski programi" onAction="#onViewStudyPrograms"
+                                styleClass="quick-button" prefWidth="200"/>
+                        <Button text="📝 Ispiti" onAction="#onViewExams"
+                                styleClass="quick-button" prefWidth="200"/>
+                    </HBox>
+                </VBox>
+
+                <Label fx:id="lblStatus" text="" styleClass="status-label">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </Label>
+            </VBox>
+        </StackPane>
+    </center>
+
+    <!-- BOTTOM: Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar" spacing="10" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="5" right="10" bottom="5" left="10"/>
+            </padding>
+            <Label fx:id="lblConnectionStatus" text="● Povezano" styleClass="connection-status"/>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="lblServerInfo" text="Server: localhost:8080"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblDateTime" text=""/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -99,6 +99,31 @@ public class StudentProfileController {
     public void initialize() {
         log.info("StudentProfileController initialized");
         setupTables();
+        setupTabPaneListener(); // ← KLJUČNO!
+    }
+
+    /**
+     * ✅ KLJUČNO: Osveži podatke kada korisnik klikne na tab
+     */
+    private void setupTabPaneListener() {
+        tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
+            if (newTab != null && currentStudentIndeksId != null) {
+                String tabText = newTab.getText();
+                log.info("🔄 Tab changed to: {}", tabText);
+
+                // Osveži podatke za odgovarajući tab
+                if (tabText.contains("Upisane godine")) {
+                    log.info("🔄 Auto-refreshing Upisane godine...");
+                    loadUpisaneGodine(currentStudentIndeksId);
+                } else if (tabText.contains("Obnovljene godine")) {
+                    log.info("🔄 Auto-refreshing Obnovljene godine...");
+                    loadObnovljeneGodine(currentStudentIndeksId);
+                } else if (tabText.contains("Uplate")) {
+                    log.info("🔄 Auto-refreshing Uplate...");
+                    loadUplate(currentStudentIndeksId);
+                }
+            }
+        });
     }
 
     private void setupTables() {
@@ -159,9 +184,6 @@ public class StudentProfileController {
                 );
     }
 
-    /**
-     * ✅ Učitaj SVE podatke odjednom
-     */
     private void loadAllData() {
         loadPolozeniPredmeti(currentStudentIndeksId);
         loadNepolozeniPredmeti(currentStudentIndeksId);
@@ -274,29 +296,37 @@ public class StudentProfileController {
     }
 
     /**
-     * ✅ DODATO: Učitavanje uplata
+     * ✅ UČITAVANJE UPLATA - proverite da li imate API endpoint!
      */
     private void loadUplate(Long studentIndeksId) {
         log.info("=== LOADING UPLATE for student {} ===", studentIndeksId);
 
-        // TODO: Implement API call kada backend bude spreman
-        // Za sada samo log
-        log.info("⚠️ API endpoint za uplate nije implementiran - tableUplate ostaje prazan");
+        // TODO: Proverite da li StudentService ima metodu getUplate()
+        // Ako nema, dodajte je ili zakomentirajte ovaj poziv
 
-        // Placeholder:
-        // studentService.getUplate(studentIndeksId)
-        //     .subscribe(
-        //         uplate -> Platform.runLater(() -> {
-        //             uplateData.clear();
-        //             uplateData.addAll(uplate);
-        //
-        //             double ukupno = uplate.stream()
-        //                     .mapToDouble(UplataDTO::getIznosEur)
-        //                     .sum();
-        //             lblUkupnoUplaceno.setText(String.format("%.2f EUR", ukupno));
-        //         }),
-        //         error -> log.error("Failed to load uplate", error)
-        //     );
+        /* PRIMER IMPLEMENTACIJE kada backend bude spreman:
+        studentService.getUplate(studentIndeksId)
+                .subscribe(
+                        uplate -> Platform.runLater(() -> {
+                            log.info("✅ RECEIVED {} uplate from backend", uplate.size());
+
+                            uplateData.clear();
+                            uplateData.addAll(uplate);
+
+                            double ukupno = uplate.stream()
+                                    .mapToDouble(UplataDTO::getIznosEur)
+                                    .sum();
+                            lblUkupnoUplaceno.setText(String.format("%.2f EUR", ukupno));
+
+                            tableUplate.refresh();
+                        }),
+                        error -> {
+                            log.error("❌ FAILED to load uplate", error);
+                        }
+                );
+        */
+
+        log.info("⚠️ API endpoint za uplate nije implementiran - tableUplate ostaje prazan");
     }
 
     @FXML
@@ -332,10 +362,6 @@ public class StudentProfileController {
         }
     }
 
-    // ============================================
-    // UPIS I OBNOVA GODINE
-    // ============================================
-
     @FXML
     private void onUpisGodine() {
         if (currentStudentIndeksId == null) {
@@ -357,7 +383,6 @@ public class StudentProfileController {
         VBox vbox = new VBox(15);
         vbox.setPadding(new Insets(20));
 
-        // Godina studija
         HBox godinaBox = new HBox(10);
         Label lblGodina = new Label("Godina studija:");
         lblGodina.setMinWidth(120);
@@ -366,7 +391,6 @@ public class StudentProfileController {
         spinnerGodina.setPrefWidth(80);
         godinaBox.getChildren().addAll(lblGodina, spinnerGodina);
 
-        // Školska godina
         HBox skolskaGodinaBox = new HBox(10);
         Label lblSkolskaGodina = new Label("Školska godina:");
         lblSkolskaGodina.setMinWidth(120);
@@ -379,7 +403,6 @@ public class StudentProfileController {
         cmbSkolskaGodina.setPrefWidth(200);
         skolskaGodinaBox.getChildren().addAll(lblSkolskaGodina, cmbSkolskaGodina);
 
-        // Datum upisa
         HBox datumBox = new HBox(10);
         Label lblDatum = new Label("Datum upisa:");
         lblDatum.setMinWidth(120);
@@ -387,7 +410,6 @@ public class StudentProfileController {
         datePicker.setPrefWidth(200);
         datumBox.getChildren().addAll(lblDatum, datePicker);
 
-        // Napomena
         HBox napomenaBox = new HBox(10);
         Label lblNapomena = new Label("Napomena:");
         lblNapomena.setMinWidth(120);
@@ -396,7 +418,6 @@ public class StudentProfileController {
         txtNapomena.setPrefWidth(300);
         napomenaBox.getChildren().addAll(lblNapomena, txtNapomena);
 
-        // Lista predmeta
         Label lblPredmeti = new Label("Izaberite predmete:");
 
         ObservableList<PredmetCheckItem> predmetItems = FXCollections.observableArrayList();
@@ -405,12 +426,10 @@ public class StudentProfileController {
         listPredmeti.setPrefHeight(250);
         listPredmeti.setCellFactory(CheckBoxListCell.forListView(PredmetCheckItem::selectedProperty));
 
-        // Label za prikaz ukupnog ESPB
         Label lblUkupnoESPB = new Label("Ukupno ESPB: 0");
         lblUkupnoESPB.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
-        // Učitaj predmete
-        Long studijskiProgramId = 1L; // TODO: Dinamički
+        Long studijskiProgramId = 1L;
 
         predmetService.getPredmetiNaStudijskomProgramu(studijskiProgramId)
                 .subscribe(
@@ -490,31 +509,17 @@ public class StudentProfileController {
 
     private void izvršiUpisGodine(UpisGodineRequestDTO request) {
         log.info("=== IZVRŠAVAM UPIS GODINE ===");
-        log.info("Request: godina={}, skolskaGodinaId={}, predmeti={}",
-                request.getGodinaStudija(), request.getSkolskaGodinaId(), request.getPredmetIds().size());
 
         studentService.upisNaGodinu(currentStudentIndeksId, request)
                 .subscribe(
                         response -> Platform.runLater(() -> {
                             log.info("✅ UPIS USPEŠAN!");
-                            log.info("Response: godina={}, ESPB={}, skolska={}",
-                                    response.getGodinaStudija(), response.getUkupnoESPB(), response.getSkolskaGodina());
 
                             AlertUtil.showInfo("Uspeh", "Student je uspešno upisan na " + response.getGodinaStudija() + ". godinu!");
 
-                            // ✅ KLJUČNO: ČEKAJ 500ms pa osveži
-                            new Thread(() -> {
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                Platform.runLater(() -> {
-                                    log.info("🔄 Refreshing upisane godine...");
-                                    loadUpisaneGodine(currentStudentIndeksId);
-                                    loadNepolozeniPredmeti(currentStudentIndeksId);
-                                });
-                            }).start();
+                            // ✅ ODMAH OSVEŽI podatke
+                            loadUpisaneGodine(currentStudentIndeksId);
+                            loadNepolozeniPredmeti(currentStudentIndeksId);
                         }),
                         error -> Platform.runLater(() -> {
                             log.error("❌ UPIS FAILED", error);
@@ -531,7 +536,24 @@ public class StudentProfileController {
         }
 
         if (upisaneData.isEmpty()) {
-            AlertUtil.showWarning("Upozorenje", "Student nema upisanih godina koje mogu biti obnovljene");
+            // ✅ OSVEŽI podatke ako je lista prazna
+            loadUpisaneGodine(currentStudentIndeksId);
+
+            // Čekaj malo pa proveri ponovo
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Platform.runLater(() -> {
+                    if (upisaneData.isEmpty()) {
+                        AlertUtil.showWarning("Upozorenje", "Student nema upisanih godina koje mogu biti obnovljene");
+                    } else {
+                        showObnovaGodineDialog();
+                    }
+                });
+            }).start();
             return;
         }
 
@@ -549,7 +571,6 @@ public class StudentProfileController {
         VBox vbox = new VBox(15);
         vbox.setPadding(new Insets(20));
 
-        // Izaberi godinu koju obnavljaš
         HBox upisanaGodinaBox = new HBox(10);
         Label lblUpisanaGodina = new Label("Obnovi godinu:");
         lblUpisanaGodina.setMinWidth(120);
@@ -570,7 +591,6 @@ public class StudentProfileController {
         cmbUpisanaGodina.setPrefWidth(300);
         upisanaGodinaBox.getChildren().addAll(lblUpisanaGodina, cmbUpisanaGodina);
 
-        // Školska godina
         HBox skolskaGodinaBox = new HBox(10);
         Label lblSkolskaGodina = new Label("Školska godina:");
         lblSkolskaGodina.setMinWidth(120);
@@ -583,7 +603,6 @@ public class StudentProfileController {
         cmbSkolskaGodina.setPrefWidth(200);
         skolskaGodinaBox.getChildren().addAll(lblSkolskaGodina, cmbSkolskaGodina);
 
-        // Datum obnove
         HBox datumBox = new HBox(10);
         Label lblDatum = new Label("Datum obnove:");
         lblDatum.setMinWidth(120);
@@ -591,7 +610,6 @@ public class StudentProfileController {
         datePicker.setPrefWidth(200);
         datumBox.getChildren().addAll(lblDatum, datePicker);
 
-        // Napomena
         HBox napomenaBox = new HBox(10);
         Label lblNapomena = new Label("Napomena:");
         lblNapomena.setMinWidth(120);
@@ -600,7 +618,6 @@ public class StudentProfileController {
         txtNapomena.setPrefWidth(300);
         napomenaBox.getChildren().addAll(lblNapomena, txtNapomena);
 
-        // Lista predmeta
         Label lblPredmeti = new Label("Izaberite predmete (max 60 ESPB):");
 
         ObservableList<PredmetCheckItem> predmetItems = FXCollections.observableArrayList();
@@ -609,11 +626,10 @@ public class StudentProfileController {
         listPredmeti.setPrefHeight(250);
         listPredmeti.setCellFactory(CheckBoxListCell.forListView(PredmetCheckItem::selectedProperty));
 
-        // Label za prikaz ukupnog ESPB
         Label lblUkupnoESPB = new Label("Ukupno ESPB: 0 / 60");
         lblUkupnoESPB.setStyle("-fx-text-fill: green; -fx-font-size: 14px; -fx-font-weight: bold;");
 
-        Long studijskiProgramId = 1L; // TODO: Dinamički
+        Long studijskiProgramId = 1L;
 
         predmetService.getPredmetiNaStudijskomProgramu(studijskiProgramId)
                 .subscribe(
@@ -718,31 +734,16 @@ public class StudentProfileController {
 
     private void izvršiObnovuGodine(ObnovaGodineRequestDTO request) {
         log.info("=== IZVRŠAVAM OBNOVU GODINE ===");
-        log.info("Request: godina={}, skolskaGodinaId={}, predmeti={}",
-                request.getGodinaStudija(), request.getSkolskaGodinaId(), request.getPredmetIds().size());
 
         studentService.obnovaGodine(currentStudentIndeksId, request)
                 .subscribe(
                         response -> Platform.runLater(() -> {
                             log.info("✅ OBNOVA USPEŠNA!");
-                            log.info("Response: godina={}, ESPB={}, skolska={}",
-                                    response.getGodinaStudija(), response.getUkupnoESPB(), response.getSkolskaGodina());
 
                             AlertUtil.showInfo("Uspeh", "Uspešno obnovljena " + response.getGodinaStudija() + ". godina!");
 
-                            // ✅ KLJUČNO: ČEKAJ 500ms pa osveži
-                            new Thread(() -> {
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                Platform.runLater(() -> {
-                                    log.info("🔄 Refreshing obnovljene godine...");
-                                    loadObnovljeneGodine(currentStudentIndeksId);
-                                    loadNepolozeniPredmeti(currentStudentIndeksId);
-                                });
-                            }).start();
+                            loadObnovljeneGodine(currentStudentIndeksId);
+                            loadNepolozeniPredmeti(currentStudentIndeksId);
                         }),
                         error -> Platform.runLater(() -> {
                             log.error("❌ OBNOVA FAILED", error);
@@ -808,30 +809,17 @@ public class StudentProfileController {
 
     private void dodajUplatu(UplataRequestDTO request) {
         log.info("=== DODAJEM UPLATU ===");
-        log.info("Request: datum={}, iznos={} EUR", request.getDatumUplate(), request.getIznosEur());
 
         studentService.dodajUplatu(currentStudentIndeksId, request)
                 .subscribe(
                         uplata -> Platform.runLater(() -> {
                             log.info("✅ UPLATA EVIDENTIRANA!");
-                            log.info("Response: iznos={} EUR, kurs={}, RSD={}",
-                                    uplata.getIznosEur(), uplata.getSrednjiKurs(), uplata.getIznosRsd());
 
                             AlertUtil.showInfo("Uspeh", "Uplata je evidentirana");
 
-                            // ✅ OSVEŽI preostali iznos i listu uplata
-                            new Thread(() -> {
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                Platform.runLater(() -> {
-                                    log.info("🔄 Refreshing preostali iznos i uplate...");
-                                    loadPreostaliIznos(currentStudentIndeksId);
-                                    loadUplate(currentStudentIndeksId);
-                                });
-                            }).start();
+                            // ✅ ODMAH OSVEŽI podatke
+                            loadPreostaliIznos(currentStudentIndeksId);
+                            loadUplate(currentStudentIndeksId);
                         }),
                         error -> Platform.runLater(() -> {
                             log.error("❌ UPLATA FAILED", error);
@@ -839,10 +827,6 @@ public class StudentProfileController {
                         })
                 );
     }
-
-    // ============================================
-    // HELPER KLASE
-    // ============================================
 
     private static class SkolskaGodinaOption {
         private final Long id;

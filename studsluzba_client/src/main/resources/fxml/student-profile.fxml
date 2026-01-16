@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.raflab.studsluzba.client.controllers.StudentProfileController"
+      stylesheets="@../css/style.css">
+      spacing="10" prefWidth="1100" prefHeight="750">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header sa osnovnim podacima -->
+    <HBox alignment="CENTER_LEFT" spacing="20" styleClass="profile-header">
+        <VBox spacing="5">
+            <Label text="Profil studenta" styleClass="page-title">
+                <font>
+                    <Font name="System Bold" size="24"/>
+                </font>
+            </Label>
+            <HBox spacing="10">
+                <Label fx:id="lblIme" text="-" styleClass="student-name">
+                    <font>
+                        <Font name="System Bold" size="18"/>
+                    </font>
+                </Label>
+                <Label fx:id="lblPrezime" text="-" styleClass="student-name">
+                    <font>
+                        <Font name="System Bold" size="18"/>
+                    </font>
+                </Label>
+            </HBox>
+            <HBox spacing="15">
+                <Label text="Indeks:" styleClass="label-bold"/>
+                <Label fx:id="lblIndeks" text="-"/>
+                <Label text="Email:" styleClass="label-bold"/>
+                <Label fx:id="lblEmail" text="-"/>
+            </HBox>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Statistika -->
+        <VBox spacing="5" alignment="CENTER" styleClass="stat-box">
+            <Label text="ESPB" styleClass="stat-label"/>
+            <Label fx:id="lblEspb" text="0" styleClass="stat-value">
+                <font>
+                    <Font name="System Bold" size="20"/>
+                </font>
+            </Label>
+        </VBox>
+
+        <VBox spacing="5" alignment="CENTER" styleClass="stat-box">
+            <Label text="Prosek" styleClass="stat-label"/>
+            <Label fx:id="lblProsek" text="0.00" styleClass="stat-value">
+                <font>
+                    <Font name="System Bold" size="20"/>
+                </font>
+            </Label>
+        </VBox>
+
+        <VBox spacing="5" alignment="CENTER" styleClass="stat-box">
+            <Label text="Preostalo za uplatu" styleClass="stat-label"/>
+            <Label fx:id="lblPreostaliIznos" text="0.00 EUR" styleClass="stat-value">
+                <font>
+                    <Font name="System Bold" size="16"/>
+                </font>
+            </Label>
+        </VBox>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Akcije -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button fx:id="btnUverenjeOStudiranju" text="📄 Uverenje o studiranju"
+                onAction="#onGenerateUverenjeOStudiranju" styleClass="action-button"/>
+        <Button fx:id="btnUverenjeOPolozenim" text="📋 Uverenje o položenim ispitima"
+                onAction="#onGenerateUverenjeOPolozenim" styleClass="action-button"/>
+        <Button fx:id="btnDodajUplatu" text="💰 Dodaj uplatu"
+                onAction="#onDodajUplatu" styleClass="action-button"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- TabPane sa detaljima -->
+    <TabPane fx:id="tabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+
+        <!-- TAB 1: Položeni predmeti -->
+        <Tab fx:id="tabPolozeni" text="Položeni predmeti">
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <TableView fx:id="tablePolozeni" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colSifra" text="Šifra" prefWidth="80"/>
+                        <TableColumn fx:id="colNaziv" text="Naziv predmeta" prefWidth="350"/>
+                        <TableColumn fx:id="colEspb" text="ESPB" prefWidth="70"/>
+                        <TableColumn fx:id="colOcena" text="Ocena" prefWidth="70"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- TAB 2: Nepoloženi predmeti -->
+        <Tab fx:id="tabNepolozeni" text="Nepoloženi predmeti">
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <TableView fx:id="tableNepolozeni" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colSifraNepolozeni" text="Šifra" prefWidth="80"/>
+                        <TableColumn fx:id="colNazivNepolozeni" text="Naziv predmeta" prefWidth="350"/>
+                        <TableColumn fx:id="colEspbNepolozeni" text="ESPB" prefWidth="70"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- TAB 3: Upisane godine -->
+        <Tab fx:id="tabUpisaneGodine" text="Upisane godine">
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                <Label text="Upisane godine - lista sa predmetima"/>
+            </VBox>
+        </Tab>
+
+        <!-- TAB 4: Obnovljene godine -->
+        <Tab fx:id="tabObnovljeneGodine" text="Obnovljene godine">
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                <Label text="Obnovljene godine - lista sa predmetima"/>
+            </VBox>
+        </Tab>
+
+        <!-- TAB 5: Uplate -->
+        <Tab fx:id="tabUplate" text="Uplate">
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+                <Label text="Lista uplata"/>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+
+</VBox>

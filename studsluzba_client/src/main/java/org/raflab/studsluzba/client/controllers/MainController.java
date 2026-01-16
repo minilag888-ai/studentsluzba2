@@ -13,7 +13,8 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class MainController {
+public class
+MainController {
 
     @FXML
     private BorderPane mainContainer;

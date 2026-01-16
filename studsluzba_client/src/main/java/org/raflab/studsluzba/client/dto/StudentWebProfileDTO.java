@@ -1,17 +1,16 @@
 package org.raflab.studsluzba.client.dto;
 
 import lombok.Data;
-import org.raflab.studsluzba.model.SlusaPredmet;
-import org.raflab.studsluzba.model.StudentIndeks;
-
 import java.util.List;
 
 @Data
 public class StudentWebProfileDTO {
-	
-	private StudentIndeks aktivanIndeks;	
+    // Umesto celog objekta, samo ID
+    private Long aktivanIndeksId;
+    private Integer brojIndeksa;
+    private Integer godinaIndeksa;
+    private String studProgramOznaka;
 
-	// za aktivnu skolsku godinu
-	private List<SlusaPredmet> slusaPredmete;
-	
+    // Lista ID-jeva predmeta koje slusa
+    private List<Long> slusaPredmeteIds;
 }

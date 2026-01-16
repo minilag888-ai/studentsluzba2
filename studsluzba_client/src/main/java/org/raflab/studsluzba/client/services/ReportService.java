@@ -3,6 +3,9 @@ package org.raflab.studsluzba.client.services;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.raflab.studsluzba.client.api.response.IspitResponse;
+import org.raflab.studsluzba.client.api.response.RezultatIspitaResponse;
+import org.raflab.studsluzba.client.dto.PolozenPredmetDTO;
 import org.raflab.studsluzba.client.dto.StudentProfileDTO;
 import org.springframework.stereotype.Service;
 

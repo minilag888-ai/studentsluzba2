@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.raflab.studsluzba.client.api.IspitApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.raflab.studsluzba.client.api.request.*;
+import org.raflab.studsluzba.client.api.response.*;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;

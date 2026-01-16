@@ -3,7 +3,6 @@ package org.raflab.studsluzba.client.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.raflab.studsluzba.model.dtos.PredmetDTO;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -2,6 +2,10 @@ package org.raflab.studsluzba.client.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.raflab.studsluzba.client.api.PredmetApiClient;
+import org.raflab.studsluzba.client.api.request.PredmetRequest;
+import org.raflab.studsluzba.client.api.response.PredmetResponse;
+import org.raflab.studsluzba.client.dto.PredmetDTO;
+import org.raflab.studsluzba.client.dto.ProsecnaOcenaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

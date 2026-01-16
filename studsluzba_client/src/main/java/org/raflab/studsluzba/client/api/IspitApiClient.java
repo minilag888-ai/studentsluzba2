@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import org.raflab.studsluzba.client.api.request.*;
+import org.raflab.studsluzba.client.api.response.*;
 
 import java.util.List;
 

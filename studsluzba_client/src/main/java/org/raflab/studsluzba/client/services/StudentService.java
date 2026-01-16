@@ -1,10 +1,13 @@
 package org.raflab.studsluzba.client.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.raflab.studsluzba.client.api.PageDTO;
 import org.raflab.studsluzba.client.api.StudentApiClient;
+import org.raflab.studsluzba.client.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import org.raflab.studsluzba.client.api.request.*;
 
 import java.util.List;
 

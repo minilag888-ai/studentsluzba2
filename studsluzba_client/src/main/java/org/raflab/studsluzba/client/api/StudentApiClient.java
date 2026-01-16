@@ -1,7 +1,9 @@
 package org.raflab.studsluzba.client.api;
 
 import lombok.extern.slf4j.Slf4j;
-import org.raflab.studsluzba.client.dto.*;
+import org.raflab.studsluzba.client.dto.*;  //
+import org.raflab.studsluzba.client.api.request.*;   //
+import org.raflab.studsluzba.client.api.response.*;  // ←
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;

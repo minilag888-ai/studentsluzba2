@@ -6,9 +6,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.raflab.studsluzba.client.controllers.MainController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -18,12 +21,13 @@ public class NavigationManager {
     @Autowired
     private NavigationHistory history;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     private Stage primaryStage;
     private Scene scene;
+    private StackPane contentArea;
 
-    /**
-     * Inicijalizacija - poziva se iz MainApp
-     */
     public void initialize(Stage stage, Scene scene) {
         this.primaryStage = stage;
         this.scene = scene;
@@ -31,12 +35,14 @@ public class NavigationManager {
         setupMouseNavigation();
         setupKeyboardNavigation();
 
-        log.info("NavigationManager initialized with mouse and keyboard support");
+        log.info("NavigationManager initialized");
     }
 
-    /**
-     * Navigacija na novu stranicu
-     */
+    public void setContentArea(StackPane contentArea) {
+        this.contentArea = contentArea;
+        log.info("Content area set");
+    }
+
     public void navigateTo(Parent view, String title) {
         navigateTo(view, title, null);
     }
@@ -45,73 +51,76 @@ public class NavigationManager {
         try {
             NavigationEvent event = new NavigationEvent(view, title, context);
             history.push(event);
-
-            displayView(view, title);
-
+            displayView(event);
             log.info("Navigated to: {}", title);
         } catch (Exception e) {
-            log.error("Navigation failed: {}", e.getMessage(), e);
+            log.error("Navigation failed", e);
         }
     }
 
-    /**
-     * Back (nazad)
-     */
     public void goBack() {
         if (!history.canGoBack()) {
-            log.debug("Cannot go back - already at first page");
+            log.debug("Cannot go back");
             return;
         }
 
         try {
             NavigationEvent previous = history.goBack();
             if (previous != null) {
-                displayView(previous.getView(), previous.getTitle());
+                displayView(previous);
                 log.info("Navigated back to: {}", previous.getTitle());
             }
         } catch (Exception e) {
-            log.error("Back navigation failed: {}", e.getMessage(), e);
+            log.error("Back navigation failed", e);
         }
     }
 
-    /**
-     * Forward (napred)
-     */
     public void goForward() {
         if (!history.canGoForward()) {
-            log.debug("Cannot go forward - no forward history");
+            log.debug("Cannot go forward");
             return;
         }
 
         try {
             NavigationEvent next = history.goForward();
             if (next != null) {
-                displayView(next.getView(), next.getTitle());
+                displayView(next);
                 log.info("Navigated forward to: {}", next.getTitle());
             }
         } catch (Exception e) {
-            log.error("Forward navigation failed: {}", e.getMessage(), e);
+            log.error("Forward navigation failed", e);
+        }
+    }
+
+    private void displayView(NavigationEvent event) {
+        if (contentArea != null) {
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(event.getView());
+            primaryStage.setTitle("Studentska služba - " + event.getTitle());
+
+            // Ažuriraj aktivno dugme
+            updateActiveButton(event.getViewType());
         }
     }
 
     /**
-     * Prikaži view na stage-u
+     * Ažuriraj aktivno dugme u navigation baru
      */
-    private void displayView(Parent view, String title) {
-        scene.setRoot(view);
-        primaryStage.setTitle("Studentska služba - " + title);
+    private void updateActiveButton(String viewType) {
+        try {
+            MainController mainController = applicationContext.getBean(MainController.class);
+            mainController.setActiveButton(viewType);
+        } catch (Exception e) {
+            log.warn("Could not update active button", e);
+        }
     }
 
-    /**
-     * Mouse button 4/5 navigation
-     */
     private void setupMouseNavigation() {
         scene.setOnMousePressed(event -> {
             if (event.getButton() == MouseButton.BACK) {
                 goBack();
                 event.consume();
             }
-
             if (event.getButton() == MouseButton.FORWARD) {
                 goForward();
                 event.consume();
@@ -119,19 +128,9 @@ public class NavigationManager {
         });
     }
 
-    /**
-     * Ctrl+[ and Ctrl+] navigation
-     */
     private void setupKeyboardNavigation() {
-        KeyCombination backKey = new KeyCodeCombination(
-                KeyCode.OPEN_BRACKET,
-                KeyCombination.CONTROL_DOWN
-        );
-
-        KeyCombination forwardKey = new KeyCodeCombination(
-                KeyCode.CLOSE_BRACKET,
-                KeyCombination.CONTROL_DOWN
-        );
+        KeyCombination backKey = new KeyCodeCombination(KeyCode.OPEN_BRACKET, KeyCombination.CONTROL_DOWN);
+        KeyCombination forwardKey = new KeyCodeCombination(KeyCode.CLOSE_BRACKET, KeyCombination.CONTROL_DOWN);
 
         scene.setOnKeyPressed(event -> {
             if (backKey.match(event)) {
@@ -144,9 +143,6 @@ public class NavigationManager {
         });
     }
 
-    /**
-     * Clear history (logout)
-     */
     public void clearHistory() {
         history.clear();
         log.info("Navigation history cleared");

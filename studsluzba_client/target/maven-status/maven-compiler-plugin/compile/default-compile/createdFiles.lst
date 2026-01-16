@@ -29,6 +29,7 @@ org\raflab\studsluzba\client\api\response\IspitResponse.class
 org\raflab\studsluzba\client\dto\StudentProfileDTO.class
 org\raflab\studsluzba\client\utils\AsyncTaskExecutor.class
 org\raflab\studsluzba\client\dto\ObnovaGodineRequestDTO.class
+org\raflab\studsluzba\client\controllers\StudentSearchController$SrednjaSkola.class
 org\raflab\studsluzba\client\navigation\NavigationEvent.class
 org\raflab\studsluzba\client\api\response\StudentIndeksResponse.class
 org\raflab\studsluzba\client\api\StudentApiClient.class

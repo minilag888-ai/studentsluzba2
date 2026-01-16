@@ -17,4 +17,5 @@ public class UpisGodineDTO {
     private String napomena;
     private String skolskaGodina;
     private List<PredmetDTO> predmeti;
+    private Integer ukupnoESPB;
 }

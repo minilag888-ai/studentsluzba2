@@ -1,12 +1,12 @@
 package org.raflab.studsluzba.client.controllers;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import lombok.extern.slf4j.Slf4j;
 import org.raflab.studsluzba.client.dto.StudentPodaciDTO;
 import org.raflab.studsluzba.client.navigation.NavigationManager;
@@ -20,81 +20,50 @@ import org.springframework.stereotype.Component;
 @Component
 public class StudentSearchController {
 
-    @FXML
-    private TextField txtIme;
+    @FXML private TextField txtIme;
+    @FXML private TextField txtPrezime;
+    @FXML private TextField txtGodina;
+    @FXML private TextField txtBroj;
+    @FXML private TextField txtOznaka;
+    @FXML private ComboBox<SrednjaSkola> cmbSrednjaSkola;
+    @FXML private TableView<StudentPodaciDTO> tableStudents;
+    @FXML private TableColumn<StudentPodaciDTO, String> colIme;
+    @FXML private TableColumn<StudentPodaciDTO, String> colPrezime;
+    @FXML private TableColumn<StudentPodaciDTO, String> colEmail;
+    @FXML private TableColumn<StudentPodaciDTO, String> colJmbg;
+    @FXML private TableColumn<StudentPodaciDTO, String> colSrednjaSkola;
+    @FXML private Pagination pagination;
 
-    @FXML
-    private TextField txtPrezime;
-
-    @FXML
-    private TextField txtGodina;
-
-    @FXML
-    private TextField txtBroj;
-
-    @FXML
-    private TextField txtOznaka;
-
-    @FXML
-    private Button btnSearchByName;
-
-    @FXML
-    private Button btnSearchByIndeks;
-
-    @FXML
-    private TableView<StudentPodaciDTO> tableStudents;
-
-    @FXML
-    private TableColumn<StudentPodaciDTO, String> colIme;
-
-    @FXML
-    private TableColumn<StudentPodaciDTO, String> colPrezime;
-
-    @FXML
-    private TableColumn<StudentPodaciDTO, String> colEmail;
-
-    @FXML
-    private TableColumn<StudentPodaciDTO, String> colJmbg;
-
-    @FXML
-    private Pagination pagination;
-
-    @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    private NavigationManager navigationManager;
-
-    @Autowired
-    private FxmlLoader fxmlLoader;
+    @Autowired private StudentService studentService;
+    @Autowired private NavigationManager navigationManager;
+    @Autowired private FxmlLoader fxmlLoader;
 
     private final ObservableList<StudentPodaciDTO> studentData = FXCollections.observableArrayList();
-
     private int currentPage = 0;
     private final int pageSize = 20;
 
     @FXML
     public void initialize() {
         log.info("StudentSearchController initialized");
-
         setupTable();
         setupPagination();
+        loadSrednjeSkole();
     }
 
-    /**
-     * Setup tabele
-     */
     private void setupTable() {
-        colIme.setCellValueFactory(new PropertyValueFactory<>("ime"));
-        colPrezime.setCellValueFactory(new PropertyValueFactory<>("prezime"));
-        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        colJmbg.setCellValueFactory(new PropertyValueFactory<>("jmbg"));
+        colIme.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getIme()));
+        colPrezime.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPrezime()));
+        colEmail.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEmail()));
+        colJmbg.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getJmbg()));
+        colSrednjaSkola.setCellValueFactory(data ->
+                new SimpleStringProperty(data.getValue().getSrednjaSkolaNaziv() != null ?
+                        data.getValue().getSrednjaSkolaNaziv() : "N/A"));
 
         tableStudents.setItems(studentData);
 
         // Double-click za otvaranje profila
         tableStudents.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 StudentPodaciDTO selected = tableStudents.getSelectionModel().getSelectedItem();
                 if (selected != null) {
                     openStudentProfile(selected.getId());
@@ -103,59 +72,43 @@ public class StudentSearchController {
         });
     }
 
-    /**
-     * Setup paginacije
-     */
     private void setupPagination() {
         pagination.setPageCount(1);
         pagination.setCurrentPageIndex(0);
-
         pagination.currentPageIndexProperty().addListener((obs, oldPage, newPage) -> {
             currentPage = newPage.intValue();
-            searchByName();
+            // Re-execute current search with new page
+            String ime = txtIme.getText().trim();
+            String prezime = txtPrezime.getText().trim();
+            if (!ime.isEmpty() || !prezime.isEmpty()) {
+                searchByName();
+            }
         });
     }
 
     /**
-     * Pretraga po imenu/prezimenu
+     * Učitaj listu srednjih škola
      */
-    @FXML
-    private void onSearchByName() {
-        currentPage = 0;
-        pagination.setCurrentPageIndex(0);
-        searchByName();
+    private void loadSrednjeSkole() {
+        // TODO: Implementirati API call za sve srednje škole
+        // Za sada hardcode primere
+        ObservableList<SrednjaSkola> skole = FXCollections.observableArrayList(
+                new SrednjaSkola(1L, "Matematička gimnazija"),
+                new SrednjaSkola(2L, "Treća beogradska gimnazija"),
+                new SrednjaSkola(3L, "Peta beogradska gimnazija"),
+                new SrednjaSkola(4L, "Elektrotehnička škola Nikola Tesla")
+        );
+        cmbSrednjaSkola.setItems(skole);
     }
 
-    private void searchByName() {
-        String ime = txtIme.getText().trim();
-        String prezime = txtPrezime.getText().trim();
-
-        if (ime.isEmpty() && prezime.isEmpty()) {
-            AlertUtil.showWarning("Upozorenje", "Unesite ime ili prezime za pretragu");
-            return;
-        }
-
-        log.info("Searching students: ime={}, prezime={}, page={}", ime, prezime, currentPage);
-
-        studentService.searchStudents(ime, prezime, currentPage, pageSize)
-                .subscribe(
-                        page -> Platform.runLater(() -> {
-                            studentData.clear();
-                            studentData.addAll(page.getContent());
-
-                            pagination.setPageCount(Math.max(1, page.getTotalPages()));
-
-                            log.info("Found {} students", page.getTotalElements());
-                        }),
-                        error -> Platform.runLater(() -> {
-                            log.error("Search failed", error);
-                            AlertUtil.showException("Greška pri pretrazi", (Exception) error);
-                        })
-                );
+    @FXML
+    private void onRefreshSkole() {
+        loadSrednjeSkole();
+        AlertUtil.showInfo("Osveženo", "Lista srednjih škola je ažurirana");
     }
 
     /**
-     * Pretraga po broju indeksa
+     * 1. NAČIN: Pretraga po broju indeksa - DIREKTNO OTVARA PROFIL
      */
     @FXML
     private void onSearchByIndeks() {
@@ -182,13 +135,78 @@ public class StudentSearchController {
                             }),
                             error -> Platform.runLater(() -> {
                                 log.error("Student not found", error);
-                                AlertUtil.showError("Greška", "Student nije pronađen");
+                                AlertUtil.showError("Greška", "Student sa tim brojem indeksa nije pronađen");
                             })
                     );
 
         } catch (NumberFormatException e) {
             AlertUtil.showError("Greška", "Godina i broj moraju biti brojevi");
         }
+    }
+
+    /**
+     * 2. NAČIN: Pretraga po imenu/prezimenu - PRIKAZUJE LISTU
+     */
+    @FXML
+    private void onSearchByName() {
+        currentPage = 0;
+        pagination.setCurrentPageIndex(0);
+        searchByName();
+    }
+
+    private void searchByName() {
+        String ime = txtIme.getText().trim();
+        String prezime = txtPrezime.getText().trim();
+
+        if (ime.isEmpty() && prezime.isEmpty()) {
+            AlertUtil.showWarning("Upozorenje", "Unesite ime ili prezime za pretragu");
+            return;
+        }
+
+        log.info("Searching students: ime={}, prezime={}, page={}", ime, prezime, currentPage);
+
+        studentService.searchStudents(ime, prezime, currentPage, pageSize)
+                .subscribe(
+                        page -> Platform.runLater(() -> {
+                            studentData.clear();
+                            studentData.addAll(page.getContent());
+                            pagination.setPageCount(Math.max(1, page.getTotalPages()));
+                            log.info("Found {} students", page.getTotalElements());
+                        }),
+                        error -> Platform.runLater(() -> {
+                            log.error("Search failed", error);
+                            AlertUtil.showException("Greška pri pretrazi", (Exception) error);
+                        })
+                );
+    }
+
+    /**
+     * 3. NAČIN: Pretraga po srednjoj školi - PRIKAZUJE LISTU
+     */
+    @FXML
+    private void onSearchBySrednjaSkola() {
+        SrednjaSkola selected = cmbSrednjaSkola.getValue();
+
+        if (selected == null) {
+            AlertUtil.showWarning("Upozorenje", "Izaberite srednju školu");
+            return;
+        }
+
+        log.info("Searching by srednja skola: {}", selected.getNaziv());
+
+        studentService.findBySrednjaSkola(selected.getId())
+                .subscribe(
+                        students -> Platform.runLater(() -> {
+                            studentData.clear();
+                            studentData.addAll(students);
+                            pagination.setPageCount(1); // Nema paginacije za ovu pretragu
+                            log.info("Found {} students from {}", students.size(), selected.getNaziv());
+                        }),
+                        error -> Platform.runLater(() -> {
+                            log.error("Search by skola failed", error);
+                            AlertUtil.showException("Greška pri pretrazi", (Exception) error);
+                        })
+                );
     }
 
     /**
@@ -211,7 +229,7 @@ public class StudentSearchController {
     }
 
     /**
-     * Clear search fields
+     * Clear search fields and results
      */
     @FXML
     private void onClearSearch() {
@@ -220,7 +238,29 @@ public class StudentSearchController {
         txtGodina.clear();
         txtBroj.clear();
         txtOznaka.clear();
+        cmbSrednjaSkola.setValue(null);
         studentData.clear();
         pagination.setPageCount(1);
+    }
+
+    /**
+     * Helper class za ComboBox
+     */
+    private static class SrednjaSkola {
+        private final Long id;
+        private final String naziv;
+
+        public SrednjaSkola(Long id, String naziv) {
+            this.id = id;
+            this.naziv = naziv;
+        }
+
+        public Long getId() { return id; }
+        public String getNaziv() { return naziv; }
+
+        @Override
+        public String toString() {
+            return naziv;
+        }
     }
 }

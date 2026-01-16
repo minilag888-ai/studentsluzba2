@@ -7,14 +7,17 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class NavigationEvent {
-
-    private Parent view;           // JavaFX Node (cela forma)
-    private String title;           // Naslov stranice
-    private Object context;         // Dodatni podaci (npr. studentId)
+    private Parent view;
+    private String title;
+    private Object context;  // viewType (studenti, ispiti, predmeti)
 
     public NavigationEvent(Parent view, String title) {
         this.view = view;
         this.title = title;
         this.context = null;
+    }
+
+    public String getViewType() {
+        return context != null ? context.toString() : "studenti";
     }
 }

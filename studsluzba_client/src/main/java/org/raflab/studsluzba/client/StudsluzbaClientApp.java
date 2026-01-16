@@ -3,6 +3,7 @@ package org.raflab.studsluzba.client;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.raflab.studsluzba.client.navigation.NavigationManager;
@@ -58,8 +59,14 @@ public class StudsluzbaClientApp extends Application {
             // Inicijalizuj NavigationManager
             navigationManager.initialize(primaryStage, scene);
 
-            // Dodaj prvi view u istoriju
-            navigationManager.navigateTo(root, "Početna");
+            // Pronađi contentArea i povezi sa NavigationManager
+            StackPane contentArea = (StackPane) root.lookup("#contentArea");
+            if (contentArea != null) {
+                navigationManager.setContentArea(contentArea);
+                log.info("ContentArea connected to NavigationManager");
+            } else {
+                log.warn("ContentArea not found in main-view!");
+            }
 
             // Postavi stage
             primaryStage.setTitle("Studentska služba");

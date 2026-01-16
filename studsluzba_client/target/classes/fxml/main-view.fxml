@@ -11,32 +11,29 @@
             stylesheets="@../css/style.css"
             prefWidth="1200" prefHeight="800">
 
-    <!-- TOP: Menu -->
+    <!-- TOP: Navigation buttons - FIKSNO -->
     <top>
-        <MenuBar styleClass="menu-bar">
-            <Menu text="Studenti">
-                <MenuItem text="Pretraga studenata" onAction="#onStudentiClick"/>
-            </Menu>
-            <Menu text="Ispiti">
-                <MenuItem text="Pregled ispita" onAction="#onIspitiClick"/>
-            </Menu>
-            <Menu text="Predmeti">
-                <MenuItem text="Pregled predmeta" onAction="#onPredmetiClick"/>
-            </Menu>
-            <Menu text="Izveštaji">
-                <MenuItem text="Izveštaji" onAction="#onIzvestajiClick"/>
-            </Menu>
-        </MenuBar>
+        <VBox>
+            <HBox spacing="0" alignment="CENTER_LEFT" styleClass="nav-bar">
+                <Button fx:id="btnStudenti" text="👥 Studenti" onAction="#onStudentiClick"
+                        styleClass="nav-button" prefWidth="150" prefHeight="50"/>
+                <Button fx:id="btnIspiti" text="📝 Ispiti" onAction="#onIspitiClick"
+                        styleClass="nav-button" prefWidth="150" prefHeight="50"/>
+                <Button fx:id="btnPredmeti" text="📚 Predmeti" onAction="#onPredmetiClick"
+                        styleClass="nav-button" prefWidth="150" prefHeight="50"/>
+                <Button fx:id="btnIzvestaji" text="📊 Izveštaji" onAction="#onIzvestajiClick"
+                        styleClass="nav-button" prefWidth="150" prefHeight="50"/>
+            </HBox>
+            <Separator/>
+        </VBox>
     </top>
 
-    <!-- CENTER: Dinamički sadržaj -->
+    <!-- CENTER: Content Area - SAMO OVO SE MENJA -->
     <center>
-        <StackPane style="-fx-background-color: #f5f5f5;">
-            <!-- Content će biti dinamički učitan -->
-        </StackPane>
+        <StackPane fx:id="contentArea" style="-fx-background-color: #f5f5f5;"/>
     </center>
 
-    <!-- BOTTOM: Status bar -->
+    <!-- BOTTOM: Status bar - FIKSNO -->
     <bottom>
         <HBox spacing="10" alignment="CENTER_LEFT" styleClass="status-bar">
             <padding>

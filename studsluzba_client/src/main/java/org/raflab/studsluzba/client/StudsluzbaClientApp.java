@@ -9,11 +9,19 @@ import org.raflab.studsluzba.client.navigation.NavigationManager;
 import org.raflab.studsluzba.client.utils.AlertUtil;
 import org.raflab.studsluzba.client.utils.FxmlLoader;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
+
 @Slf4j
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+        DataSourceAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class
+})
 public class StudsluzbaClientApp extends Application {
 
     private ConfigurableApplicationContext springContext;

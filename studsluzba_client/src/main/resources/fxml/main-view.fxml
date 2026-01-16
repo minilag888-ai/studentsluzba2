@@ -5,11 +5,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.raflab.studsluzba.client.controllers.MainController"
-            stylesheets="@../css/style.css">
+            stylesheets="@../css/style.css"
             prefWidth="1200" prefHeight="800">
 
     <!-- TOP: Menu i Navigacija -->

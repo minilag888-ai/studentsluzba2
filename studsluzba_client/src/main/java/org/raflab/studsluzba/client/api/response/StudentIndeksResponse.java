@@ -1,19 +1,28 @@
 package org.raflab.studsluzba.client.api.response;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudentIndeksResponse {
     private Long id;
-    private int broj;
-    private int godina;
+    private Integer broj;
+    private Integer godina;
     private String studProgramOznaka;
     private String nacinFinansiranja;
     private boolean aktivan;
     private LocalDate vaziOd;
-    private String student;
-    private String studijskiProgram;   // na koji studijski program je upisan
+
+    
+    private String studentIme;
+    private String studentPrezime;
+    private String studentEmail;
+    private String studijskiProgramNaziv;
+
     private Integer ostvarenoEspb;
 }

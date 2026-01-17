@@ -92,7 +92,7 @@ public class StudentApiClient {
     // EXAM RESULTS
     // ============================================
 
-    public Mono<Page<PolozenPredmetDTO>> getPolozeniPredmeti(Long studentIndeksId, int page, int size) {
+    public Mono<PageDTO<PolozenPredmetDTO>> getPolozeniPredmeti(Long studentIndeksId, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/students/{id}/polozeni-predmeti")
@@ -100,10 +100,9 @@ public class StudentApiClient {
                         .queryParam("size", size)
                         .build(studentIndeksId))
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Page<PolozenPredmetDTO>>() {});
-    }
+                .bodyToMono(new ParameterizedTypeReference<PageDTO<PolozenPredmetDTO>>() {});    }
 
-    public Mono<Page<NepolozenPredmetDTO>> getNepolozeniPredmeti(Long studentIndeksId, int page, int size) {
+    public Mono<PageDTO<NepolozenPredmetDTO>> getNepolozeniPredmeti(Long studentIndeksId, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/students/{id}/nepolozeni-predmeti")
@@ -111,7 +110,7 @@ public class StudentApiClient {
                         .queryParam("size", size)
                         .build(studentIndeksId))
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Page<NepolozenPredmetDTO>>() {});
+                .bodyToMono(new ParameterizedTypeReference<PageDTO<NepolozenPredmetDTO>>() {});
     }
 
     // ============================================

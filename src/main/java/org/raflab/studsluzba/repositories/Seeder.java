@@ -484,7 +484,53 @@ public class Seeder implements CommandLineRunner {
             izlazak.setPonisteno(false);
             izlazakNaIspitRepository.save(izlazak);
         }
+        // ========== DODAJ VIŠE POLOŽENIH PREDMETA ==========
+        // Dodaj položene predmete za SVIH 10 studenata (ne samo prva 3)
 
+        System.out.println("🌱 Adding more položeni predmeti...");
+
+        // Student 3: položio 4 predmeta
+        for (int j = 0; j < 4; j++) {
+            PolozenPredmet pp = new PolozenPredmet();
+            pp.setStudentIndeks(indeksList.get(3));
+            pp.setPredmet(predmetList.get(j));
+            pp.setOcena(7 + (j % 4));  // Ocene 7, 8, 9, 10
+            pp.setDatumPolaganja(LocalDate.of(2024, 2, 10 + j));
+            polozenPredmetRepository.save(pp);
+        }
+
+        // Student 4: položio 5 predmeta
+        for (int j = 0; j < 5; j++) {
+            PolozenPredmet pp = new PolozenPredmet();
+            pp.setStudentIndeks(indeksList.get(4));
+            pp.setPredmet(predmetList.get(j));
+            pp.setOcena(6 + (j % 5));  // Ocene 6-10
+            pp.setDatumPolaganja(LocalDate.of(2024, 3, 15 + j));
+            polozenPredmetRepository.save(pp);
+        }
+
+        // Student 5: položio 3 predmeta
+        for (int j = 0; j < 3; j++) {
+            PolozenPredmet pp = new PolozenPredmet();
+            pp.setStudentIndeks(indeksList.get(5));
+            pp.setPredmet(predmetList.get(j + 2));
+            pp.setOcena(9);  // Sve 9ke
+            pp.setDatumPolaganja(LocalDate.of(2024, 6, 20 + j));
+            polozenPredmetRepository.save(pp);
+        }
+
+        // Student 6-9: položili 2-6 predmeta
+        for (int i = 6; i < 10; i++) {
+            int brojPolozenih = 2 + (i % 5);  // 2-6 predmeta
+            for (int j = 0; j < brojPolozenih && j < predmetList.size(); j++) {
+                PolozenPredmet pp = new PolozenPredmet();
+                pp.setStudentIndeks(indeksList.get(i));
+                pp.setPredmet(predmetList.get(j));
+                pp.setOcena(6 + (i + j) % 5);  // Razne ocene
+                pp.setDatumPolaganja(LocalDate.of(2024, 1 + (i % 6), 5 + j));
+                polozenPredmetRepository.save(pp);
+            }
+        }
         System.out.println("Seeder completed successfully!");
         System.out.println("   - " + spList.size() + " Studijskih programa");
         System.out.println("   - " + predmetList.size() + " Predmeta");

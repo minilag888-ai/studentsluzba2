@@ -16,4 +16,7 @@ public interface UplataRepository extends CrudRepository<Uplata, Long> {
 
     @Query("SELECT SUM(u.iznosEur) FROM Uplata u WHERE u.student.id = :studentId")
     Double sumIznosEurByStudentId(@Param("studentId") Long studentId);
+
+
+
 }

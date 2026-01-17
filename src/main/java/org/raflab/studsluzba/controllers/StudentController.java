@@ -18,56 +18,21 @@ public class StudentController {
     @Autowired
     private StudentProfileService studentProfileService;
 
+    // ============================================
+    // STUDENT PROFILE
+    // ============================================
 
+    /**
+     * Profil studenta po ID
+     */
     @GetMapping("/{studentIndeksId}/profile")
     public ResponseEntity<StudentProfileDTO> getStudentProfile(@PathVariable Long studentIndeksId) {
         StudentProfileDTO profile = studentProfileService.getStudentProfile(studentIndeksId);
         return ResponseEntity.ok(profile);
     }
 
-    @GetMapping("/{studentIndeksId}/polozeni-predmeti")
-    public ResponseEntity<Page<PolozenPredmetDTO>> getPolozeniPredmeti(
-            @PathVariable Long studentIndeksId,
-            Pageable pageable) {
-        Page<PolozenPredmetDTO> predmeti = studentProfileService.getPolozeniPredmeti(studentIndeksId, pageable);
-        return ResponseEntity.ok(predmeti);
-    }
-
-    @GetMapping("/{studentIndeksId}/nepolozeni-predmeti")
-    public ResponseEntity<Page<NepolozenPredmetDTO>> getNepolozeniPredmeti(
-            @PathVariable Long studentIndeksId,
-            @RequestParam(required = false) String ime,
-            @RequestParam(required = false) String prezime,
-            Pageable pageable) {
-        Page<NepolozenPredmetDTO> predmeti = studentProfileService.getNepolozeniPredmeti(studentIndeksId, ime, prezime, pageable);
-        return ResponseEntity.ok(predmeti);
-    }
-
-    @GetMapping("/{studentIndeksId}/preostali-iznos-za-uplatu")
-    public ResponseEntity<PreostaliIznosDTO> getPreostaliIznos(@PathVariable Long studentIndeksId) {
-        PreostaliIznosDTO iznos = studentProfileService.getPreostaliIznosZaUplatu(studentIndeksId);
-        return ResponseEntity.ok(iznos);
-    }
-
-    @GetMapping("/ime-prezime")
-    public ResponseEntity<Page<StudentPodaciDTO>> getStudentsByImeIPrezime(
-            @RequestParam(required = false) String ime,
-            @RequestParam(required = false) String prezime,
-            Pageable pageable) {
-        Page<StudentPodaciDTO> studenti = studentProfileService.getStudentsByImeIPrezime(ime, prezime, pageable);
-        return ResponseEntity.ok(studenti);
-    }
-
-    @GetMapping("/srednja-skola/{srednjaSkolaId}")
-    public ResponseEntity<List<StudentPodaciDTO>> getStudentsBySrednjaSkola(@PathVariable Long srednjaSkolaId) {
-        List<StudentPodaciDTO> studenti = studentProfileService.getStudentsBySrednjaSkola(srednjaSkolaId);
-        return ResponseEntity.ok(studenti);
-    }
-
-    // ========== NOVE METODE (SPECIFIKACIJA) ==========
-
     /**
-     * 1. Selekcija studenta preko broja indeksa (godina, broj, oznaka studijskog programa)
+     * Selekcija studenta preko broja indeksa (godina, broj, oznaka studijskog programa)
      */
     @GetMapping("/indeks")
     public ResponseEntity<StudentProfileDTO> getStudentByIndeks(
@@ -78,8 +43,40 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
+    // ============================================
+    // POLOŽENI I NEPOLOŽENI PREDMETI
+    // ============================================
+
     /**
-     * 2. Pregled svih upisanih godina za broj indeksa studenta
+     * Selekcija svih položenih ispita za broj indeksa, paginirano
+     */
+    @GetMapping("/{studentIndeksId}/polozeni-predmeti")
+    public ResponseEntity<Page<PolozenPredmetDTO>> getPolozeniPredmeti(
+            @PathVariable Long studentIndeksId,
+            Pageable pageable) {
+        Page<PolozenPredmetDTO> predmeti = studentProfileService.getPolozeniPredmeti(studentIndeksId, pageable);
+        return ResponseEntity.ok(predmeti);
+    }
+
+    /**
+     * Selekcija svih nepoloženih ispita, paginirano
+     */
+    @GetMapping("/{studentIndeksId}/nepolozeni-predmeti")
+    public ResponseEntity<Page<NepolozenPredmetDTO>> getNepolozeniPredmeti(
+            @PathVariable Long studentIndeksId,
+            @RequestParam(required = false) String ime,
+            @RequestParam(required = false) String prezime,
+            Pageable pageable) {
+        Page<NepolozenPredmetDTO> predmeti = studentProfileService.getNepolozeniPredmeti(studentIndeksId, ime, prezime, pageable);
+        return ResponseEntity.ok(predmeti);
+    }
+
+    // ============================================
+    // UPIS I OBNOVA GODINE
+    // ============================================
+
+    /**
+     * Pregled svih upisanih godina za broj indeksa studenta
      */
     @GetMapping("/{studentIndeksId}/upisane-godine")
     public ResponseEntity<List<UpisGodineDTO>> getUpisaneGodine(@PathVariable Long studentIndeksId) {
@@ -88,7 +85,7 @@ public class StudentController {
     }
 
     /**
-     * 3. Upis studenta na godinu
+     * Upis studenta na godinu
      */
     @PostMapping("/{studentIndeksId}/upis-godine")
     public ResponseEntity<UpisGodineDTO> upisStudentaNaGodinu(
@@ -99,7 +96,7 @@ public class StudentController {
     }
 
     /**
-     * 4. Pregled obnovljenih godina za broj indeksa
+     * Pregled obnovljenih godina za broj indeksa
      */
     @GetMapping("/{studentIndeksId}/obnovljene-godine")
     public ResponseEntity<List<ObnovaGodineDTO>> getObnovljeneGodine(@PathVariable Long studentIndeksId) {
@@ -108,7 +105,7 @@ public class StudentController {
     }
 
     /**
-     * 5. Obnova godine za studenta (max 60 ESPB)
+     * Obnova godine za studenta (max 60 ESPB)
      */
     @PostMapping("/{studentIndeksId}/obnova-godine")
     public ResponseEntity<ObnovaGodineDTO> obnovaGodine(
@@ -118,8 +115,21 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(obnovaGodine);
     }
 
+    // ============================================
+    // UPLATE - ✅ DODATO
+    // ============================================
+
     /**
-     * 6. Dodavanje nove uplate (automatski dohvata srednji kurs EUR)
+     * ✅ NOVA METODA - Selekcija svih uplata za studenta
+     */
+    @GetMapping("/{studentIndeksId}/uplate")
+    public ResponseEntity<List<UplataDTO>> getUplate(@PathVariable Long studentIndeksId) {
+        List<UplataDTO> uplate = studentProfileService.getUplate(studentIndeksId);
+        return ResponseEntity.ok(uplate);
+    }
+
+    /**
+     * Dodavanje nove uplate (automatski dohvata srednji kurs EUR)
      */
     @PostMapping("/{studentIndeksId}/uplate")
     public ResponseEntity<UplataDTO> dodajUplatu(
@@ -127,5 +137,52 @@ public class StudentController {
             @RequestBody UplataRequestDTO request) {
         UplataDTO uplata = studentProfileService.dodajUplatu(studentIndeksId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(uplata);
+    }
+
+    /**
+     * Selekcija preostalog iznosa za uplatu (EUR + RSD)
+     */
+    @GetMapping("/{studentIndeksId}/preostali-iznos-za-uplatu")
+    public ResponseEntity<PreostaliIznosDTO> getPreostaliIznos(@PathVariable Long studentIndeksId) {
+        PreostaliIznosDTO iznos = studentProfileService.getPreostaliIznosZaUplatu(studentIndeksId);
+        return ResponseEntity.ok(iznos);
+    }
+
+    // ============================================
+    // PRETRAGA STUDENATA
+    // ============================================
+
+    /**
+     * Selekcija studenata po imenu i/ili prezimenu, paginirano
+     */
+    @GetMapping("/ime-prezime")
+    public ResponseEntity<Page<StudentPodaciDTO>> getStudentsByImeIPrezime(
+            @RequestParam(required = false) String ime,
+            @RequestParam(required = false) String prezime,
+            Pageable pageable) {
+        Page<StudentPodaciDTO> studenti = studentProfileService.getStudentsByImeIPrezime(ime, prezime, pageable);
+        return ResponseEntity.ok(studenti);
+    }
+
+    /**
+     * Selekcija studenata iz određene srednje škole
+     */
+    @GetMapping("/srednja-skola/{srednjaSkolaId}")
+    public ResponseEntity<List<StudentPodaciDTO>> getStudentsBySrednjaSkola(@PathVariable Long srednjaSkolaId) {
+        List<StudentPodaciDTO> studenti = studentProfileService.getStudentsBySrednjaSkola(srednjaSkolaId);
+        return ResponseEntity.ok(studenti);
+    }
+
+    // ============================================
+    // STATISTIKA STUDENTA
+    // ============================================
+
+    /**
+     * Statistika studenta (ESPB, prosek, broj položenih/nepoloženih)
+     */
+    @GetMapping("/{studentIndeksId}/statistics")
+    public ResponseEntity<StudentStatisticsDTO> getStatistics(@PathVariable Long studentIndeksId) {
+        StudentStatisticsDTO statistics = studentProfileService.getStatistics(studentIndeksId);
+        return ResponseEntity.ok(statistics);
     }
 }

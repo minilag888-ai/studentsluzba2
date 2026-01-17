@@ -70,20 +70,20 @@ public class StudentService {
     // ============================================
 
     /**
-     * ✅ DEBUG: Učitaj upisane godine sa detaljnim logom
+     *  DEBUG: Učitaj upisane godine sa detaljnim logom
      */
     public Mono<List<UpisGodineDTO>> getUpisaneGodine(Long studentIndeksId) {
         log.info("🔍 [DEBUG] Calling API: GET /students/{}/upisane-godine", studentIndeksId);
 
         return studentApiClient.getUpisaneGodine(studentIndeksId)
                 .doOnNext(response -> {
-                    log.info("✅ [DEBUG] RAW RESPONSE from backend:");
+                    log.info(" [DEBUG] RAW RESPONSE from backend:");
                     log.info("   - Type: {}", response.getClass().getName());
                     log.info("   - Size: {}", response.size());
                     log.info("   - Is Empty: {}", response.isEmpty());
 
                     if (!response.isEmpty()) {
-                        log.info("📦 [DEBUG] Response content:");
+                        log.info(" [DEBUG] Response content:");
                         for (int i = 0; i < response.size(); i++) {
                             UpisGodineDTO dto = response.get(i);
                             log.info("   [{}] ID={}, Godina={}, ESPB={}, Skolska={}, Datum={}",
@@ -91,28 +91,28 @@ public class StudentService {
                                     dto.getSkolskaGodina(), dto.getDatumUpisa());
                         }
                     } else {
-                        log.warn("⚠️ [DEBUG] Backend returned EMPTY list!");
+                        log.warn(" [DEBUG] Backend returned EMPTY list!");
                     }
                 })
                 .doOnError(error -> {
-                    log.error("❌ [DEBUG] API call FAILED!", error);
+                    log.error(" [DEBUG] API call FAILED!", error);
                     log.error("   - Error type: {}", error.getClass().getName());
                     log.error("   - Error message: {}", error.getMessage());
                 });
     }
 
     /**
-     * ✅ DEBUG: Učitaj obnovljene godine sa detaljnim logom
+     *  DEBUG: Učitaj obnovljene godine sa detaljnim logom
      */
     public Mono<List<ObnovaGodineDTO>> getObnovljeneGodine(Long studentIndeksId) {
         log.info("🔍 [DEBUG] Calling API: GET /students/{}/obnovljene-godine", studentIndeksId);
 
         return studentApiClient.getObnovljeneGodine(studentIndeksId)
                 .doOnNext(response -> {
-                    log.info("✅ [DEBUG] Received {} obnovljene godine", response.size());
+                    log.info(" [DEBUG] Received {} obnovljene godine", response.size());
                 })
                 .doOnError(error -> {
-                    log.error("❌ [DEBUG] Failed to load obnovljene godine", error);
+                    log.error(" [DEBUG] Failed to load obnovljene godine", error);
                 });
     }
 
@@ -120,18 +120,18 @@ public class StudentService {
      * Upiši studenta na godinu
      */
     public Mono<UpisGodineDTO> upisNaGodinu(Long studentIndeksId, UpisGodineRequestDTO request) {
-        log.info("📤 [DEBUG] Sending POST /students/{}/upis-godine", studentIndeksId);
+        log.info(" [DEBUG] Sending POST /students/{}/upis-godine", studentIndeksId);
         log.info("   Request: godina={}, skolskaId={}, predmeti={}",
                 request.getGodinaStudija(), request.getSkolskaGodinaId(), request.getPredmetIds().size());
 
         return studentApiClient.upisNaGodinu(studentIndeksId, request)
                 .doOnNext(response -> {
-                    log.info("✅ [DEBUG] UPIS SUCCESS!");
+                    log.info(" [DEBUG] UPIS SUCCESS!");
                     log.info("   Response: ID={}, godina={}, ESPB={}, skolska={}",
                             response.getId(), response.getGodinaStudija(), response.getUkupnoESPB(), response.getSkolskaGodina());
                 })
                 .doOnError(error -> {
-                    log.error("❌ [DEBUG] UPIS FAILED!", error);
+                    log.error(" [DEBUG] UPIS FAILED!", error);
                 });
     }
 
@@ -139,14 +139,14 @@ public class StudentService {
      * Obnovi godinu studija
      */
     public Mono<ObnovaGodineDTO> obnovaGodine(Long studentIndeksId, ObnovaGodineRequestDTO request) {
-        log.info("📤 [DEBUG] Sending POST /students/{}/obnova-godine", studentIndeksId);
+        log.info(" [DEBUG] Sending POST /students/{}/obnova-godine", studentIndeksId);
 
         return studentApiClient.obnovaGodine(studentIndeksId, request)
                 .doOnNext(response -> {
-                    log.info("✅ [DEBUG] OBNOVA SUCCESS!");
+                    log.info(" [DEBUG] OBNOVA SUCCESS!");
                 })
                 .doOnError(error -> {
-                    log.error("❌ [DEBUG] OBNOVA FAILED!", error);
+                    log.error(" [DEBUG] OBNOVA FAILED!", error);
                 });
     }
 
@@ -155,30 +155,30 @@ public class StudentService {
     // ============================================
 
     /**
-     * ✅ DEBUG: Učitaj uplate sa detaljnim logom
+     *  DEBUG: Učitaj uplate sa detaljnim logom
      */
     public Mono<List<UplataDTO>> getUplate(Long studentIndeksId) {
-        log.info("🔍 [DEBUG] Calling API: GET /students/{}/uplate", studentIndeksId);
+        log.info(" [DEBUG] Calling API: GET /students/{}/uplate", studentIndeksId);
 
         return studentApiClient.getUplate(studentIndeksId)
                 .doOnNext(response -> {
-                    log.info("✅ [DEBUG] RAW RESPONSE from backend:");
+                    log.info(" [DEBUG] RAW RESPONSE from backend:");
                     log.info("   - Type: {}", response.getClass().getName());
                     log.info("   - Size: {}", response.size());
 
                     if (!response.isEmpty()) {
-                        log.info("📦 [DEBUG] Uplate content:");
+                        log.info(" [DEBUG] Uplate content:");
                         for (int i = 0; i < response.size(); i++) {
                             UplataDTO dto = response.get(i);
                             log.info("   [{}] ID={}, Datum={}, EUR={}, RSD={}",
                                     i, dto.getId(), dto.getDatumUplate(), dto.getIznosEur(), dto.getIznosRsd());
                         }
                     } else {
-                        log.warn("⚠️ [DEBUG] Backend returned EMPTY list of uplate!");
+                        log.warn(" [DEBUG] Backend returned EMPTY list of uplate!");
                     }
                 })
                 .doOnError(error -> {
-                    log.error("❌ [DEBUG] API call FAILED for uplate!", error);
+                    log.error(" [DEBUG] API call FAILED for uplate!", error);
                     log.error("   - Error type: {}", error.getClass().getName());
                     log.error("   - Error message: {}", error.getMessage());
                 });
@@ -195,17 +195,17 @@ public class StudentService {
      * Evidentiraj uplatu
      */
     public Mono<UplataDTO> dodajUplatu(Long studentIndeksId, UplataRequestDTO request) {
-        log.info("📤 [DEBUG] Sending POST /students/{}/uplate", studentIndeksId);
+        log.info(" [DEBUG] Sending POST /students/{}/uplate", studentIndeksId);
         log.info("   Request: datum={}, iznos={}", request.getDatumUplate(), request.getIznosEur());
 
         return studentApiClient.dodajUplatu(studentIndeksId, request)
                 .doOnNext(response -> {
-                    log.info("✅ [DEBUG] UPLATA SUCCESS!");
+                    log.info(" [DEBUG] UPLATA SUCCESS!");
                     log.info("   Response: ID={}, EUR={}, kurs={}, RSD={}",
                             response.getId(), response.getIznosEur(), response.getSrednjiKurs(), response.getIznosRsd());
                 })
                 .doOnError(error -> {
-                    log.error("❌ [DEBUG] UPLATA FAILED!", error);
+                    log.error(" [DEBUG] UPLATA FAILED!", error);
                 });
     }
 
@@ -233,5 +233,26 @@ public class StudentService {
                 .mapToInt(PolozenPredmetDTO::getOcena)
                 .average()
                 .orElse(0.0);
+    }
+    // ============================================
+    // STATISTICS
+    // ============================================
+
+    /**
+     * Učitaj statistiku studenta (ESPB, prosek)
+     */
+    public Mono<StudentStatisticsDTO> getStatistics(Long studentIndeksId) {
+        log.info("🔍 [DEBUG] Calling API: GET /students/{}/statistics", studentIndeksId);
+
+        return studentApiClient.getStatistics(studentIndeksId)
+                .doOnNext(response -> {
+                    log.info(" [DEBUG] STATISTICS SUCCESS!");
+                    log.info("   ESPB: {}, Prosek: {}, Položenih: {}, Nepoloženih: {}",
+                            response.getUkupnoESPB(), response.getProsecnaOcena(),
+                            response.getBrojPolozenihPredmeta(), response.getBrojNepolozenihPredmeta());
+                })
+                .doOnError(error -> {
+                    log.error(" [DEBUG] STATISTICS FAILED!", error);
+                });
     }
 }

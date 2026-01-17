@@ -37,6 +37,7 @@ public class StudentProfileController {
     @FXML private Label lblIndeks;
     @FXML private Label lblEmail;
     @FXML private Label lblEspb;
+    @FXML private Label lblUkupnoESPB;
     @FXML private Label lblProsek;
     @FXML private Label lblPreostaliIznos;
 
@@ -79,6 +80,7 @@ public class StudentProfileController {
     @Autowired private StudentService studentService;
     @Autowired private PredmetService predmetService;
     @Autowired private ReportService reportService;
+
 
     private StudentProfileDTO currentStudent;
     private Long currentStudentIndeksId;
@@ -176,6 +178,7 @@ public class StudentProfileController {
         loadObnovljeneGodine(currentStudentIndeksId);
         loadPreostaliIznos(currentStudentIndeksId);
         loadUplate(currentStudentIndeksId);
+        loadStatistics();
     }
 
     private void displayStudentInfo(StudentProfileDTO student) {
@@ -191,12 +194,7 @@ public class StudentProfileController {
                         page -> Platform.runLater(() -> {
                             polozeniData.clear();
                             polozeniData.addAll(page.getContent());
-
-                            int ukupnoEspb = studentService.calculateTotalESPB(page.getContent());
-                            double prosek = studentService.calculateAverageGrade(page.getContent());
-
-                            lblEspb.setText(String.valueOf(ukupnoEspb));
-                            lblProsek.setText(String.format("%.2f", prosek));
+                            log.info("Loaded {} položenih predmeta", polozeniData.size());
                         }),
                         error -> log.error("Failed to load polozeni predmeti", error)
                 );
@@ -846,6 +844,27 @@ public class StudentProfileController {
         public String toString() {
             return predmet.getSifra() + " - " + predmet.getNaziv() + " (" + predmet.getEspb() + " ESPB)";
         }
+    }
+    private void loadStatistics() {
+        if (currentStudentIndeksId == null) return;
+
+        studentService.getStatistics(currentStudentIndeksId)
+                .subscribe(
+                        stats -> Platform.runLater(() -> {
+                            //  KORISTIMO lblEspb umesto lblUkupnoESPB!
+                            if (lblEspb != null) {
+                                lblEspb.setText(String.valueOf(stats.getUkupnoESPB()));
+                            }
+                            if (lblProsek != null) {
+                                lblProsek.setText(String.format("%.2f", stats.getProsecnaOcena()));
+                            }
+                            log.info("Statistics loaded: ESPB={}, Prosek={}",
+                                    stats.getUkupnoESPB(), stats.getProsecnaOcena());
+                        }),
+                        error -> {
+                            log.error("Failed to load statistics", error);
+                        }
+                );
     }
     /**
      * ✅ HELPER - Osveži sve podatke studenta

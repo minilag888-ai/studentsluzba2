@@ -6,14 +6,16 @@ import org.raflab.studsluzba.repositories.*;
 import org.raflab.studsluzba.mappers.PredmetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;  // ✅ DODAJ IMPORT
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,8 +53,6 @@ public class StudentProfileService {
 
     private static final Double SKOLARINA_EUR = 3000.0;
 
-
-
     @Transactional(readOnly = true)
     public StudentProfileDTO getStudentProfile(Long studentIndeksId) {
         StudentIndeks indeks = indeksRepo.findById(studentIndeksId)
@@ -77,13 +77,21 @@ public class StudentProfileService {
     }
 
     @Transactional(readOnly = true)
+    public StudentProfileDTO getStudentByIndeks(Integer godina, Integer broj, String oznaka) {
+        StudentIndeks indeks = indeksRepo.findByGodinaAndBrojAndStudProgramOznaka(godina, broj, oznaka)
+                .orElseThrow(() -> new RuntimeException("Student sa datim indeksom ne postoji"));
+
+        return getStudentProfile(indeks.getId());
+    }
+
+    @Transactional(readOnly = true)
     public Page<PolozenPredmetDTO> getPolozeniPredmeti(Long studentIndeksId, Pageable pageable) {
         StudentIndeks indeks = indeksRepo.findById(studentIndeksId)
                 .orElseThrow(() -> new RuntimeException("Student indeks ne postoji"));
 
         Page<PolozenPredmet> polozeni = polozenPredmetRepo.findByStudentIndeks(indeks, pageable);
 
-        return polozeni.map(pp -> {
+        List<PolozenPredmetDTO> dtos = polozeni.getContent().stream().map(pp -> {
             PolozenPredmetDTO dto = new PolozenPredmetDTO();
             dto.setId(pp.getId());
             dto.setSifraPredmeta(pp.getPredmet().getSifra());
@@ -91,12 +99,10 @@ public class StudentProfileService {
             dto.setEspb(pp.getPredmet().getEspb());
             dto.setOcena(pp.getOcena());
             dto.setDatumPolaganja(pp.getDatumPolaganja());
-
-
-            dto.setTipPolaganja("Ispit");
-
             return dto;
-        });
+        }).collect(Collectors.toList());
+
+        return new PageImpl<>(dtos, pageable, polozeni.getTotalElements());
     }
 
     @Transactional(readOnly = true)
@@ -104,22 +110,17 @@ public class StudentProfileService {
         StudentIndeks indeks = indeksRepo.findById(studentIndeksId)
                 .orElseThrow(() -> new RuntimeException("Student indeks ne postoji"));
 
-        List<SlusaPredmet> slusaPredmeti = slusaPredmetRepo.findByStudentIndeks(indeks);
+        List<SlusaPredmet> slusaPredmete = slusaPredmetRepo.findByStudentIndeks(indeks);
         List<PolozenPredmet> polozeniPredmeti = polozenPredmetRepo.findByStudentIndeks(indeks);
-
         List<Long> polozeniIds = polozeniPredmeti.stream()
                 .map(pp -> pp.getPredmet().getId())
                 .collect(Collectors.toList());
 
-        List<NepolozenPredmetDTO> nepolozeni = slusaPredmeti.stream()
-                .filter(sp -> {
-                    Predmet predmet = sp.getDrziPredmet().getPredmet();
-                    return !polozeniIds.contains(predmet.getId());
-                })
+        List<NepolozenPredmetDTO> nepolozeni = slusaPredmete.stream()
+                .filter(sp -> !polozeniIds.contains(sp.getDrziPredmet().getPredmet().getId()))
                 .map(sp -> {
-                    Predmet predmet = sp.getDrziPredmet().getPredmet();
-
                     NepolozenPredmetDTO dto = new NepolozenPredmetDTO();
+                    Predmet predmet = sp.getDrziPredmet().getPredmet();
                     dto.setId(sp.getId());
                     dto.setSifraPredmeta(predmet.getSifra());
                     dto.setNazivPredmeta(predmet.getNaziv());
@@ -138,40 +139,7 @@ public class StudentProfileService {
         int end = Math.min((start + pageable.getPageSize()), nepolozeni.size());
         List<NepolozenPredmetDTO> pageContent = nepolozeni.subList(start, end);
 
-        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, nepolozeni.size());
-    }
-
-    @Transactional(readOnly = true)
-    public PreostaliIznosDTO getPreostaliIznosZaUplatu(Long studentIndeksId) {
-        StudentIndeks indeks = indeksRepo.findById(studentIndeksId)
-                .orElseThrow(() -> new RuntimeException("Student indeks ne postoji"));
-
-        List<Uplata> uplate = uplataRepo.findByStudent(indeks.getStudent());
-        Double ukupnoUplaceno = uplate.stream()
-                .mapToDouble(Uplata::getIznos)
-                .sum();
-
-        Double srednjiKurs = getSrednjiKursEUR();
-        Double preostaloEur = SKOLARINA_EUR - ukupnoUplaceno;
-        Double preostaloRsd = preostaloEur * srednjiKurs;
-
-        PreostaliIznosDTO dto = new PreostaliIznosDTO();
-        dto.setPreostaliIznosEur(preostaloEur);
-        dto.setPreostaliIznosRsd(preostaloRsd);
-        dto.setSrednjiKurs(srednjiKurs);
-        dto.setSkolarinaNaCenu(SKOLARINA_EUR);
-
-        return dto;
-    }
-
-
-
-    @Transactional(readOnly = true)
-    public StudentProfileDTO getStudentByIndeks(Integer godina, Integer broj, String oznaka) {
-        StudentIndeks indeks = indeksRepo.findByGodinaAndBrojAndStudProgramOznaka(godina, broj, oznaka)
-                .orElseThrow(() -> new RuntimeException("Student sa datim indeksom ne postoji"));
-
-        return getStudentProfile(indeks.getId());
+        return new PageImpl<>(pageContent, pageable, nepolozeni.size());
     }
 
     @Transactional(readOnly = true)
@@ -189,6 +157,12 @@ public class StudentProfileService {
             dto.setNapomena(ug.getNapomena());
             dto.setSkolskaGodina(ug.getSkolskaGodina().getNaziv());
             dto.setPredmeti(predmetMapper.toDTOList(ug.getPredmeti()));
+
+            int ukupnoEspb = ug.getPredmeti().stream()
+                    .mapToInt(Predmet::getEspb)
+                    .sum();
+            dto.setUkupnoESPB(ukupnoEspb);
+
             return dto;
         }).collect(Collectors.toList());
     }
@@ -222,6 +196,11 @@ public class StudentProfileService {
         dto.setSkolskaGodina(skolskaGodina.getNaziv());
         dto.setPredmeti(predmetMapper.toDTOList(predmeti));
 
+        int ukupnoEspb = predmeti.stream()
+                .mapToInt(Predmet::getEspb)
+                .sum();
+        dto.setUkupnoESPB(ukupnoEspb);
+
         return dto;
     }
 
@@ -239,12 +218,13 @@ public class StudentProfileService {
             dto.setDatumObnove(og.getDatumObnove());
             dto.setNapomena(og.getNapomena());
             dto.setSkolskaGodina(og.getSkolskaGodina().getNaziv());
+
+            int ukupnoEspb = og.getPredmeti().stream()
+                    .mapToInt(Predmet::getEspb)
+                    .sum();
+            dto.setUkupnoESPB(ukupnoEspb);
+
             dto.setPredmeti(predmetMapper.toDTOList(og.getPredmeti()));
-
-            // Izračunaj ESPB dinamički
-            int ukupnoESPB = og.getPredmeti().stream().mapToInt(Predmet::getEspb).sum();
-            dto.setUkupnoESPB(ukupnoESPB);
-
             return dto;
         }).collect(Collectors.toList());
     }
@@ -260,9 +240,12 @@ public class StudentProfileService {
         List<Predmet> predmeti = new ArrayList<>();
         predmetRepo.findAllById(request.getPredmetIds()).forEach(predmeti::add);
 
-        int ukupnoESPB = predmeti.stream().mapToInt(Predmet::getEspb).sum();
-        if (ukupnoESPB > 60) {
-            throw new RuntimeException("Ukupan ESPB ne može biti veći od 60!");
+        int ukupnoEspb = predmeti.stream()
+                .mapToInt(Predmet::getEspb)
+                .sum();
+
+        if (ukupnoEspb > 60) {
+            throw new RuntimeException("Ukupan broj ESPB poena ne može biti veći od 60 (trenutno: " + ukupnoEspb + ")");
         }
 
         ObnovaGodine obnovaGodine = new ObnovaGodine();
@@ -281,18 +264,89 @@ public class StudentProfileService {
         dto.setDatumObnove(obnovaGodine.getDatumObnove());
         dto.setNapomena(obnovaGodine.getNapomena());
         dto.setSkolskaGodina(skolskaGodina.getNaziv());
+        dto.setUkupnoESPB(ukupnoEspb);
         dto.setPredmeti(predmetMapper.toDTOList(predmeti));
-        dto.setUkupnoESPB(ukupnoESPB);
 
         return dto;
     }
 
+    // ============================================
+    // STATISTIKA STUDENTA (ESPB, PROSEK)
+    // ============================================
+
+    @Transactional(readOnly = true)
+    public StudentStatisticsDTO getStatistics(Long studentIndeksId) {
+        StudentIndeks indeks = indeksRepo.findById(studentIndeksId)
+                .orElseThrow(() -> new RuntimeException("Student indeks ne postoji"));
+
+        List<PolozenPredmet> polozeniPredmeti = polozenPredmetRepo.findByStudentIndeks(indeks);
+        List<SlusaPredmet> slusaPredmete = slusaPredmetRepo.findByStudentIndeks(indeks);
+
+        // Ukupan ESPB
+        int ukupnoEspb = polozeniPredmeti.stream()
+                .mapToInt(pp -> pp.getPredmet().getEspb())
+                .sum();
+
+        // Prosečna ocena
+        double prosek = polozeniPredmeti.isEmpty() ? 0.0 :
+                polozeniPredmeti.stream()
+                        .mapToInt(PolozenPredmet::getOcena)
+                        .average()
+                        .orElse(0.0);
+
+        // Broj položenih
+        int brojPolozenih = polozeniPredmeti.size();
+
+        // Broj nepoloženih (sluša ali nije položio)
+        List<Long> polozeniIds = polozeniPredmeti.stream()
+                .map(pp -> pp.getPredmet().getId())
+                .collect(Collectors.toList());
+
+        int brojNepolozenih = (int) slusaPredmete.stream()
+                .filter(sp -> !polozeniIds.contains(sp.getDrziPredmet().getPredmet().getId()))
+                .count();
+
+        StudentStatisticsDTO dto = new StudentStatisticsDTO();
+        dto.setUkupnoESPB(ukupnoEspb);
+        dto.setProsecnaOcena(Math.round(prosek * 100.0) / 100.0); // 2 decimale
+        dto.setBrojPolozenihPredmeta(brojPolozenih);
+        dto.setBrojNepolozenihPredmeta(brojNepolozenih);
+
+        return dto;
+    }
+
+    // ============================================
+    // ✅ UPLATE - NOVA METODA
+    // ============================================
+
+    @Transactional(readOnly = true)
+    public List<UplataDTO> getUplate(Long studentIndeksId) {
+        StudentIndeks indeks = indeksRepo.findById(studentIndeksId)
+                .orElseThrow(() -> new RuntimeException("Student indeks nije pronađen"));
+
+        StudentPodaci student = indeks.getStudent();
+
+        List<Uplata> uplate = uplataRepo.findByStudentOrderByDatumUplateDesc(student);
+
+        return uplate.stream()
+                .map(uplata -> {
+                    UplataDTO dto = new UplataDTO();
+                    dto.setId(uplata.getId());
+                    dto.setDatumUplate(uplata.getDatumUplate());
+                    dto.setIznosEur(uplata.getIznosEur());
+                    dto.setSrednjiKurs(uplata.getSrednjiKurs());
+                    dto.setIznosRsd(uplata.getIznosRsd());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public UplataDTO dodajUplatu(Long studentIndeksId, UplataRequestDTO request) {
-        // VALIDACIJA - iznos ne sme biti negativan ili nula
         if (request.getIznosEur() == null || request.getIznosEur() <= 0) {
             throw new RuntimeException("Iznos uplate mora biti veći od 0");
         }
+
         StudentIndeks indeks = indeksRepo.findById(studentIndeksId)
                 .orElseThrow(() -> new RuntimeException("Student indeks ne postoji"));
 
@@ -300,8 +354,6 @@ public class StudentProfileService {
 
         Uplata uplata = new Uplata();
         uplata.setStudent(indeks.getStudent());
-
-
         uplata.setDatumUplate(request.getDatumUplate());
         uplata.setIznosEur(request.getIznosEur());
         uplata.setSrednjiKurs(srednjiKurs);
@@ -309,96 +361,122 @@ public class StudentProfileService {
 
         uplata = uplataRepo.save(uplata);
 
-
         UplataDTO dto = new UplataDTO();
         dto.setId(uplata.getId());
         dto.setDatumUplate(uplata.getDatumUplate());
         dto.setIznosEur(uplata.getIznosEur());
-        dto.setSrednjiKurs(srednjiKurs);
+        dto.setSrednjiKurs(uplata.getSrednjiKurs());
         dto.setIznosRsd(uplata.getIznosRsd());
 
         return dto;
     }
 
     @Transactional(readOnly = true)
+    public PreostaliIznosDTO getPreostaliIznosZaUplatu(Long studentIndeksId) {
+        StudentIndeks indeks = indeksRepo.findById(studentIndeksId)
+                .orElseThrow(() -> new RuntimeException("Student indeks ne postoji"));
+
+        List<Uplata> uplate = uplataRepo.findByStudent(indeks.getStudent());
+        Double ukupnoUplaceno = uplate.stream()
+                .mapToDouble(Uplata::getIznosEur)
+                .sum();
+
+        Double srednjiKurs = getSrednjiKursEUR();
+        Double preostaloEur = SKOLARINA_EUR - ukupnoUplaceno;
+        if (preostaloEur < 0) {
+            preostaloEur = 0.0;
+        }
+        Double preostaloRsd = preostaloEur * srednjiKurs;
+
+        PreostaliIznosDTO dto = new PreostaliIznosDTO();
+        dto.setPreostaliIznosEur(preostaloEur);
+        dto.setPreostaliIznosRsd(preostaloRsd);
+        dto.setSrednjiKurs(srednjiKurs);
+        dto.setSkolarinaNaCenu(SKOLARINA_EUR);
+
+        return dto;
+    }
+
+    // ============================================
+    // PRETRAGA
+    // ============================================
+
+    @Transactional(readOnly = true)
     public Page<StudentPodaciDTO> getStudentsByImeIPrezime(String ime, String prezime, Pageable pageable) {
         Page<StudentPodaci> studenti;
 
-        if (ime != null && prezime != null) {
+        if (ime != null && !ime.isEmpty() && prezime != null && !prezime.isEmpty()) {
             studenti = studentPodaciRepo.findByImeContainingIgnoreCaseAndPrezimeContainingIgnoreCase(ime, prezime, pageable);
-        } else if (ime != null) {
+        } else if (ime != null && !ime.isEmpty()) {
             studenti = studentPodaciRepo.findByImeContainingIgnoreCase(ime, pageable);
-        } else if (prezime != null) {
+        } else if (prezime != null && !prezime.isEmpty()) {
             studenti = studentPodaciRepo.findByPrezimeContainingIgnoreCase(prezime, pageable);
         } else {
             studenti = studentPodaciRepo.findAll(pageable);
         }
 
-        return studenti.map(this::convertToDTO);
+        List<StudentPodaciDTO> dtos = studenti.getContent().stream()
+                .map(student -> {
+                    StudentPodaciDTO dto = new StudentPodaciDTO();
+                    dto.setId(student.getId());
+                    dto.setIme(student.getIme());
+                    dto.setPrezime(student.getPrezime());
+                    dto.setSrednjeIme(student.getSrednjeIme());
+                    dto.setJmbg(student.getJmbg());
+                    dto.setEmail(student.getEmail());
+                    dto.setBrojTelefona(student.getBrojTelefonaMobilni());
+
+                    if (student.getSrednjaSkola() != null) {
+                        dto.setSrednjaSkolaNaziv(student.getSrednjaSkola().getNaziv());
+                    }
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtos, pageable, studenti.getTotalElements());
     }
 
-    @Transactional(readOnly = true)  //
+    @Transactional(readOnly = true)
     public List<StudentPodaciDTO> getStudentsBySrednjaSkola(Long srednjaSkolaId) {
+        // ✅ ISPRAVLJENO - koristi findBySrednjaSkolaId umesto findBySrednjaSkola_Id
         List<StudentPodaci> studenti = studentPodaciRepo.findBySrednjaSkolaId(srednjaSkolaId);
-        return studenti.stream().map(this::convertToDTO).collect(Collectors.toList());
-    }
 
-    // ========== HELPER METODE ==========
+        return studenti.stream()
+                .map(student -> {
+                    StudentPodaciDTO dto = new StudentPodaciDTO();
+                    dto.setId(student.getId());
+                    dto.setIme(student.getIme());
+                    dto.setPrezime(student.getPrezime());
+                    dto.setSrednjeIme(student.getSrednjeIme());
+                    dto.setJmbg(student.getJmbg());
+                    dto.setEmail(student.getEmail());
+                    dto.setBrojTelefona(student.getBrojTelefonaMobilni());
 
-    private StudentPodaciDTO convertToDTO(StudentPodaci student) {
-        StudentPodaciDTO dto = new StudentPodaciDTO();
-        dto.setId(student.getId());
-        dto.setIme(student.getIme());
-        dto.setPrezime(student.getPrezime());
-        dto.setSrednjeIme(student.getSrednjeIme());
-        dto.setJmbg(student.getJmbg());
-        dto.setDatumRodjenja(student.getDatumRodjenja());
+                    if (student.getSrednjaSkola() != null) {
+                        dto.setSrednjaSkolaNaziv(student.getSrednjaSkola().getNaziv());
+                    }
 
-
-        dto.setMestoRodjenja(student.getMestoRodjenja());
-        dto.setDrzavaRodjenja(student.getDrzavaRodjenja());
-        dto.setDrzavljanstvo(student.getDrzavljanstvo());
-
-
-        if (student.getPol() != null) {
-            dto.setPol(String.valueOf(student.getPol()));
-        }
-
-        dto.setEmail(student.getEmail());
-        dto.setBrojTelefona(student.getBrojTelefonaMobilni());
-
-        if (student.getSrednjaSkola() != null) {
-            dto.setSrednjaSkolaNaziv(student.getSrednjaSkola().getNaziv());
-        }
-
-        return dto;
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     private Double getSrednjiKursEUR() {
         try {
-            RestTemplate restTemplate = new RestTemplate();
             String url = "https://kurs.resenje.org/api/v1/currencies/eur/rates/today";
-            KursResponse response = restTemplate.getForObject(url, KursResponse.class);
+            RestTemplate restTemplate = new RestTemplate();
 
-            if (response != null && response.getExchangeMiddle() != null) {
-                return response.getExchangeMiddle();
+            @SuppressWarnings("unchecked")
+            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+
+            if (response != null && response.containsKey("exchange_middle")) {
+                return Double.parseDouble(response.get("exchange_middle").toString());
             }
         } catch (Exception e) {
-            System.err.println("Greška prilikom dohvatanja kursa: " + e.getMessage());
+            return 117.5;
         }
 
         return 117.5;
-    }
-
-    private static class KursResponse {
-        private Double exchangeMiddle;
-
-        public Double getExchangeMiddle() {
-            return exchangeMiddle;
-        }
-
-        public void setExchangeMiddle(Double exchangeMiddle) {
-            this.exchangeMiddle = exchangeMiddle;
-        }
     }
 }

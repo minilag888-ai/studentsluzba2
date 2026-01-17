@@ -17,14 +17,10 @@ public class StudentApiClient {
 
     private final WebClient webClient;
 
-    /**
-     * ✅ Koristi api.base.url iz application.properties
-     */
     public StudentApiClient(@Value("${api.base.url}") String baseUrl) {
         this.webClient = WebClient.builder()
                 .baseUrl(baseUrl)
                 .build();
-
         log.info("StudentApiClient initialized with base URL: {}", baseUrl);
     }
 
@@ -40,12 +36,23 @@ public class StudentApiClient {
     }
 
     // ============================================
+    // STATISTICS - ✅ NOVO!
+    // ============================================
+
+    public Mono<StudentStatisticsDTO> getStatistics(Long studentIndeksId) {
+        log.debug("Fetching statistics for student: {}", studentIndeksId);
+
+        return webClient.get()
+                .uri("/students/{id}/statistics", studentIndeksId)
+                .retrieve()
+                .bodyToMono(StudentStatisticsDTO.class)
+                .doOnError(error -> log.error("Failed to fetch statistics", error));
+    }
+
+    // ============================================
     // SEARCH ENDPOINTS
     // ============================================
 
-    /**
-     * ✅ Backend vraća Page<StudentPodaciDTO>
-     */
     public Mono<Page<StudentPodaciDTO>> searchStudents(String ime, String prezime, int page, int size) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -112,8 +119,6 @@ public class StudentApiClient {
     // ============================================
 
     public Mono<List<UpisGodineDTO>> getUpisaneGodine(Long studentIndeksId) {
-        log.debug("Fetching upisane godine for student: {}", studentIndeksId);
-
         return webClient.get()
                 .uri("/students/{id}/upisane-godine", studentIndeksId)
                 .retrieve()
@@ -122,8 +127,6 @@ public class StudentApiClient {
     }
 
     public Mono<List<ObnovaGodineDTO>> getObnovljeneGodine(Long studentIndeksId) {
-        log.debug("Fetching obnovljene godine for student: {}", studentIndeksId);
-
         return webClient.get()
                 .uri("/students/{id}/obnovljene-godine", studentIndeksId)
                 .retrieve()
@@ -132,8 +135,6 @@ public class StudentApiClient {
     }
 
     public Mono<UpisGodineDTO> upisNaGodinu(Long studentIndeksId, UpisGodineRequestDTO request) {
-        log.debug("Enrolling student {} to year {}", studentIndeksId, request.getGodinaStudija());
-
         return webClient.post()
                 .uri("/students/{id}/upis-godine", studentIndeksId)
                 .bodyValue(request)
@@ -143,8 +144,6 @@ public class StudentApiClient {
     }
 
     public Mono<ObnovaGodineDTO> obnovaGodine(Long studentIndeksId, ObnovaGodineRequestDTO request) {
-        log.debug("Renewing year for student {}", studentIndeksId);
-
         return webClient.post()
                 .uri("/students/{id}/obnova-godine", studentIndeksId)
                 .bodyValue(request)
@@ -158,8 +157,6 @@ public class StudentApiClient {
     // ============================================
 
     public Mono<List<UplataDTO>> getUplate(Long studentIndeksId) {
-        log.debug("Fetching uplate for student: {}", studentIndeksId);
-
         return webClient.get()
                 .uri("/students/{id}/uplate", studentIndeksId)
                 .retrieve()
@@ -168,8 +165,6 @@ public class StudentApiClient {
     }
 
     public Mono<PreostaliIznosDTO> getPreostaliIznos(Long studentIndeksId) {
-        log.debug("Fetching preostali iznos for student: {}", studentIndeksId);
-
         return webClient.get()
                 .uri("/students/{id}/preostali-iznos-za-uplatu", studentIndeksId)
                 .retrieve()
@@ -178,8 +173,6 @@ public class StudentApiClient {
     }
 
     public Mono<UplataDTO> dodajUplatu(Long studentIndeksId, UplataRequestDTO request) {
-        log.debug("Adding payment for student {}: {} EUR", studentIndeksId, request.getIznosEur());
-
         return webClient.post()
                 .uri("/students/{id}/uplate", studentIndeksId)
                 .bodyValue(request)

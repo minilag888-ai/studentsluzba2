@@ -119,22 +119,38 @@ public class IspitController {
 
     @FXML
     private void onGenerisiZapisnik() {
-        if (selectedIspit == null) {
-            AlertUtil.showWarning("Upozorenje", "Izaberite ispit");
-            return;
-        }
+        // Dohvati selektovani ispit iz tabele
+        IspitResponse selectedIspit = tableIspiti.getSelectionModel().getSelectedItem();
 
-        if (rezultatiData.isEmpty()) {
-            AlertUtil.showWarning("Upozorenje", "Prvo učitajte rezultate ispita");
+        if (selectedIspit == null) {
+            AlertUtil.showWarning("Upozorenje", "Selektujte ispit iz tabele");
             return;
         }
 
         try {
-            reportService.generateZapisnikSaIspita(selectedIspit, rezultatiData);
-            AlertUtil.showInfo("Uspeh", "Zapisnik je generisan i otvoren");
+            log.info("Generating zapisnik for ispit: {} - {}",
+                    selectedIspit.getPredmetNaziv(), selectedIspit.getIspitniRokNaziv());
+
+            // Učitaj rezultate ispita sa sortiranjem
+            ispitService.getRezultati(selectedIspit.getId(), "studProgram")
+                    .subscribe(
+                            rezultati -> Platform.runLater(() -> {
+                                try {
+                                    reportService.generateZapisnikSaIspita(selectedIspit, rezultati);
+                                    AlertUtil.showInfo("Uspeh", "Zapisnik sa ispita je generisan i otvoren!");
+                                } catch (Exception e) {
+                                    log.error("Error generating zapisnik", e);
+                                    AlertUtil.showError("Greška", "Nije moguće generisati zapisnik: " + e.getMessage());
+                                }
+                            }),
+                            error -> Platform.runLater(() -> {
+                                log.error("Failed to load rezultati ispita", error);
+                                AlertUtil.showError("Greška", "Nije moguće učitati rezultate ispita");
+                            })
+                    );
         } catch (Exception e) {
             log.error("Failed to generate zapisnik", e);
-            AlertUtil.showException("Greška", e);
+            AlertUtil.showError("Greška", "Greška: " + e.getMessage());
         }
     }
 

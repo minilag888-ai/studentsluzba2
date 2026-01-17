@@ -41,7 +41,6 @@
 
     <title>
         <band height="260">
-            <!-- HEADER -->
             <staticText>
                 <reportElement x="0" y="10" width="535" height="25"/>
                 <textElement textAlignment="Center">
@@ -62,7 +61,6 @@
                 <text><![CDATA[ZAPISNIK SA ISPITA]]></text>
             </staticText>
 
-            <!-- INFO O ISPITU -->
             <staticText>
                 <reportElement x="0" y="110" width="100" height="20"/>
                 <textElement><font size="10" isBold="true"/></textElement>
@@ -111,7 +109,6 @@
                 <textFieldExpression><![CDATA[$P{nastavnik}]]></textFieldExpression>
             </textField>
 
-            <!-- NAPOMENA -->
             <staticText>
                 <reportElement x="50" y="220" width="435" height="30"/>
                 <textElement textAlignment="Center">
@@ -275,7 +272,7 @@
     </detail>
 
     <summary>
-        <band height="80">
+        <band height="130">
             <staticText>
                 <reportElement x="280" y="15" width="110" height="20"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
@@ -307,23 +304,20 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$V{prosecnaOcena}]]></textFieldExpression>
             </textField>
-        </band>
-    </summary>
 
-    <pageFooter>
-        <band height="50">
+            <!-- POTPIS U SUMMARY -->
             <line>
-                <reportElement x="350" y="10" width="150" height="1"/>
+                <reportElement x="350" y="90" width="150" height="1"/>
             </line>
 
             <staticText>
-                <reportElement x="350" y="15" width="150" height="20"/>
+                <reportElement x="350" y="95" width="150" height="20"/>
                 <textElement textAlignment="Center">
                     <font size="9"/>
                 </textElement>
                 <text><![CDATA[Potpis nastavnika]]></text>
             </staticText>
         </band>
-    </pageFooter>
+    </summary>
 
 </jasperReport>

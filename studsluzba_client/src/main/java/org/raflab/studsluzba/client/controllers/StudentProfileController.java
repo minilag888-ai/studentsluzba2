@@ -493,9 +493,12 @@ public class StudentProfileController {
 
                             AlertUtil.showInfo("Uspeh", "Student je uspešno upisan na " + response.getGodinaStudija() + ". godinu!");
 
-                            // Osveži podatke
+                            // ✅ KLJUČNA IZMENA - Eksplicitno osvežavanje svih povezanih tabela
                             loadUpisaneGodine(currentStudentIndeksId);
                             loadNepolozeniPredmeti(currentStudentIndeksId);
+
+                            // ✅ FORCE REFRESH - Prebaci na tab Upisane godine da korisnik vidi rezultat
+                            tabPane.getSelectionModel().select(2); // Index 2 = "Upisane godine" tab
                         }),
                         error -> Platform.runLater(() -> {
                             log.error("❌ UPIS FAILED", error);
@@ -709,8 +712,12 @@ public class StudentProfileController {
 
                             AlertUtil.showInfo("Uspeh", "Uspešno obnovljena " + response.getGodinaStudija() + ". godina!");
 
+                            // ✅ EKSPLICITNO OSVEŽAVANJE
                             loadObnovljeneGodine(currentStudentIndeksId);
                             loadNepolozeniPredmeti(currentStudentIndeksId);
+
+                            // ✅ Prebaci na tab Obnovljene godine
+                            tabPane.getSelectionModel().select(3); // Index 3 = "Obnovljene godine" tab
                         }),
                         error -> Platform.runLater(() -> {
                             log.error("❌ OBNOVA FAILED", error);
@@ -839,5 +846,18 @@ public class StudentProfileController {
         public String toString() {
             return predmet.getSifra() + " - " + predmet.getNaziv() + " (" + predmet.getEspb() + " ESPB)";
         }
+    }
+    /**
+     * ✅ HELPER - Osveži sve podatke studenta
+     */
+    private void refreshAllData() {
+        log.info("🔄 Refreshing all student data...");
+
+        loadPolozeniPredmeti(currentStudentIndeksId);
+        loadNepolozeniPredmeti(currentStudentIndeksId);
+        loadUpisaneGodine(currentStudentIndeksId);
+        loadObnovljeneGodine(currentStudentIndeksId);
+        loadPreostaliIznos(currentStudentIndeksId);
+        loadUplate(currentStudentIndeksId);
     }
 }

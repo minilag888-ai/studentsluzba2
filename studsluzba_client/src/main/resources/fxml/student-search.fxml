@@ -75,9 +75,9 @@
             <columns>
                 <TableColumn fx:id="colIme" text="Ime" prefWidth="150"/>
                 <TableColumn fx:id="colPrezime" text="Prezime" prefWidth="150"/>
-                <TableColumn fx:id="colEmail" text="Indeks" prefWidth="150"/>
-                <TableColumn fx:id="colJmbg" text="Status" prefWidth="100"/>
-                <TableColumn fx:id="colSrednjaSkola" text="ID Indeksa" prefWidth="100"/>
+                <TableColumn fx:id="colEmail" text="Email" prefWidth="200"/>
+                <TableColumn fx:id="colJmbg" text="JMBG" prefWidth="120"/>
+                <TableColumn fx:id="colSrednjaSkola" text="Srednja škola" prefWidth="200"/>
             </columns>
             <placeholder>
                 <Label text="Nema rezultata pretrage"/>

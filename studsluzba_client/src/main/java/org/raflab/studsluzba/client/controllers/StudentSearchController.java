@@ -54,7 +54,7 @@ public class StudentSearchController {
     }
 
     private void setupTable() {
-        // ✅ StudentPodaciDTO ima prava polja
+        // ✅ Ispravno mapiranje kolona na StudentPodaciDTO polja
         colIme.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getIme()));
         colPrezime.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPrezime()));
         colEmail.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEmail()));
@@ -71,7 +71,7 @@ public class StudentSearchController {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 StudentPodaciDTO selected = tableStudents.getSelectionModel().getSelectedItem();
                 if (selected != null) {
-                    // ✅ Koristi getId() umesto getIdIndeks()
+                    // ✅ Koristi getId() jer StudentPodaciDTO ima 'id' polje
                     openStudentProfile(selected.getId());
                 }
             }

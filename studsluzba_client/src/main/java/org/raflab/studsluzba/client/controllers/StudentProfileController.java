@@ -217,14 +217,14 @@ public class StudentProfileController {
         studentService.getUpisaneGodine(studentIndeksId)
                 .subscribe(
                         godine -> Platform.runLater(() -> {
-                            log.info("✅ Received {} upisane godine", godine.size());
+                            log.info(" Received {} upisane godine", godine.size());
 
                             upisaneData.clear();
                             upisaneData.addAll(godine);
                             tableUpisaneGodine.refresh();
                         }),
                         error -> {
-                            log.error("❌ Failed to load upisane godine", error);
+                            log.error(" Failed to load upisane godine", error);
                             Platform.runLater(() ->
                                     AlertUtil.showError("Greška", "Nije moguće učitati upisane godine: " + error.getMessage())
                             );
@@ -238,20 +238,20 @@ public class StudentProfileController {
         studentService.getObnovljeneGodine(studentIndeksId)
                 .subscribe(
                         godine -> Platform.runLater(() -> {
-                            log.info("✅ Received {} obnovljene godine", godine.size());
+                            log.info(" Received {} obnovljene godine", godine.size());
 
                             obnovljeneData.clear();
                             obnovljeneData.addAll(godine);
                             tableObnovljeneGodine.refresh();
                         }),
                         error -> {
-                            log.error("❌ Failed to load obnovljene godine", error);
+                            log.error(" Failed to load obnovljene godine", error);
                         }
                 );
     }
 
     /**
-     * ✅ Učitaj preostali iznos (ne može biti ispod 0.00 EUR)
+     *  Učitaj preostali iznos (ne može biti ispod 0.00 EUR)
      */
     private void loadPreostaliIznos(Long studentIndeksId) {
         studentService.getPreostaliIznos(studentIndeksId)
@@ -259,7 +259,7 @@ public class StudentProfileController {
                         iznos -> Platform.runLater(() -> {
                             double preostali = iznos.getPreostaliIznosEur();
 
-                            // ✅ Ne dozvoli negativan iznos - prikaži 0.00 ako je minus
+                            //  Ne dozvoli negativan iznos - prikaži 0.00 ako je minus
                             if (preostali < 0) {
                                 preostali = 0.00;
                             }
@@ -271,7 +271,7 @@ public class StudentProfileController {
     }
 
     /**
-     * ✅ UČITAJ UPLATE - sada koristi StudentService.getUplate()
+     *  UČITAJ UPLATE - sada koristi StudentService.getUplate()
      */
     private void loadUplate(Long studentIndeksId) {
         log.info("=== LOADING UPLATE ===");
@@ -279,7 +279,7 @@ public class StudentProfileController {
         studentService.getUplate(studentIndeksId)
                 .subscribe(
                         uplate -> Platform.runLater(() -> {
-                            log.info("✅ Received {} uplate", uplate.size());
+                            log.info(" Received {} uplate", uplate.size());
 
                             uplateData.clear();
                             uplateData.addAll(uplate);
@@ -295,7 +295,7 @@ public class StudentProfileController {
                             tableUplate.refresh();
                         }),
                         error -> {
-                            log.error("❌ Failed to load uplate", error);
+                            log.error(" Failed to load uplate", error);
                             Platform.runLater(() -> {
                                 // Ako endpoint ne postoji, samo ostavi praznu tabelu
                                 uplateData.clear();
@@ -487,19 +487,19 @@ public class StudentProfileController {
         studentService.upisNaGodinu(currentStudentIndeksId, request)
                 .subscribe(
                         response -> Platform.runLater(() -> {
-                            log.info("✅ UPIS USPEŠAN!");
+                            log.info(" UPIS USPEŠAN!");
 
                             AlertUtil.showInfo("Uspeh", "Student je uspešno upisan na " + response.getGodinaStudija() + ". godinu!");
 
-                            // ✅ KLJUČNA IZMENA - Eksplicitno osvežavanje svih povezanih tabela
+                            //  KLJUČNA IZMENA - Eksplicitno osvežavanje svih povezanih tabela
                             loadUpisaneGodine(currentStudentIndeksId);
                             loadNepolozeniPredmeti(currentStudentIndeksId);
 
-                            // ✅ FORCE REFRESH - Prebaci na tab Upisane godine da korisnik vidi rezultat
+                            //  FORCE REFRESH - Prebaci na tab Upisane godine da korisnik vidi rezultat
                             tabPane.getSelectionModel().select(2); // Index 2 = "Upisane godine" tab
                         }),
                         error -> Platform.runLater(() -> {
-                            log.error("❌ UPIS FAILED", error);
+                            log.error(" UPIS FAILED", error);
                             AlertUtil.showException("Greška", (Exception) error);
                         })
                 );
@@ -706,19 +706,19 @@ public class StudentProfileController {
         studentService.obnovaGodine(currentStudentIndeksId, request)
                 .subscribe(
                         response -> Platform.runLater(() -> {
-                            log.info("✅ OBNOVA USPEŠNA!");
+                            log.info(" OBNOVA USPEŠNA!");
 
                             AlertUtil.showInfo("Uspeh", "Uspešno obnovljena " + response.getGodinaStudija() + ". godina!");
 
-                            // ✅ EKSPLICITNO OSVEŽAVANJE
+                            //  EKSPLICITNO OSVEŽAVANJE
                             loadObnovljeneGodine(currentStudentIndeksId);
                             loadNepolozeniPredmeti(currentStudentIndeksId);
 
-                            // ✅ Prebaci na tab Obnovljene godine
+                            //  Prebaci na tab Obnovljene godine
                             tabPane.getSelectionModel().select(3); // Index 3 = "Obnovljene godine" tab
                         }),
                         error -> Platform.runLater(() -> {
-                            log.error("❌ OBNOVA FAILED", error);
+                            log.error(" OBNOVA FAILED", error);
                             AlertUtil.showException("Greška", (Exception) error);
                         })
                 );
@@ -785,7 +785,7 @@ public class StudentProfileController {
         studentService.dodajUplatu(currentStudentIndeksId, request)
                 .subscribe(
                         uplata -> Platform.runLater(() -> {
-                            log.info("✅ UPLATA EVIDENTIRANA!");
+                            log.info(" UPLATA EVIDENTIRANA!");
 
                             AlertUtil.showInfo("Uspeh", "Uplata je evidentirana");
 
@@ -793,7 +793,7 @@ public class StudentProfileController {
                             loadUplate(currentStudentIndeksId);
                         }),
                         error -> Platform.runLater(() -> {
-                            log.error("❌ UPLATA FAILED", error);
+                            log.error(" UPLATA FAILED", error);
                             AlertUtil.showException("Greška", (Exception) error);
                         })
                 );
@@ -867,7 +867,7 @@ public class StudentProfileController {
                 );
     }
     /**
-     * ✅ HELPER - Osveži sve podatke studenta
+     *  HELPER - Osveži sve podatke studenta
      */
     private void refreshAllData() {
         log.info("🔄 Refreshing all student data...");

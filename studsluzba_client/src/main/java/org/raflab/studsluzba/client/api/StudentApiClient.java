@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -36,7 +37,7 @@ public class StudentApiClient {
     }
 
     // ============================================
-    // STATISTICS - ✅ NOVO!
+    // STATISTICS
     // ============================================
 
     public Mono<StudentStatisticsDTO> getStatistics(Long studentIndeksId) {
@@ -50,10 +51,16 @@ public class StudentApiClient {
     }
 
     // ============================================
-    // SEARCH ENDPOINTS
+    // SEARCH ENDPOINTS -  KOMPLETNO ISPRAVLJENO
     // ============================================
 
+    /**
+     * Pretraga studenata po imenu i/ili prezimenu
+     *  ISPRAVKA: Koristi RestPageImpl za deserijalizaciju Page odgovora
+     */
     public Mono<Page<StudentPodaciDTO>> searchStudents(String ime, String prezime, int page, int size) {
+        log.debug("Searching students: ime={}, prezime={}, page={}, size={}", ime, prezime, page, size);
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/students/ime-prezime")
@@ -63,11 +70,23 @@ public class StudentApiClient {
                         .queryParam("size", size)
                         .build())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Page<StudentPodaciDTO>>() {})
-                .doOnError(error -> log.error("Failed to search students", error));
+                .bodyToMono(new ParameterizedTypeReference<RestPageImpl<StudentPodaciDTO>>() {})
+                .map(restPage -> (Page<StudentPodaciDTO>) restPage)
+                .doOnError(error -> {
+                    log.error(" Failed to search students by name", error);
+                    log.error("   Request: ime={}, prezime={}, page={}, size={}", ime, prezime, page, size);
+                });
     }
 
+    /**
+     *  NOVA ISPRAVKA: findByIndeks sada vraća Page umesto direktno profil
+     *
+     * VAŽNO: Server endpoint /students/indeks vraća StudentProfileDTO, ne Page!
+     * Moramo da konvertujemo u Page sa jednim elementom za kompatibilnost sa UI kodom.
+     */
     public Mono<Page<StudentPodaciDTO>> findByIndeks(int godina, int broj, String oznaka) {
+        log.debug("Finding student by indeks: {}/{}/{}", godina, broj, oznaka);
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/students/indeks")
@@ -76,10 +95,32 @@ public class StudentApiClient {
                         .queryParam("oznaka", oznaka)
                         .build())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Page<StudentPodaciDTO>>() {})
-                .doOnError(error -> log.error("Failed to find by indeks", error));
+                .bodyToMono(StudentProfileDTO.class)  // Server vraća StudentProfileDTO
+                .map(profile -> {
+                    //  Konvertuj StudentProfileDTO -> StudentPodaciDTO
+                    StudentPodaciDTO podaciDTO = new StudentPodaciDTO();
+                    podaciDTO.setId(profile.getId());
+                    podaciDTO.setIme(profile.getIme());
+                    podaciDTO.setPrezime(profile.getPrezime());
+                    podaciDTO.setSrednjeIme(profile.getSrednjeIme());
+                    podaciDTO.setEmail(profile.getEmail());
+                    podaciDTO.setBrojTelefona(profile.getBrojTelefona());
+
+                    //  Kreiraj Page sa jednim studentom
+                    List<StudentPodaciDTO> content = new ArrayList<>();
+                    content.add(podaciDTO);
+                    return (Page<StudentPodaciDTO>) new RestPageImpl<>(content);
+                })
+                .doOnError(error -> {
+                    log.error(" Failed to find student by indeks", error);
+                    log.error("   Request: godina={}, broj={}, oznaka={}", godina, broj, oznaka);
+                    log.error("   Check if student exists in database!");
+                });
     }
 
+    /**
+     * Pretraga studenata po srednjoj školi
+     */
     public Mono<List<StudentPodaciDTO>> findBySrednjaSkola(Long srednjaSkolaId) {
         return webClient.get()
                 .uri("/students/srednja-skola/{id}", srednjaSkolaId)
@@ -100,7 +141,8 @@ public class StudentApiClient {
                         .queryParam("size", size)
                         .build(studentIndeksId))
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<PageDTO<PolozenPredmetDTO>>() {});    }
+                .bodyToMono(new ParameterizedTypeReference<PageDTO<PolozenPredmetDTO>>() {});
+    }
 
     public Mono<PageDTO<NepolozenPredmetDTO>> getNepolozeniPredmeti(Long studentIndeksId, int page, int size) {
         return webClient.get()

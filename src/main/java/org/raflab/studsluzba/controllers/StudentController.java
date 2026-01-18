@@ -117,11 +117,11 @@ public class StudentController {
     }
 
     // ============================================
-    // UPLATE - ✅ DODATO
+    // UPLATE -  DODATO
     // ============================================
 
     /**
-     * ✅ NOVA METODA - Selekcija svih uplata za studenta
+     *  NOVA METODA - Selekcija svih uplata za studenta
      */
     @GetMapping("/{studentIndeksId}/uplate")
     public ResponseEntity<List<UplataDTO>> getUplate(@PathVariable Long studentIndeksId) {

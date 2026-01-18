@@ -24,7 +24,7 @@ public class ReportService {
     public void generateUverenjeOStudiranju(StudentProfileDTO student) throws JRException {
         log.info("Generating uverenje o studiranju for student: {}", student.getId());
 
-        // ✅ DODAJ DEBUG
+        //  DODAJ DEBUG
         log.info("🔍 DEBUG - Student data:");
         log.info("   ime: {}", student.getIme());
         log.info("   prezime: {}", student.getPrezime());
@@ -38,11 +38,11 @@ public class ReportService {
             throw new JRException("Template not found: uverenje_o_studiranju.jrxml");
         }
 
-        log.info("✅ Template loaded successfully");
+        log.info(" Template loaded successfully");
 
         // Kompajliraj report
         JasperReport jasperReport = JasperCompileManager.compileReport(templateStream);
-        log.info("✅ Report compiled successfully");
+        log.info(" Report compiled successfully");
 
         // Parametri
         Map<String, Object> parameters = new HashMap<>();
@@ -53,7 +53,7 @@ public class ReportService {
         parameters.put("studijskiProgram", student.getStudProgramOznaka());
         parameters.put("datumIzdavanja", LocalDate.now());
 
-        // ✅ DODAJ DEBUG
+        //  DODAJ DEBUG
         log.info("🔍 Parameters map:");
         parameters.forEach((key, value) -> log.info("   {} = {}", key, value));
 
@@ -62,7 +62,7 @@ public class ReportService {
 
         // Popuni report
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-        log.info("✅ Report filled successfully, pages: {}", jasperPrint.getPages().size());
+        log.info(" Report filled successfully, pages: {}", jasperPrint.getPages().size());
 
         // Eksportuj u PDF
         String outputPath = System.getProperty("user.home") + "/Desktop/uverenje_o_studiranju.pdf";

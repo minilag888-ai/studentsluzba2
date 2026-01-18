@@ -27,7 +27,7 @@ public class StudentSearchController {
     @FXML private TextField txtOznaka;
     @FXML private ComboBox<SrednjaSkola> cmbSrednjaSkola;
 
-    // ✅ Koristi StudentPodaciDTO jer to backend vraća
+    //  Koristi StudentPodaciDTO jer to backend vraća
     @FXML private TableView<StudentPodaciDTO> tableStudents;
     @FXML private TableColumn<StudentPodaciDTO, String> colIme;
     @FXML private TableColumn<StudentPodaciDTO, String> colPrezime;
@@ -40,7 +40,7 @@ public class StudentSearchController {
     @Autowired private NavigationManager navigationManager;
     @Autowired private FxmlLoader fxmlLoader;
 
-    // ✅ Koristi StudentPodaciDTO
+    //  Koristi StudentPodaciDTO
     private final ObservableList<StudentPodaciDTO> studentData = FXCollections.observableArrayList();
     private int currentPage = 0;
     private final int pageSize = 20;
@@ -54,7 +54,7 @@ public class StudentSearchController {
     }
 
     private void setupTable() {
-        // ✅ Ispravno mapiranje kolona na StudentPodaciDTO polja
+        //  Ispravno mapiranje kolona na StudentPodaciDTO polja
         colIme.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getIme()));
         colPrezime.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPrezime()));
         colEmail.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEmail()));
@@ -71,7 +71,7 @@ public class StudentSearchController {
             if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
                 StudentPodaciDTO selected = tableStudents.getSelectionModel().getSelectedItem();
                 if (selected != null) {
-                    // ✅ Koristi getId() jer StudentPodaciDTO ima 'id' polje
+                    //  Koristi getId() jer StudentPodaciDTO ima 'id' polje
                     openStudentProfile(selected.getId());
                 }
             }
@@ -127,7 +127,7 @@ public class StudentSearchController {
 
             log.info("Searching by indeks: {}/{}/{}", godina, broj, oznaka);
 
-            // ✅ findByIndeks vraća Page<StudentPodaciDTO>
+            //  findByIndeks vraća Page<StudentPodaciDTO>
             studentService.findByIndeks(godina, broj, oznaka)
                     .subscribe(
                             page -> Platform.runLater(() -> {
@@ -177,7 +177,7 @@ public class StudentSearchController {
         studentService.searchStudents(ime, prezime, currentPage, pageSize)
                 .subscribe(
                         page -> Platform.runLater(() -> {
-                            // ✅ Ispravno mapiranje Page<StudentDTO>
+                            //  Ispravno mapiranje Page<StudentDTO>
                             studentData.clear();
                             studentData.addAll(page.getContent());
                             pagination.setPageCount(Math.max(1, page.getTotalPages()));
@@ -207,7 +207,7 @@ public class StudentSearchController {
         studentService.findBySrednjaSkola(selected.getId())
                 .subscribe(
                         students -> Platform.runLater(() -> {
-                            // ✅ List<StudentPodaciDTO> se pravilno parsira
+                            //  List<StudentPodaciDTO> se pravilno parsira
                             studentData.clear();
                             studentData.addAll(students);
                             pagination.setPageCount(1);

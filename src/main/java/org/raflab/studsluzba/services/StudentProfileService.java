@@ -316,7 +316,7 @@ public class StudentProfileService {
     }
 
     // ============================================
-    // ✅ UPLATE - NOVA METODA
+    //  UPLATE - NOVA METODA
     // ============================================
 
     @Transactional(readOnly = true)
@@ -439,7 +439,7 @@ public class StudentProfileService {
 
     @Transactional(readOnly = true)
     public List<StudentPodaciDTO> getStudentsBySrednjaSkola(Long srednjaSkolaId) {
-        // ✅ ISPRAVLJENO - koristi findBySrednjaSkolaId umesto findBySrednjaSkola_Id
+        //  ISPRAVLJENO - koristi findBySrednjaSkolaId umesto findBySrednjaSkola_Id
         List<StudentPodaci> studenti = studentPodaciRepo.findBySrednjaSkolaId(srednjaSkolaId);
 
         return studenti.stream()

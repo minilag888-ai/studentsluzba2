@@ -5,6 +5,7 @@ import org.raflab.studsluzba.controllers.response.StudentPodaciResponse;
 import org.raflab.studsluzba.model.StudentIndeks;
 import org.raflab.studsluzba.model.StudentPodaci;
 import org.springframework.stereotype.Component;
+import org.raflab.studsluzba.shared.dtos.StudentDTO;
 
 @Component
 public class EntityMappers {

@@ -8,7 +8,8 @@ import org.raflab.studsluzba.repositories.StudijskiProgramRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.raflab.studsluzba.shared.dtos.PredmetDTO;
+import org.raflab.studsluzba.shared.dtos.ProsecnaOcenaDTO;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

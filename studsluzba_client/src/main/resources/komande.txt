@@ -4,8 +4,4 @@ mvn javafx:run
 
 cd C:\Users\PC\Desktop\studsluzba_server
 mvn clean compile
-mvn javafx:run
-
-cd C:\Users\PC\Desktop\studsluzba_server\studsluzba_client
-mvn clean compile
-mvn javafx:run
+mvn spring-boot:run

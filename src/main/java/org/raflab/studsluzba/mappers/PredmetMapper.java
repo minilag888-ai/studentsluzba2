@@ -2,7 +2,7 @@ package org.raflab.studsluzba.mappers;
 
 import org.raflab.studsluzba.model.Predmet;
 import org.springframework.stereotype.Component;
-
+import org.raflab.studsluzba.shared.dtos.PredmetDTO;
 import java.util.List;
 import java.util.stream.Collectors;
 

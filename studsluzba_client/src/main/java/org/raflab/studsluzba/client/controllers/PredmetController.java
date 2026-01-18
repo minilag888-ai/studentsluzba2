@@ -154,12 +154,14 @@ public class PredmetController {
         CheckBox chkObavezan = new CheckBox("Obavezan");
         chkObavezan.setSelected(true);
 
-        // TODO: Učitaj studijske programe iz API-ja
+
         ComboBox<StudijskiProgramOption> cmbStudijskiProgram = new ComboBox<>();
         cmbStudijskiProgram.getItems().addAll(
-                new StudijskiProgramOption(1L, "Računarske nauke (RN)"),
-                new StudijskiProgramOption(2L, "Softversko inženjerstvo (SI)"),
-                new StudijskiProgramOption(3L, "Računarsko inženjerstvo (RI)")
+                new StudijskiProgramOption(1L, "Studijski program 1"),
+                new StudijskiProgramOption(2L, "Studijski program 2"),
+                new StudijskiProgramOption(3L, "Studijski program 3"),
+                new StudijskiProgramOption(4L, "Studijski program 4"),
+                new StudijskiProgramOption(5L, "Studijski program 5")
         );
         cmbStudijskiProgram.getSelectionModel().selectFirst();
         cmbStudijskiProgram.setPrefWidth(300);

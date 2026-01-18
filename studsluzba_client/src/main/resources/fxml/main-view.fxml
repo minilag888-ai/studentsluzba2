@@ -21,8 +21,6 @@
                         styleClass="nav-button" prefWidth="150" prefHeight="50"/>
                 <Button fx:id="btnPredmeti" text="📚 Predmeti" onAction="#onPredmetiClick"
                         styleClass="nav-button" prefWidth="150" prefHeight="50"/>
-                <Button fx:id="btnIzvestaji" text="📊 Izveštaji" onAction="#onIzvestajiClick"
-                        styleClass="nav-button" prefWidth="150" prefHeight="50"/>
             </HBox>
             <Separator/>
         </VBox>

@@ -93,10 +93,10 @@ public class StudentSearchController {
 
     private void loadSrednjeSkole() {
         ObservableList<SrednjaSkola> skole = FXCollections.observableArrayList(
-                new SrednjaSkola(1L, "Matematička gimnazija"),
-                new SrednjaSkola(2L, "Treća beogradska gimnazija"),
-                new SrednjaSkola(3L, "Peta beogradska gimnazija"),
-                new SrednjaSkola(4L, "Elektrotehnička škola Nikola Tesla")
+                new SrednjaSkola(1L, "Srednja škola 1"),
+                new SrednjaSkola(2L, "Srednja škola 2"),
+                new SrednjaSkola(3L, "Srednja škola 3"),
+                new SrednjaSkola(4L, "Srednja škola 4")
         );
         cmbSrednjaSkola.setItems(skole);
     }

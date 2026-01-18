@@ -1,7 +1,7 @@
 package org.raflab.studsluzba.client.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.raflab.studsluzba.client.api.PageDTO;
+import org.raflab.studsluzba.client.dto.PageDTO;
 import org.raflab.studsluzba.client.api.StudentApiClient;
 import org.raflab.studsluzba.client.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;

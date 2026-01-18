@@ -1,4 +1,4 @@
-package org.raflab.studsluzba.client.api;
+package org.raflab.studsluzba.client.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

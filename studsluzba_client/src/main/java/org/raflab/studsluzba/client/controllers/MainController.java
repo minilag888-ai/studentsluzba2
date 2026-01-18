@@ -22,7 +22,6 @@ public class MainController {
     @FXML private Button btnStudenti;
     @FXML private Button btnIspiti;
     @FXML private Button btnPredmeti;
-    @FXML private Button btnIzvestaji;
 
     @Autowired private NavigationManager navigationManager;
     @Autowired private FxmlLoader fxmlLoader;
@@ -61,12 +60,6 @@ public class MainController {
         loadPredmetView();
     }
 
-    @FXML
-    private void onIzvestajiClick() {
-        log.info("Izvestaji button clicked");
-        setActiveButton(btnIzvestaji);
-        AlertUtil.showInfo("TODO", "Izveštaji view u izradi");
-    }
 
     private void loadStudentSearch() {
         loadView("student-search.fxml", "Pretraga studenata", "studenti");
@@ -130,24 +123,18 @@ public class MainController {
                 return btnIspiti;
             case "predmeti":
                 return btnPredmeti;
-            case "izvestaji":
-                return btnIzvestaji;
             default:
                 return btnStudenti;
         }
     }
 
-    private void setActiveButton(Button button) {
-        // Ukloni active stil sa svih dugmadi
-        btnStudenti.getStyleClass().remove("nav-button-active");
-        btnIspiti.getStyleClass().remove("nav-button-active");
-        btnPredmeti.getStyleClass().remove("nav-button-active");
-        btnIzvestaji.getStyleClass().remove("nav-button-active");
+    private void setActiveButton(Button activeButton) {
+        // Ukloni "active" sa svih buttona
+        btnStudenti.getStyleClass().remove("active");
+        btnIspiti.getStyleClass().remove("active");
+        btnPredmeti.getStyleClass().remove("active");
 
-        // Dodaj active stil na novo dugme
-        if (!button.getStyleClass().contains("nav-button-active")) {
-            button.getStyleClass().add("nav-button-active");
-        }
-        currentActiveButton = button;
+        // Dodaj "active" na selektovani button
+        activeButton.getStyleClass().add("active");
     }
 }

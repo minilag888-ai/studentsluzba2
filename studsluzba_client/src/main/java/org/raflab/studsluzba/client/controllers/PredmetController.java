@@ -11,7 +11,7 @@ import javafx.scene.layout.GridPane;
 import lombok.extern.slf4j.Slf4j;
 import org.raflab.studsluzba.client.api.request.PredmetRequest;
 import org.raflab.studsluzba.client.api.response.PredmetResponse;
-import org.raflab.studsluzba.client.dto.ProsecnaOcenaDTO;
+import org.raflab.studsluzba.shared.dtos.ProsecnaOcenaDTO;
 import org.raflab.studsluzba.client.services.PredmetService;
 import org.raflab.studsluzba.client.utils.AlertUtil;
 import org.springframework.beans.factory.annotation.Autowired;

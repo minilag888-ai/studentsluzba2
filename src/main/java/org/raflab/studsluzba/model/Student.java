@@ -1,11 +1,14 @@
 package org.raflab.studsluzba.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
+@Data
 @Entity
+
 @Table(name = "student")
 public class Student {
 

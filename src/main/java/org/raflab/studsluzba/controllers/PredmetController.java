@@ -4,8 +4,6 @@ import org.raflab.studsluzba.controllers.request.PredmetRequest;
 import org.raflab.studsluzba.controllers.response.PredmetResponse;
 import org.raflab.studsluzba.model.Predmet;
 import org.raflab.studsluzba.model.StudijskiProgram;
-import org.raflab.studsluzba.model.dtos.PredmetDTO;
-import org.raflab.studsluzba.model.dtos.ProsecnaOcenaDTO;
 import org.raflab.studsluzba.services.PredmetService;
 import org.raflab.studsluzba.services.StudijskiProgramService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,13 @@
 package org.raflab.studsluzba.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
+@Data
+@AllArgsConstructor
 @Entity
 @Table(name = "studijski_program")
 public class StudijskiProgram {

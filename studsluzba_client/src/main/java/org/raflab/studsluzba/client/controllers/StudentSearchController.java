@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import lombok.extern.slf4j.Slf4j;
-import org.raflab.studsluzba.client.dto.StudentPodaciDTO;
+import org.raflab.studsluzba.shared.dtos.StudentPodaciDTO;
 import org.raflab.studsluzba.client.navigation.NavigationManager;
 import org.raflab.studsluzba.client.services.StudentService;
 import org.raflab.studsluzba.client.utils.AlertUtil;

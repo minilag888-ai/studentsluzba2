@@ -15,7 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
-import org.raflab.studsluzba.client.dto.*;
+import org.raflab.studsluzba.shared.dtos.*;
 import org.raflab.studsluzba.client.services.PredmetService;
 import org.raflab.studsluzba.client.services.ReportService;
 import org.raflab.studsluzba.client.services.StudentService;

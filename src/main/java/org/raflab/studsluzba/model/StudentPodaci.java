@@ -1,6 +1,7 @@
 package org.raflab.studsluzba.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -8,6 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class StudentPodaci {
 
     @Id

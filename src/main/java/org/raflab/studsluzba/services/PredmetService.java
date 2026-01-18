@@ -2,8 +2,6 @@ package org.raflab.studsluzba.services;
 
 import org.raflab.studsluzba.model.Predmet;
 import org.raflab.studsluzba.model.StudijskiProgram;
-import org.raflab.studsluzba.model.dtos.PredmetDTO;
-import org.raflab.studsluzba.model.dtos.ProsecnaOcenaDTO;
 import org.raflab.studsluzba.mappers.PredmetMapper;
 import org.raflab.studsluzba.repositories.PredmetRepository;
 import org.raflab.studsluzba.repositories.StudijskiProgramRepository;

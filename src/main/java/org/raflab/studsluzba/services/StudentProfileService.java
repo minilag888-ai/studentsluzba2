@@ -1,7 +1,7 @@
 package org.raflab.studsluzba.services;
 
 import org.raflab.studsluzba.model.*;
-import org.raflab.studsluzba.model.dtos.*;
+import org.raflab.studsluzba.shared.dtos.*;
 import org.raflab.studsluzba.repositories.*;
 import org.raflab.studsluzba.mappers.PredmetMapper;
 import org.springframework.beans.factory.annotation.Autowired;

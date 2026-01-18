@@ -1,7 +1,6 @@
 package org.raflab.studsluzba.mappers;
 
 import org.raflab.studsluzba.model.Predmet;
-import org.raflab.studsluzba.model.dtos.PredmetDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

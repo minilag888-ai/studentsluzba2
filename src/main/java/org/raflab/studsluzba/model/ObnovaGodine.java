@@ -1,10 +1,14 @@
 package org.raflab.studsluzba.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "obnova_godine")
 public class ObnovaGodine {
@@ -39,9 +43,7 @@ public class ObnovaGodine {
     )
     private List<Predmet> predmeti = new ArrayList<>();
 
-    // Constructors
-    public ObnovaGodine() {
-    }
+
 
     public ObnovaGodine(StudentIndeks studentIndeks, SkolskaGodina skolskaGodina, Integer godinaStudija, LocalDate datumObnove) {
         this.studentIndeks = studentIndeks;

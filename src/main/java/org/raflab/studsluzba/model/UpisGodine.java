@@ -1,9 +1,14 @@
 package org.raflab.studsluzba.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+@Data
+@AllArgsConstructor
 
 @Entity
 @Table(name = "upis_godine")

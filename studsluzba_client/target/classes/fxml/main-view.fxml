@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="rootPane"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.raflab.studsluzba.client.controllers.MainController"
+            stylesheets="@../css/style.css"
+            prefWidth="1200" prefHeight="800">
+
+    <!-- TOP: Navigation buttons - FIKSNO -->
+    <top>
+        <VBox>
+            <HBox spacing="0" alignment="CENTER_LEFT" styleClass="nav-bar">
+                <Button fx:id="btnStudenti" text="👥 Studenti" onAction="#onStudentiClick"
+                        styleClass="nav-button" prefWidth="150" prefHeight="50"/>
+                <Button fx:id="btnIspiti" text="📝 Ispiti" onAction="#onIspitiClick"
+                        styleClass="nav-button" prefWidth="150" prefHeight="50"/>
+                <Button fx:id="btnPredmeti" text="📚 Predmeti" onAction="#onPredmetiClick"
+                        styleClass="nav-button" prefWidth="150" prefHeight="50"/>
+            </HBox>
+            <Separator/>
+        </VBox>
+    </top>
+
+    <!-- CENTER: Content Area - SAMO OVO SE MENJA -->
+    <center>
+        <StackPane fx:id="contentArea" style="-fx-background-color: #f5f5f5;"/>
+    </center>
+
+    <!-- BOTTOM: Status bar - FIKSNO -->
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="status-bar">
+            <padding>
+                <Insets top="5" right="10" bottom="5" left="10"/>
+            </padding>
+            <Label text="● Povezano sa serverom: http://localhost:8090"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

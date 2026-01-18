@@ -5,8 +5,8 @@ import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.raflab.studsluzba.client.api.response.IspitResponse;
 import org.raflab.studsluzba.client.api.response.RezultatIspitaResponse;
-import org.raflab.studsluzba.client.dto.PolozenPredmetDTO;
-import org.raflab.studsluzba.client.dto.StudentProfileDTO;
+import org.raflab.studsluzba.shared.dtos.PolozenPredmetDTO;
+import org.raflab.studsluzba.shared.dtos.StudentProfileDTO;
 import org.springframework.stereotype.Service;
 
 import java.io.File;

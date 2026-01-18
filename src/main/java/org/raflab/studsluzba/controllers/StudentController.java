@@ -1,7 +1,8 @@
 package org.raflab.studsluzba.controllers;
 
-import org.raflab.studsluzba.model.dtos.*;
+
 import org.raflab.studsluzba.services.StudentProfileService;
+import org.raflab.studsluzba.shared.dtos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,8 +1,12 @@
 package org.raflab.studsluzba.model;
 
-import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+import javax.persistence.*;
+@Data
 @Entity
+@AllArgsConstructor
 @Table(name = "vrsta_studija")
 public class VrstaStudija {
 

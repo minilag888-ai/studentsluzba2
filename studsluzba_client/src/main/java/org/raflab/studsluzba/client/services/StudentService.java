@@ -1,9 +1,9 @@
 package org.raflab.studsluzba.client.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.raflab.studsluzba.client.dto.PageDTO;
+import org.raflab.studsluzba.shared.dtos.PageDTO;
 import org.raflab.studsluzba.client.api.StudentApiClient;
-import org.raflab.studsluzba.client.dto.*;
+import org.raflab.studsluzba.shared.dtos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;

@@ -1,14 +1,10 @@
 package org.raflab.studsluzba.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Objects;
-
+@Data
 @Entity
 @Table(name = "predispitna_obaveza")
 @Getter

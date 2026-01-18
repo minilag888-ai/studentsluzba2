@@ -1,11 +1,7 @@
 package org.raflab.studsluzba.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -20,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
+@Data
+
 @Getter
 @Setter
 @NoArgsConstructor

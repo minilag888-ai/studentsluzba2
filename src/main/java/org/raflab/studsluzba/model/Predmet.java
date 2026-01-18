@@ -3,10 +3,12 @@ package org.raflab.studsluzba.model;
 import javax.persistence.*;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
 @Data
+@NoArgsConstructor
 @ToString(exclude = {"studProgram"})
 public class Predmet {
 	

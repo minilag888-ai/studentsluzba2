@@ -1,8 +1,12 @@
 package org.raflab.studsluzba.model;
 
-import javax.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+@Data
 @Entity
+@NoArgsConstructor
 @Table(name = "srednja_skola")
 public class SrednjaSkola {
 
@@ -20,9 +24,7 @@ public class SrednjaSkola {
     @Column(name = "vrsta", nullable = false)
     private String vrsta; // Gimnazija, Srednja stručna škola, Tehnička škola...
 
-    // Constructors
-    public SrednjaSkola() {
-    }
+
 
     public SrednjaSkola(String naziv, String mesto, String vrsta) {
         this.naziv = naziv;

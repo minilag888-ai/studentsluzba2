@@ -1,11 +1,15 @@
 package org.raflab.studsluzba.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-
+@Data
 @Entity
+
 @Table(name = "uplata")
 public class Uplata {
 

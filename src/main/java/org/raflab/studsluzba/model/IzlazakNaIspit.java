@@ -1,7 +1,11 @@
 package org.raflab.studsluzba.model;
 
-import javax.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "izlazak_na_ispit")
 public class IzlazakNaIspit {
@@ -33,9 +37,7 @@ public class IzlazakNaIspit {
     @Column(name = "ponisteno", nullable = false)
     private Boolean ponisteno = false; // Da li student poništava ispit
 
-    // Constructors
-    public IzlazakNaIspit() {
-    }
+
 
     public IzlazakNaIspit(PrijavaIspita prijavaIspita, Integer poeniPredispitne, Integer poeniIspit) {
         this.prijavaIspita = prijavaIspita;

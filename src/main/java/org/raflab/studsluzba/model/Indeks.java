@@ -1,8 +1,12 @@
 package org.raflab.studsluzba.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
-
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "indeks")
 public class Indeks {
@@ -32,9 +36,7 @@ public class Indeks {
     @Column(name = "datum_od")
     private LocalDate datumOd;
 
-    // Constructors
-    public Indeks() {
-    }
+
 
     public Indeks(Student student, StudijskiProgram studijskiProgram, Integer godinaUpisa, Integer broj) {
         this.student = student;

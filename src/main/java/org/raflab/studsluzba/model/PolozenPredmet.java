@@ -1,8 +1,12 @@
 package org.raflab.studsluzba.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
-
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "polozen_predmet")
 public class PolozenPredmet {
@@ -36,9 +40,7 @@ public class PolozenPredmet {
     @Column(name = "napomena")
     private String napomena;
 
-    // Constructors
-    public PolozenPredmet() {
-    }
+
 
     public PolozenPredmet(StudentIndeks studentIndeks, Predmet predmet, Integer ocena, LocalDate datumPolaganja) {
         this.studentIndeks = studentIndeks;

@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.ToString;
 
 import lombok.*;
-
+@Data
 @Entity
 @Getter
 @Setter
